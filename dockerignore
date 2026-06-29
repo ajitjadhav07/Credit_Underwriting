@@ -1,0 +1,26 @@
+# Dependencies (rebuilt inside Docker)
+node_modules/
+npm-debug.log*
+
+# Dev/build artifacts
+dist/
+.env
+.env.*
+!.env.example
+
+# Git & editor
+.git/
+.gitignore
+.eslintrc*
+.vscode/
+.idea/
+
+# Docs & CI
+docs/
+*.md
+!README.md
+
+# Test / local scripts
+coverage/
+*.test.js
+*.spec.js
