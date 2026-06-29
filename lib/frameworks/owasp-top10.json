@@ -1,0 +1,257 @@
+{
+  "framework": "OWASP Top 10",
+  "version": "2021",
+  "source": "https://owasp.org/Top10/",
+  "description": "The OWASP Top 10 is a standard awareness document for developers and web application security.",
+  "controls": [
+    {
+      "id": "A01:2021",
+      "name": "Broken Access Control",
+      "severity": "critical",
+      "official_text": "Access control enforces policy such that users cannot act outside of their intended permissions. Failures typically lead to unauthorized information disclosure, modification, or destruction of all data or performing a business function outside the user's limits.",
+      "source_reference": "OWASP Top 10 2021 - A01:2021",
+      "code_checks": [
+        {
+          "id": "auth_middleware",
+          "description": "Authentication middleware on protected routes",
+          "check_type": "positive_pattern",
+          "patterns": ["ensureAuthenticated", "requireAuth", "isAuthenticated"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "Authentication middleware found"
+        },
+        {
+          "id": "rbac_implementation",
+          "description": "Role-based access control implemented",
+          "check_type": "positive_pattern",
+          "patterns": ["requireRole", "checkRole", "hasPermission", "ROLES"],
+          "file_patterns": ["*.js"],
+          "pass_criteria": "RBAC functions defined and used"
+        }
+      ]
+    },
+    {
+      "id": "A02:2021",
+      "name": "Cryptographic Failures",
+      "severity": "critical",
+      "official_text": "The first thing is to determine the protection needs of data in transit and at rest. Passwords, credit card numbers, health records, personal information, and business secrets require extra protection.",
+      "source_reference": "OWASP Top 10 2021 - A02:2021",
+      "code_checks": [
+        {
+          "id": "tls_enforced",
+          "description": "TLS/HTTPS enforced for data in transit",
+          "check_type": "positive_pattern",
+          "patterns": ["secure: true", "https://", "TLS", "SSL"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "Secure cookie flag and HTTPS references found"
+        },
+        {
+          "id": "encryption_at_rest",
+          "description": "Encryption at rest configured",
+          "check_type": "positive_pattern",
+          "patterns": ["ServerSideEncryption", "AES", "encrypt", "KMS"],
+          "file_patterns": ["*s3*.js", "server.js"],
+          "pass_criteria": "Encryption configuration found"
+        }
+      ]
+    },
+    {
+      "id": "A03:2021",
+      "name": "Injection",
+      "severity": "critical",
+      "official_text": "An application is vulnerable to attack when user-supplied data is not validated, filtered, or sanitized by the application.",
+      "source_reference": "OWASP Top 10 2021 - A03:2021",
+      "code_checks": [
+        {
+          "id": "input_validation",
+          "description": "Input validation functions exist",
+          "check_type": "positive_pattern",
+          "patterns": ["validate", "sanitize", "escape", "filter"],
+          "file_patterns": ["*.js"],
+          "pass_criteria": "Validation functions defined and used"
+        },
+        {
+          "id": "no_eval",
+          "description": "No dangerous eval() usage",
+          "check_type": "negative_pattern",
+          "patterns": ["^[^/]*\\beval\\s*\\("],
+          "pass_criteria": "No eval with dynamic input",
+          "pass_if_not_found": true
+        }
+      ]
+    },
+    {
+      "id": "A04:2021",
+      "name": "Insecure Design",
+      "severity": "high",
+      "official_text": "Insecure design is a broad category representing different weaknesses, expressed as missing or ineffective control design.",
+      "source_reference": "OWASP Top 10 2021 - A04:2021",
+      "code_checks": [
+        {
+          "id": "rate_limiting",
+          "description": "Rate limiting implemented",
+          "check_type": "positive_pattern",
+          "patterns": ["rateLimit", "rateLimiter", "throttle"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "Rate limiting middleware configured"
+        },
+        {
+          "id": "error_handling",
+          "description": "Proper error handling",
+          "check_type": "positive_pattern",
+          "patterns": ["try", "catch"],
+          "file_patterns": ["server.js", "lib/*.js"],
+          "pass_criteria": "Error handling implemented"
+        }
+      ]
+    },
+    {
+      "id": "A05:2021",
+      "name": "Security Misconfiguration",
+      "severity": "high",
+      "official_text": "The application might be vulnerable if the application is missing appropriate security hardening across any part of the application stack.",
+      "source_reference": "OWASP Top 10 2021 - A05:2021",
+      "code_checks": [
+        {
+          "id": "security_headers",
+          "description": "Security headers configured (Helmet)",
+          "check_type": "positive_pattern",
+          "patterns": ["helmet", "Helmet"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "Helmet middleware enabled"
+        },
+        {
+          "id": "secure_cookies",
+          "description": "Secure cookie configuration",
+          "check_type": "positive_pattern",
+          "patterns": ["httpOnly", "secure", "sameSite"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "All secure cookie flags set"
+        }
+      ]
+    },
+    {
+      "id": "A06:2021",
+      "name": "Vulnerable and Outdated Components",
+      "severity": "high",
+      "official_text": "You are likely vulnerable if you do not know the versions of all components you use. Software is vulnerable, unsupported, or out of date.",
+      "source_reference": "OWASP Top 10 2021 - A06:2021",
+      "code_checks": [
+        {
+          "id": "npm_audit",
+          "description": "No known vulnerabilities in dependencies",
+          "check_type": "npm_audit",
+          "pass_criteria": "No critical or high severity vulnerabilities"
+        },
+        {
+          "id": "dependency_management",
+          "description": "Dependencies managed via package.json",
+          "check_type": "positive_pattern",
+          "patterns": ["\"dependencies\"", "\"devDependencies\""],
+          "file_patterns": ["package.json"],
+          "pass_criteria": "Package.json with dependencies configured"
+        }
+      ]
+    },
+    {
+      "id": "A07:2021",
+      "name": "Identification and Authentication Failures",
+      "severity": "critical",
+      "official_text": "Confirmation of the user's identity, authentication, and session management is critical to protect against authentication-related attacks.",
+      "source_reference": "OWASP Top 10 2021 - A07:2021",
+      "code_checks": [
+        {
+          "id": "session_security",
+          "description": "Secure session configuration",
+          "check_type": "positive_pattern",
+          "patterns": ["express-session", "session"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "Session middleware configured"
+        },
+        {
+          "id": "auth_rate_limit",
+          "description": "Authentication rate limiting",
+          "check_type": "positive_pattern",
+          "patterns": ["authLimiter", "loginLimiter", "rateLimit"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "Rate limiting on auth endpoints"
+        },
+        {
+          "id": "no_hardcoded_creds",
+          "description": "No hardcoded credentials",
+          "check_type": "negative_pattern",
+          "patterns": ["password\\s*=\\s*['\"][a-zA-Z0-9!@#$%^&*]{8,}['\"]"],
+          "exclude_patterns": ["process.env", "SESSION_SECRET", "example", "placeholder", "PASSWORD", "ANTHROPIC", "AWS_", "test"],
+          "pass_criteria": "No hardcoded passwords found",
+          "pass_if_not_found": true
+        }
+      ]
+    },
+    {
+      "id": "A08:2021",
+      "name": "Software and Data Integrity Failures",
+      "severity": "high",
+      "official_text": "Software and data integrity failures relate to code and infrastructure that does not protect against integrity violations.",
+      "source_reference": "OWASP Top 10 2021 - A08:2021",
+      "code_checks": [
+        {
+          "id": "signed_sessions",
+          "description": "Signed cookies/sessions",
+          "check_type": "positive_pattern",
+          "patterns": ["secret", "signed", "SESSION_SECRET"],
+          "file_patterns": ["server.js"],
+          "pass_criteria": "Session secret configured"
+        }
+      ]
+    },
+    {
+      "id": "A09:2021",
+      "name": "Security Logging and Monitoring Failures",
+      "severity": "high",
+      "official_text": "This category is to help detect, escalate, and respond to active breaches. Without logging and monitoring, breaches cannot be detected.",
+      "source_reference": "OWASP Top 10 2021 - A09:2021",
+      "code_checks": [
+        {
+          "id": "security_logging",
+          "description": "Security event logging implemented",
+          "check_type": "positive_pattern",
+          "patterns": ["securityLogger", "SecurityLogger", "auditLog", "logSecurityEvent"],
+          "file_patterns": ["server.js", "lib/*.js"],
+          "pass_criteria": "Security logging functions exist"
+        },
+        {
+          "id": "pii_protection_logs",
+          "description": "PII protected in logs",
+          "check_type": "positive_pattern",
+          "patterns": ["maskPII", "maskObject", "pii-handler"],
+          "file_patterns": ["lib/*.js"],
+          "pass_criteria": "PII masking in logging"
+        }
+      ]
+    },
+    {
+      "id": "A10:2021",
+      "name": "Server-Side Request Forgery (SSRF)",
+      "severity": "high",
+      "official_text": "SSRF flaws occur whenever a web application is fetching a remote resource without validating the user-supplied URL.",
+      "source_reference": "OWASP Top 10 2021 - A10:2021",
+      "code_checks": [
+        {
+          "id": "no_user_url_fetch",
+          "description": "No unvalidated URL fetching from user input",
+          "check_type": "negative_pattern",
+          "patterns": ["fetch\\(req\\.body\\.", "axios\\(req\\.body\\.", "request\\(req\\.body\\."],
+          "pass_criteria": "No direct user URL in fetch calls",
+          "pass_if_not_found": true
+        },
+        {
+          "id": "url_allowlist",
+          "description": "URL allowlist for external calls",
+          "check_type": "positive_pattern",
+          "patterns": ["allowedDomains", "allowedUrls", "whitelist", "allowlist"],
+          "file_patterns": ["*.js"],
+          "pass_criteria": "URL allowlist configured"
+        }
+      ]
+    }
+  ]
+}

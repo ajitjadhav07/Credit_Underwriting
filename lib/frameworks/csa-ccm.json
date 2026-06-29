@@ -1,0 +1,450 @@
+{
+  "framework": "CSA Cloud Controls Matrix",
+  "version": "4.0",
+  "source": "https://cloudsecurityalliance.org/research/cloud-controls-matrix/",
+  "description": "The Cloud Controls Matrix (CCM) is a cybersecurity control framework for cloud computing, providing fundamental security principles to guide cloud vendors and assist prospective cloud customers in assessing the overall security risk of a cloud provider.",
+  "note": "This scanner checks CODE-RELATED controls only. Infrastructure and organizational controls require manual assessment.",
+  "domains": [
+    {
+      "id": "AIS",
+      "name": "Application & Interface Security",
+      "description": "Controls that address the security of application interfaces and software development.",
+      "controls": [
+        {
+          "id": "AIS-01",
+          "name": "Application Security Policy",
+          "official_text": "Policies and procedures shall be established, and supporting business processes and technical measures implemented, to ensure protection of application services throughout its lifecycle.",
+          "source_reference": "CSA CCM v4.0 - AIS-01",
+          "code_checks": [
+            {
+              "id": "ais_01_input_validation",
+              "description": "Input validation implemented",
+              "check_type": "ast_pattern",
+              "patterns": ["validate", "sanitize", "escape", "filter"],
+              "pass_criteria": "Input validation functions exist"
+            }
+          ]
+        },
+        {
+          "id": "AIS-02",
+          "name": "Application Security Baseline Requirements",
+          "official_text": "Baseline requirements shall be established for securing different types of applications (e.g., web, mobile, cloud-native).",
+          "source_reference": "CSA CCM v4.0 - AIS-02",
+          "code_checks": [
+            {
+              "id": "ais_02_security_headers",
+              "description": "Security headers configured",
+              "check_type": "ast_pattern",
+              "patterns": ["helmet", "Helmet", "contentSecurityPolicy"],
+              "pass_criteria": "Security headers middleware enabled"
+            },
+            {
+              "id": "ais_02_secure_defaults",
+              "description": "Secure defaults configured",
+              "check_type": "ast_pattern",
+              "patterns": ["httpOnly", "secure", "sameSite"],
+              "pass_criteria": "Secure cookie defaults"
+            }
+          ]
+        },
+        {
+          "id": "AIS-03",
+          "name": "Application Security Metrics",
+          "official_text": "Technical security metrics shall be defined, implemented, and reported.",
+          "source_reference": "CSA CCM v4.0 - AIS-03",
+          "code_checks": [
+            {
+              "id": "ais_03_logging",
+              "description": "Security metrics logging",
+              "check_type": "ast_pattern",
+              "patterns": ["securityLogger", "metrics", "audit"],
+              "pass_criteria": "Security logging for metrics"
+            }
+          ]
+        },
+        {
+          "id": "AIS-04",
+          "name": "Secure Application Design and Development",
+          "official_text": "Applications shall be designed, developed, deployed, and tested in accordance with industry-accepted secure design and development practices.",
+          "source_reference": "CSA CCM v4.0 - AIS-04",
+          "code_checks": [
+            {
+              "id": "ais_04_no_eval",
+              "description": "No dangerous code patterns",
+              "check_type": "eslint_rule",
+              "rule": "security/detect-eval-with-expression",
+              "pass_criteria": "No eval with expressions"
+            },
+            {
+              "id": "ais_04_error_handling",
+              "description": "Proper error handling",
+              "check_type": "ast_pattern",
+              "patterns": ["try", "catch", "finally", "sanitizeError"],
+              "pass_criteria": "Error handling implemented"
+            }
+          ]
+        },
+        {
+          "id": "AIS-07",
+          "name": "Application Vulnerability Remediation",
+          "official_text": "Technical vulnerabilities in applications shall be corrected in a timely manner.",
+          "source_reference": "CSA CCM v4.0 - AIS-07",
+          "code_checks": [
+            {
+              "id": "ais_07_npm_audit",
+              "description": "Dependency vulnerability scanning",
+              "check_type": "npm_audit",
+              "pass_criteria": "No critical vulnerabilities"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DSI",
+      "name": "Data Security & Information Lifecycle Management",
+      "description": "Controls that address data security throughout its lifecycle.",
+      "controls": [
+        {
+          "id": "DSI-01",
+          "name": "Data Security Policy",
+          "official_text": "Policies and procedures shall be established for the classification, protection, and handling of data throughout its lifecycle.",
+          "source_reference": "CSA CCM v4.0 - DSI-01",
+          "code_checks": [
+            {
+              "id": "dsi_01_data_masking",
+              "description": "Data masking for sensitive data",
+              "check_type": "ast_pattern",
+              "patterns": ["maskPII", "mask", "redact", "anonymize"],
+              "pass_criteria": "PII masking functions exist"
+            }
+          ]
+        },
+        {
+          "id": "DSI-02",
+          "name": "Data Classification",
+          "official_text": "Data and assets shall be classified according to their business value and criticality.",
+          "source_reference": "CSA CCM v4.0 - DSI-02",
+          "code_checks": [
+            {
+              "id": "dsi_02_pii_handling",
+              "description": "PII identification and handling",
+              "check_type": "ast_pattern",
+              "patterns": ["PII", "pii", "sensitive", "confidential"],
+              "pass_criteria": "PII awareness in code"
+            }
+          ]
+        },
+        {
+          "id": "DSI-05",
+          "name": "Data Flow Documentation",
+          "official_text": "Data flows shall be documented and maintained.",
+          "source_reference": "CSA CCM v4.0 - DSI-05",
+          "code_checks": [
+            {
+              "id": "dsi_05_audit_trail",
+              "description": "Audit trail of data access",
+              "check_type": "ast_pattern",
+              "patterns": ["auditLog", "logPIIAccess", "accessLog"],
+              "pass_criteria": "Data access logging"
+            }
+          ]
+        },
+        {
+          "id": "DSI-07",
+          "name": "Encryption and Key Management",
+          "official_text": "Data shall be protected using encryption throughout its lifecycle where technically feasible and legally permitted.",
+          "source_reference": "CSA CCM v4.0 - DSI-07",
+          "code_checks": [
+            {
+              "id": "dsi_07_encryption_transit",
+              "description": "Encryption in transit",
+              "check_type": "ast_pattern",
+              "patterns": ["https", "TLS", "secure.*true", "SSL"],
+              "pass_criteria": "TLS/HTTPS configured"
+            },
+            {
+              "id": "dsi_07_encryption_rest",
+              "description": "Encryption at rest",
+              "check_type": "ast_pattern",
+              "patterns": ["AES", "encrypt", "ServerSideEncryption"],
+              "pass_criteria": "Encryption at rest configured"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "IAM",
+      "name": "Identity & Access Management",
+      "description": "Controls that address identity management and access control.",
+      "controls": [
+        {
+          "id": "IAM-01",
+          "name": "Identity and Access Management Policy",
+          "official_text": "Identity and access management policies and procedures shall be established.",
+          "source_reference": "CSA CCM v4.0 - IAM-01",
+          "code_checks": [
+            {
+              "id": "iam_01_auth_system",
+              "description": "Authentication system implemented",
+              "check_type": "ast_pattern",
+              "patterns": ["passport", "authenticate", "login", "session"],
+              "pass_criteria": "Authentication middleware exists"
+            }
+          ]
+        },
+        {
+          "id": "IAM-02",
+          "name": "Strong Authentication",
+          "official_text": "Strong authentication shall be implemented for access to systems and applications.",
+          "source_reference": "CSA CCM v4.0 - IAM-02",
+          "code_checks": [
+            {
+              "id": "iam_02_sso",
+              "description": "SSO/Federation implemented",
+              "check_type": "ast_pattern",
+              "patterns": ["OIDC", "SAML", "passport-azure", "SSO"],
+              "pass_criteria": "Enterprise SSO integration"
+            }
+          ]
+        },
+        {
+          "id": "IAM-04",
+          "name": "Separation of Duties",
+          "official_text": "Segregation of duties shall be implemented within the identity and access management processes.",
+          "source_reference": "CSA CCM v4.0 - IAM-04",
+          "code_checks": [
+            {
+              "id": "iam_04_rbac",
+              "description": "Role-based access control",
+              "check_type": "ast_pattern",
+              "patterns": ["ROLES", "role", "requireRole", "checkPermission"],
+              "pass_criteria": "RBAC implementation with multiple roles"
+            }
+          ]
+        },
+        {
+          "id": "IAM-06",
+          "name": "User Access Provisioning",
+          "official_text": "User access provisioning shall follow the principles of least privilege.",
+          "source_reference": "CSA CCM v4.0 - IAM-06",
+          "code_checks": [
+            {
+              "id": "iam_06_least_privilege",
+              "description": "Least privilege enforcement",
+              "check_type": "ast_pattern",
+              "patterns": ["requireRole", "ensureAuthenticated", "authorize"],
+              "pass_criteria": "Route-level access controls"
+            }
+          ]
+        },
+        {
+          "id": "IAM-08",
+          "name": "User Access Review",
+          "official_text": "User access shall be reviewed and revalidated for appropriateness on a regular basis.",
+          "source_reference": "CSA CCM v4.0 - IAM-08",
+          "code_checks": [
+            {
+              "id": "iam_08_user_management",
+              "description": "User management capabilities",
+              "check_type": "ast_pattern",
+              "patterns": ["getUsers", "deleteUser", "updateUser", "userManager"],
+              "pass_criteria": "User CRUD operations exist"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "IVS",
+      "name": "Infrastructure & Virtualization Security",
+      "description": "Controls that address infrastructure security.",
+      "controls": [
+        {
+          "id": "IVS-03",
+          "name": "Network Security",
+          "official_text": "Networks shall be designed, developed, deployed, and configured to restrict unauthorized traffic.",
+          "source_reference": "CSA CCM v4.0 - IVS-03",
+          "code_checks": [
+            {
+              "id": "ivs_03_cors",
+              "description": "CORS configuration",
+              "check_type": "ast_pattern",
+              "patterns": ["cors", "CORS", "allowedOrigins"],
+              "pass_criteria": "CORS configured"
+            },
+            {
+              "id": "ivs_03_rate_limit",
+              "description": "Rate limiting for DoS protection",
+              "check_type": "ast_pattern",
+              "patterns": ["rateLimit", "rateLimiter", "throttle"],
+              "pass_criteria": "Rate limiting enabled"
+            }
+          ]
+        },
+        {
+          "id": "IVS-09",
+          "name": "Network Defense",
+          "official_text": "Network-based intrusion detection and prevention systems shall be deployed to protect network traffic.",
+          "source_reference": "CSA CCM v4.0 - IVS-09",
+          "code_checks": [
+            {
+              "id": "ivs_09_waf_headers",
+              "description": "WAF/Security headers",
+              "check_type": "ast_pattern",
+              "patterns": ["helmet", "X-Frame-Options", "X-Content-Type"],
+              "pass_criteria": "Security headers via middleware"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SEF",
+      "name": "Security Incident Management, E-Discovery & Cloud Forensics",
+      "description": "Controls that address security incident management and forensics.",
+      "controls": [
+        {
+          "id": "SEF-02",
+          "name": "Incident Management Policy",
+          "official_text": "Policies and procedures shall be established to triage security incidents and preserve forensic evidence.",
+          "source_reference": "CSA CCM v4.0 - SEF-02",
+          "code_checks": [
+            {
+              "id": "sef_02_security_logging",
+              "description": "Security incident logging",
+              "check_type": "ast_pattern",
+              "patterns": ["securityLogger", "logSecurityEvent", "SECURITY"],
+              "pass_criteria": "Security event logging"
+            }
+          ]
+        },
+        {
+          "id": "SEF-03",
+          "name": "Incident Response Plans",
+          "official_text": "Incident response plans shall include identification of roles and responsibilities.",
+          "source_reference": "CSA CCM v4.0 - SEF-03",
+          "code_checks": [
+            {
+              "id": "sef_03_audit_trail",
+              "description": "Audit trail for incident investigation",
+              "check_type": "ast_pattern",
+              "patterns": ["auditTrail", "forensic", "correlationId"],
+              "pass_criteria": "Audit trail capabilities"
+            }
+          ]
+        },
+        {
+          "id": "SEF-04",
+          "name": "Incident Response Testing",
+          "official_text": "Incident response capabilities shall be tested on a planned basis.",
+          "source_reference": "CSA CCM v4.0 - SEF-04",
+          "code_checks": [
+            {
+              "id": "sef_04_forensic_export",
+              "description": "Forensic data export capability",
+              "check_type": "ast_pattern",
+              "patterns": ["forensicExport", "ForensicExport", "forensic"],
+              "pass_criteria": "Forensic export functionality"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "LOG",
+      "name": "Logging and Monitoring",
+      "description": "Controls that address logging and monitoring.",
+      "controls": [
+        {
+          "id": "LOG-01",
+          "name": "Logging and Monitoring Policy",
+          "official_text": "Logging and monitoring policies and procedures shall be established and maintained.",
+          "source_reference": "CSA CCM v4.0 - LOG-01",
+          "code_checks": [
+            {
+              "id": "log_01_centralized",
+              "description": "Centralized logging",
+              "check_type": "ast_pattern",
+              "patterns": ["centralizedLogger", "CentralizedLogger", "SIEM"],
+              "pass_criteria": "Centralized logging system"
+            }
+          ]
+        },
+        {
+          "id": "LOG-03",
+          "name": "Security Monitoring and Alerting",
+          "official_text": "Security-related events shall be identified and logged.",
+          "source_reference": "CSA CCM v4.0 - LOG-03",
+          "code_checks": [
+            {
+              "id": "log_03_security_events",
+              "description": "Security event logging",
+              "check_type": "ast_pattern",
+              "patterns": ["LOGIN_SUCCESS", "LOGIN_FAILED", "ACCESS_DENIED", "SECURITY"],
+              "pass_criteria": "Security events logged"
+            }
+          ]
+        },
+        {
+          "id": "LOG-05",
+          "name": "Audit Logging",
+          "official_text": "Audit logs shall be collected, protected, and retained.",
+          "source_reference": "CSA CCM v4.0 - LOG-05",
+          "code_checks": [
+            {
+              "id": "log_05_pii_protection",
+              "description": "PII protection in logs",
+              "check_type": "ast_pattern",
+              "patterns": ["maskPII", "maskObject", "pii-handler"],
+              "pass_criteria": "PII masking in logs"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "excluded_domains": [
+    {
+      "id": "AAC",
+      "name": "Audit Assurance & Compliance",
+      "reason": "Organizational process - requires manual assessment"
+    },
+    {
+      "id": "BCR",
+      "name": "Business Continuity Management & Operational Resilience",
+      "reason": "Organizational/infrastructure - requires manual assessment"
+    },
+    {
+      "id": "CEK",
+      "name": "Cryptography, Encryption & Key Management",
+      "reason": "Partially covered in DSI-07, infrastructure controls require manual assessment"
+    },
+    {
+      "id": "GRC",
+      "name": "Governance, Risk & Compliance",
+      "reason": "Organizational process - requires manual assessment"
+    },
+    {
+      "id": "HRS",
+      "name": "Human Resources Security",
+      "reason": "HR process - not code related"
+    },
+    {
+      "id": "STA",
+      "name": "Supply Chain Management, Transparency, and Accountability",
+      "reason": "Vendor management - not code related"
+    },
+    {
+      "id": "TVM",
+      "name": "Threat & Vulnerability Management",
+      "reason": "Partially covered via npm audit, full scope requires manual assessment"
+    },
+    {
+      "id": "UEM",
+      "name": "Universal Endpoint Management",
+      "reason": "Endpoint management - not application code related"
+    }
+  ]
+}

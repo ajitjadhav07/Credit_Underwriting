@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Credit Assessment - AI-Powered Lending</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #faf9f7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #97144D 0%, #B91D5B 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .header-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .header-links a:hover {
+            color: #1a1a1a;
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 80px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        /* Left Side - Login Form */
+        .login-section {
+            flex: 1;
+            max-width: 420px;
+        }
+        
+        .headline {
+            font-size: 56px;
+            font-weight: 400;
+            color: #1a1a1a;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            font-family: 'Georgia', serif;
+        }
+        
+        .headline .highlight {
+            color: #97144D;
+            display: block;
+        }
+        
+        .subheadline {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 48px;
+            font-weight: 400;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.08);
+        }
+        
+        .microsoft-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: white;
+            color: #1a1a1a;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .microsoft-btn:hover {
+            background: #f5f5f5;
+            border-color: #ccc;
+        }
+        
+        .microsoft-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .divider span {
+            padding: 0 16px;
+        }
+        
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .feature-item svg {
+            width: 18px;
+            height: 18px;
+            color: #97144D;
+            flex-shrink: 0;
+        }
+        
+        /* Right Side - Visual */
+        .visual-section {
+            flex: 1;
+            max-width: 520px;
+            position: relative;
+        }
+        
+        .visual-card {
+            background: linear-gradient(145deg, #97144D 0%, #6B0F35 100%);
+            border-radius: 24px;
+            padding: 48px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visual-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .visual-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .visual-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            position: relative;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .floating-element.top-right {
+            top: -20px;
+            right: -20px;
+        }
+        
+        .floating-element.bottom-left {
+            bottom: -20px;
+            left: -20px;
+        }
+        
+        .floating-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .floating-icon.green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .floating-icon.blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 20px 40px;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .footer a {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            color: #97144D;
+        }
+        
+        .build-info {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #bbb;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                gap: 48px;
+            }
+            
+            .visual-section {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .headline {
+                font-size: 42px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .header {
+                padding: 16px 20px;
+            }
+            
+            .header-links {
+                display: none;
+            }
+            
+            .main {
+                padding: 20px;
+            }
+            
+            .headline {
+                font-size: 36px;
+            }
+            
+            .visual-card {
+                padding: 32px;
+            }
+            
+            .floating-element {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">AC</div>
+            <span class="logo-text">Agentic Credit Assessment</span>
+        </div>
+        <div class="header-links">
+            <a href="#">About</a>
+            <a href="#">Documentation</a>
+            <a href="#">Support</a>
+            <span style="color:#fca5a5;font-size:11px;margin-left:12px;font-family:monospace;opacity:0.9">Build: 2026-02-10 16:00 IST</span>
+        </div>
+    </header>
+    
+    <main class="main">
+        <div class="container">
+            <div class="login-section">
+                <h1 class="headline">
+                    Smart Lending.
+                    <span class="highlight">Simplified.</span>
+                </h1>
+                <p class="subheadline">AI-powered credit assessment for MSME lending</p>
+                
+                <div class="login-card">
+                    <a href="/auth/signin" class="microsoft-btn">
+                        <svg class="microsoft-icon" viewBox="0 0 21 21" fill="none">
+                            <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+                            <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+                            <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+                            <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+                        </svg>
+                        Continue with Office 365
+                    </a>
+                    
+                    <div class="divider"><span>Secure enterprise login</span></div>
+                    
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            <span>Single sign-on with Microsoft Azure AD</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            <span>Process credit applications in minutes</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span>10 AI agents analyze your documents</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visual-section">
+                <div class="visual-card">
+                    <h2 class="visual-title">Intelligent Underwriting</h2>
+                    <p class="visual-subtitle">Transform your credit assessment process with AI-powered document analysis, automated calculations, and instant recommendations.</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">70%</div>
+                            <div class="stat-label">Faster Processing</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">10+</div>
+                            <div class="stat-label">AI Agents</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">50+</div>
+                            <div class="stat-label">Financial Ratios</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">24/7</div>
+                            <div class="stat-label">Availability</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="floating-element top-right">
+                    <div class="floating-icon green">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <span>Credit Approved</span>
+                </div>
+                
+                <div class="floating-element bottom-left">
+                    <div class="floating-icon blue">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <span>Analysis Complete</span>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>© 2025 Applied Cloud Computing Private Limited · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+        <p class="build-info" id="buildInfo">Loading version...</p>
+    </footer>
+    
+    <script>
+        // Fetch and display build info
+        fetch('/api/version')
+            .then(res => res.json())
+            .then(data => {
+                const el = document.getElementById('buildInfo');
+                let info = 'v' + (data.version || '?');
+                if (data.buildNumber) info += ' · Build: ' + data.buildNumber;
+                else if (data.gitCommit) info += ' · ' + data.gitCommit.substring(0, 7);
+                if (data.buildDate) info += ' · ' + data.buildDate;
+                el.textContent = info;
+            })
+            .catch(() => {
+                document.getElementById('buildInfo').textContent = 'v7.7.5';
+            });
+    </script>
+</body>
+</html>

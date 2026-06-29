@@ -1,0 +1,2163 @@
+{
+  "scan_info": {
+    "timestamp": "2026-02-06T18:16:35.712Z",
+    "version": "7.5.0",
+    "scan_type": "Pre-deployment compliance scan",
+    "duration_ms": 7536,
+    "files_scanned": 36
+  },
+  "overall_score": 100,
+  "summary": {
+    "sast": {
+      "score": 75,
+      "issues": 1
+    },
+    "dependencies": {
+      "score": 100,
+      "vulnerabilities": 0
+    },
+    "secrets": {
+      "score": 100,
+      "findings": 0
+    },
+    "owasp": {
+      "score": 100,
+      "passed": 10,
+      "total": 10
+    },
+    "nist": {
+      "score": 100,
+      "passed": 7,
+      "total": 7
+    },
+    "csa": {
+      "score": 100,
+      "passed": 6,
+      "total": 6
+    }
+  },
+  "sast": {
+    "tool": "ESLint + eslint-plugin-security",
+    "success": true,
+    "findings": [
+      {
+        "rule": "no-eval",
+        "severity": "critical",
+        "file": ".eslintrc.js",
+        "line": 24,
+        "column": 1,
+        "message": "Dangerous eval() usage"
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "dependencies": {
+    "tool": "npm audit",
+    "success": true,
+    "vulnerabilities": [],
+    "summary": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0,
+      "moderate": 0
+    }
+  },
+  "secrets": {
+    "tool": "Secrets Scanner",
+    "findings": [],
+    "summary": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "medium": 0
+    }
+  },
+  "owasp": {
+    "framework": "OWASP Top 10",
+    "version": "2021",
+    "source": "https://owasp.org/Top10/",
+    "controls": [
+      {
+        "id": "A01:2021",
+        "name": "Broken Access Control",
+        "severity": "critical",
+        "official_text": "Access control enforces policy such that users cannot act outside of their intended permissions. Failures typically lead to unauthorized information disclosure, modification, or destruction of all data or performing a business function outside the user's limits.",
+        "source_reference": "OWASP Top 10 2021 - A01:2021",
+        "checks": [
+          {
+            "id": "auth_middleware",
+            "description": "Authentication middleware on protected routes",
+            "status": "pass",
+            "evidence": [
+              "server.js:38 → const { passport, ensureAuthenticated, ensureNotAuthenticated, requireRole, e...",
+              "server.js:514 → app.get('/api/user', ensureAuthenticated, (req, res) => {",
+              "server.js:526 → app.get('/', ensureAuthenticated, (req, res) => {",
+              "server.js:531 → app.get('/siem-docs', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN), (r...",
+              "server.js:536 → app.get('/compliance', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN), (...",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 38,
+                "code": "const { passport, ensureAuthenticated, ensureNotAuthenticated, requireRole, e..."
+              },
+              {
+                "file": "server.js",
+                "line": 514,
+                "code": "app.get('/api/user', ensureAuthenticated, (req, res) => {"
+              },
+              {
+                "file": "server.js",
+                "line": 526,
+                "code": "app.get('/', ensureAuthenticated, (req, res) => {"
+              },
+              {
+                "file": "server.js",
+                "line": 531,
+                "code": "app.get('/siem-docs', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN), (r..."
+              },
+              {
+                "file": "server.js",
+                "line": 536,
+                "code": "app.get('/compliance', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN), (..."
+              }
+            ]
+          },
+          {
+            "id": "rbac_implementation",
+            "description": "Role-based access control implemented",
+            "status": "pass",
+            "evidence": [
+              "lib/auth-config.js:143 → function requireRole(...allowedRoles) {",
+              "lib/auth-config.js:179 → requireRole,",
+              "lib/auth-config.js:142 → // Middleware to require specific roles",
+              "lib/auth-config.js:151 → if (!userRole || !allowedRoles.includes(userRole)) {",
+              "lib/auth-config.js:181 → ROLES: userManager.ROLES",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "lib/auth-config.js",
+                "line": 143,
+                "code": "function requireRole(...allowedRoles) {"
+              },
+              {
+                "file": "lib/auth-config.js",
+                "line": 179,
+                "code": "requireRole,"
+              },
+              {
+                "file": "lib/auth-config.js",
+                "line": 142,
+                "code": "// Middleware to require specific roles"
+              },
+              {
+                "file": "lib/auth-config.js",
+                "line": 151,
+                "code": "if (!userRole || !allowedRoles.includes(userRole)) {"
+              },
+              {
+                "file": "lib/auth-config.js",
+                "line": 181,
+                "code": "ROLES: userManager.ROLES"
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ Authentication middleware on protected routes",
+          "✓ Role-based access control implemented"
+        ],
+        "code_evidence": [
+          {
+            "file": "server.js",
+            "line": 38,
+            "code": "const { passport, ensureAuthenticated, ensureNotAuthenticated, requireRole, e..."
+          },
+          {
+            "file": "server.js",
+            "line": 514,
+            "code": "app.get('/api/user', ensureAuthenticated, (req, res) => {"
+          },
+          {
+            "file": "server.js",
+            "line": 526,
+            "code": "app.get('/', ensureAuthenticated, (req, res) => {"
+          },
+          {
+            "file": "server.js",
+            "line": 531,
+            "code": "app.get('/siem-docs', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN), (r..."
+          },
+          {
+            "file": "server.js",
+            "line": 536,
+            "code": "app.get('/compliance', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN), (..."
+          },
+          {
+            "file": "lib/auth-config.js",
+            "line": 143,
+            "code": "function requireRole(...allowedRoles) {"
+          },
+          {
+            "file": "lib/auth-config.js",
+            "line": 179,
+            "code": "requireRole,"
+          },
+          {
+            "file": "lib/auth-config.js",
+            "line": 142,
+            "code": "// Middleware to require specific roles"
+          },
+          {
+            "file": "lib/auth-config.js",
+            "line": 151,
+            "code": "if (!userRole || !allowedRoles.includes(userRole)) {"
+          },
+          {
+            "file": "lib/auth-config.js",
+            "line": 181,
+            "code": "ROLES: userManager.ROLES"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      },
+      {
+        "id": "A02:2021",
+        "name": "Cryptographic Failures",
+        "severity": "critical",
+        "official_text": "The first thing is to determine the protection needs of data in transit and at rest. Passwords, credit card numbers, health records, personal information, and business secrets require extra protection.",
+        "source_reference": "OWASP Top 10 2021 - A02:2021",
+        "checks": [
+          {
+            "id": "tls_enforced",
+            "description": "TLS/HTTPS enforced for data in transit",
+            "status": "pass",
+            "evidence": [
+              "server.js:84 → styleSrc: [\"'self'\", \"'unsafe-inline'\", \"https://fonts.googleapis.com\"],",
+              "server.js:85 → fontSrc: [\"'self'\", \"https://fonts.gstatic.com\"],",
+              "server.js:91 → \"https://api.anthropic.com\",",
+              "server.js:92 → \"https://*.amazonaws.com\"",
+              "server.js:894 → const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://afl.acc.ltd,...",
+              "... and 7 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 84,
+                "code": "styleSrc: [\"'self'\", \"'unsafe-inline'\", \"https://fonts.googleapis.com\"],"
+              },
+              {
+                "file": "server.js",
+                "line": 85,
+                "code": "fontSrc: [\"'self'\", \"https://fonts.gstatic.com\"],"
+              },
+              {
+                "file": "server.js",
+                "line": 91,
+                "code": "\"https://api.anthropic.com\","
+              },
+              {
+                "file": "server.js",
+                "line": 92,
+                "code": "\"https://*.amazonaws.com\""
+              },
+              {
+                "file": "server.js",
+                "line": 894,
+                "code": "const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://afl.acc.ltd,..."
+              }
+            ]
+          },
+          {
+            "id": "encryption_at_rest",
+            "description": "Encryption at rest configured",
+            "status": "pass",
+            "evidence": [
+              "lib/s3-migration.js:273 → TBLPROPERTIES ('has_encrypted_data'='false');",
+              "lib/s3-migration.js:296 → TBLPROPERTIES ('has_encrypted_data'='false');"
+            ],
+            "code_snippets": [
+              {
+                "file": "lib/s3-migration.js",
+                "line": 273,
+                "code": "TBLPROPERTIES ('has_encrypted_data'='false');"
+              },
+              {
+                "file": "lib/s3-migration.js",
+                "line": 296,
+                "code": "TBLPROPERTIES ('has_encrypted_data'='false');"
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ TLS/HTTPS enforced for data in transit",
+          "✓ Encryption at rest configured"
+        ],
+        "code_evidence": [
+          {
+            "file": "server.js",
+            "line": 84,
+            "code": "styleSrc: [\"'self'\", \"'unsafe-inline'\", \"https://fonts.googleapis.com\"],"
+          },
+          {
+            "file": "server.js",
+            "line": 85,
+            "code": "fontSrc: [\"'self'\", \"https://fonts.gstatic.com\"],"
+          },
+          {
+            "file": "server.js",
+            "line": 91,
+            "code": "\"https://api.anthropic.com\","
+          },
+          {
+            "file": "server.js",
+            "line": 92,
+            "code": "\"https://*.amazonaws.com\""
+          },
+          {
+            "file": "server.js",
+            "line": 894,
+            "code": "const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://afl.acc.ltd,..."
+          },
+          {
+            "file": "lib/s3-migration.js",
+            "line": 273,
+            "code": "TBLPROPERTIES ('has_encrypted_data'='false');"
+          },
+          {
+            "file": "lib/s3-migration.js",
+            "line": 296,
+            "code": "TBLPROPERTIES ('has_encrypted_data'='false');"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      },
+      {
+        "id": "A03:2021",
+        "name": "Injection",
+        "severity": "critical",
+        "official_text": "An application is vulnerable to attack when user-supplied data is not validated, filtered, or sanitized by the application.",
+        "source_reference": "OWASP Top 10 2021 - A03:2021",
+        "checks": [
+          {
+            "id": "input_validation",
+            "description": "Input validation functions exist",
+            "status": "pass",
+            "evidence": [
+              "lib/aml-screening-manager.js:43 → .filter(list => list.is_active && list.auto_screen);",
+              "lib/aml-screening-manager.js:156 → .filter(e => e.is_active);",
+              "lib/aml-screening-manager.js:314 → .filter(w => w.is_active);",
+              "lib/aml-screening-manager.js:327 → .filter(r => r.is_active)",
+              "lib/auth-config.js:10 → // Validate required environment variables",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 43,
+                "code": ".filter(list => list.is_active && list.auto_screen);"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 156,
+                "code": ".filter(e => e.is_active);"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 314,
+                "code": ".filter(w => w.is_active);"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 327,
+                "code": ".filter(r => r.is_active)"
+              },
+              {
+                "file": "lib/auth-config.js",
+                "line": 10,
+                "code": "// Validate required environment variables"
+              }
+            ]
+          },
+          {
+            "id": "no_eval",
+            "description": "No dangerous eval() usage",
+            "status": "pass",
+            "evidence": [
+              "✓ No vulnerable patterns found"
+            ],
+            "code_snippets": []
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ Input validation functions exist",
+          "✓ No dangerous eval() usage"
+        ],
+        "code_evidence": [
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 43,
+            "code": ".filter(list => list.is_active && list.auto_screen);"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 156,
+            "code": ".filter(e => e.is_active);"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 314,
+            "code": ".filter(w => w.is_active);"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 327,
+            "code": ".filter(r => r.is_active)"
+          },
+          {
+            "file": "lib/auth-config.js",
+            "line": 10,
+            "code": "// Validate required environment variables"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      },
+      {
+        "id": "A04:2021",
+        "name": "Insecure Design",
+        "severity": "high",
+        "official_text": "Insecure design is a broad category representing different weaknesses, expressed as missing or ineffective control design.",
+        "source_reference": "OWASP Top 10 2021 - A04:2021",
+        "checks": [
+          {
+            "id": "rate_limiting",
+            "description": "Rate limiting implemented",
+            "status": "pass",
+            "evidence": [
+              "server.js:37 → const rateLimit = require('express-rate-limit'); // Rate limiting",
+              "server.js:105 → const apiLimiter = rateLimit({",
+              "server.js:109 → standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers",
+              "server.js:110 → legacyHeaders: false, // Disable the `X-RateLimit-*` headers",
+              "server.js:118 → const authLimiter = rateLimit({",
+              "... and 11 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 37,
+                "code": "const rateLimit = require('express-rate-limit'); // Rate limiting"
+              },
+              {
+                "file": "server.js",
+                "line": 105,
+                "code": "const apiLimiter = rateLimit({"
+              },
+              {
+                "file": "server.js",
+                "line": 109,
+                "code": "standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers"
+              },
+              {
+                "file": "server.js",
+                "line": 110,
+                "code": "legacyHeaders: false, // Disable the `X-RateLimit-*` headers"
+              },
+              {
+                "file": "server.js",
+                "line": 118,
+                "code": "const authLimiter = rateLimit({"
+              }
+            ]
+          },
+          {
+            "id": "error_handling",
+            "description": "Proper error handling",
+            "status": "pass",
+            "evidence": [
+              "lib/aml-screening-manager.js:21 → try {",
+              "lib/aml-screening-manager.js:222 → * Calculate match score between entity and watchlist entry",
+              "lib/aml-screening-manager.js:424 → try {",
+              "lib/aml-screening-manager.js:27 → } catch (err) {",
+              "lib/aml-screening-manager.js:430 → } catch (err) {",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 21,
+                "code": "try {"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 222,
+                "code": "* Calculate match score between entity and watchlist entry"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 424,
+                "code": "try {"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 27,
+                "code": "} catch (err) {"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 430,
+                "code": "} catch (err) {"
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ Rate limiting implemented",
+          "✓ Proper error handling"
+        ],
+        "code_evidence": [
+          {
+            "file": "server.js",
+            "line": 37,
+            "code": "const rateLimit = require('express-rate-limit'); // Rate limiting"
+          },
+          {
+            "file": "server.js",
+            "line": 105,
+            "code": "const apiLimiter = rateLimit({"
+          },
+          {
+            "file": "server.js",
+            "line": 109,
+            "code": "standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers"
+          },
+          {
+            "file": "server.js",
+            "line": 110,
+            "code": "legacyHeaders: false, // Disable the `X-RateLimit-*` headers"
+          },
+          {
+            "file": "server.js",
+            "line": 118,
+            "code": "const authLimiter = rateLimit({"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 21,
+            "code": "try {"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 222,
+            "code": "* Calculate match score between entity and watchlist entry"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 424,
+            "code": "try {"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 27,
+            "code": "} catch (err) {"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 430,
+            "code": "} catch (err) {"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      },
+      {
+        "id": "A05:2021",
+        "name": "Security Misconfiguration",
+        "severity": "high",
+        "official_text": "The application might be vulnerable if the application is missing appropriate security hardening across any part of the application stack.",
+        "source_reference": "OWASP Top 10 2021 - A05:2021",
+        "checks": [
+          {
+            "id": "security_headers",
+            "description": "Security headers configured (Helmet)",
+            "status": "pass",
+            "evidence": [
+              "server.js:36 → const helmet = require('helmet'); // Security headers",
+              "server.js:77 → // Security Headers - Helmet middleware",
+              "server.js:78 → app.use(helmet({",
+              "server.js:102 → console.log('✓ Helmet security headers enabled');"
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 36,
+                "code": "const helmet = require('helmet'); // Security headers"
+              },
+              {
+                "file": "server.js",
+                "line": 77,
+                "code": "// Security Headers - Helmet middleware"
+              },
+              {
+                "file": "server.js",
+                "line": 78,
+                "code": "app.use(helmet({"
+              },
+              {
+                "file": "server.js",
+                "line": 102,
+                "code": "console.log('✓ Helmet security headers enabled');"
+              }
+            ]
+          },
+          {
+            "id": "secure_cookies",
+            "description": "Secure cookie configuration",
+            "status": "pass",
+            "evidence": [
+              "server.js:247 → httpOnly: true, // Prevent XSS cookie theft",
+              "server.js:96 → upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null",
+              "server.js:246 → secure: process.env.NODE_ENV === 'production', // HTTPS only in production",
+              "server.js:249 → sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Allow cr..."
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 247,
+                "code": "httpOnly: true, // Prevent XSS cookie theft"
+              },
+              {
+                "file": "server.js",
+                "line": 96,
+                "code": "upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null"
+              },
+              {
+                "file": "server.js",
+                "line": 246,
+                "code": "secure: process.env.NODE_ENV === 'production', // HTTPS only in production"
+              },
+              {
+                "file": "server.js",
+                "line": 249,
+                "code": "sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Allow cr..."
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ Security headers configured (Helmet)",
+          "✓ Secure cookie configuration"
+        ],
+        "code_evidence": [
+          {
+            "file": "server.js",
+            "line": 36,
+            "code": "const helmet = require('helmet'); // Security headers"
+          },
+          {
+            "file": "server.js",
+            "line": 77,
+            "code": "// Security Headers - Helmet middleware"
+          },
+          {
+            "file": "server.js",
+            "line": 78,
+            "code": "app.use(helmet({"
+          },
+          {
+            "file": "server.js",
+            "line": 102,
+            "code": "console.log('✓ Helmet security headers enabled');"
+          },
+          {
+            "file": "server.js",
+            "line": 247,
+            "code": "httpOnly: true, // Prevent XSS cookie theft"
+          },
+          {
+            "file": "server.js",
+            "line": 96,
+            "code": "upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null"
+          },
+          {
+            "file": "server.js",
+            "line": 246,
+            "code": "secure: process.env.NODE_ENV === 'production', // HTTPS only in production"
+          },
+          {
+            "file": "server.js",
+            "line": 249,
+            "code": "sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Allow cr..."
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      },
+      {
+        "id": "A06:2021",
+        "name": "Vulnerable and Outdated Components",
+        "severity": "high",
+        "official_text": "You are likely vulnerable if you do not know the versions of all components you use. Software is vulnerable, unsupported, or out of date.",
+        "source_reference": "OWASP Top 10 2021 - A06:2021",
+        "checks": [
+          {
+            "id": "npm_audit",
+            "description": "No known vulnerabilities in dependencies",
+            "status": "pass",
+            "evidence": [
+              "✓ Checked via npm audit - see Dependencies tab"
+            ],
+            "code_snippets": []
+          },
+          {
+            "id": "dependency_management",
+            "description": "Dependencies managed via package.json",
+            "status": "pass",
+            "evidence": [
+              "package.json:19 → \"dependencies\": {",
+              "package.json:43 → \"devDependencies\": {"
+            ],
+            "code_snippets": [
+              {
+                "file": "package.json",
+                "line": 19,
+                "code": "\"dependencies\": {"
+              },
+              {
+                "file": "package.json",
+                "line": 43,
+                "code": "\"devDependencies\": {"
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ No known vulnerabilities in dependencies",
+          "✓ Dependencies managed via package.json"
+        ],
+        "code_evidence": [
+          {
+            "file": "package.json",
+            "line": 19,
+            "code": "\"dependencies\": {"
+          },
+          {
+            "file": "package.json",
+            "line": 43,
+            "code": "\"devDependencies\": {"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      },
+      {
+        "id": "A07:2021",
+        "name": "Identification and Authentication Failures",
+        "severity": "critical",
+        "official_text": "Confirmation of the user's identity, authentication, and session management is critical to protect against authentication-related attacks.",
+        "source_reference": "OWASP Top 10 2021 - A07:2021",
+        "checks": [
+          {
+            "id": "session_security",
+            "description": "Secure session configuration",
+            "status": "pass",
+            "evidence": [
+              "server.js:34 → const session = require('express-session');",
+              "server.js:66 → const { CentralizedLogger, correlationMiddleware, accessLogMiddleware, sessio...",
+              "server.js:225 → // CRITICAL: Body parsers MUST come first (before session and passport)",
+              "server.js:230 → // Security check: Require SESSION_SECRET in production",
+              "server.js:231 → if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 34,
+                "code": "const session = require('express-session');"
+              },
+              {
+                "file": "server.js",
+                "line": 66,
+                "code": "const { CentralizedLogger, correlationMiddleware, accessLogMiddleware, sessio..."
+              },
+              {
+                "file": "server.js",
+                "line": 225,
+                "code": "// CRITICAL: Body parsers MUST come first (before session and passport)"
+              },
+              {
+                "file": "server.js",
+                "line": 230,
+                "code": "// Security check: Require SESSION_SECRET in production"
+              },
+              {
+                "file": "server.js",
+                "line": 231,
+                "code": "if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {"
+              }
+            ]
+          },
+          {
+            "id": "auth_rate_limit",
+            "description": "Authentication rate limiting",
+            "status": "pass",
+            "evidence": [
+              "server.js:118 → const authLimiter = rateLimit({",
+              "server.js:128 → app.use('/auth/', authLimiter);",
+              "server.js:37 → const rateLimit = require('express-rate-limit'); // Rate limiting",
+              "server.js:105 → const apiLimiter = rateLimit({",
+              "server.js:109 → standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers",
+              "... and 12 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 118,
+                "code": "const authLimiter = rateLimit({"
+              },
+              {
+                "file": "server.js",
+                "line": 128,
+                "code": "app.use('/auth/', authLimiter);"
+              },
+              {
+                "file": "server.js",
+                "line": 37,
+                "code": "const rateLimit = require('express-rate-limit'); // Rate limiting"
+              },
+              {
+                "file": "server.js",
+                "line": 105,
+                "code": "const apiLimiter = rateLimit({"
+              },
+              {
+                "file": "server.js",
+                "line": 109,
+                "code": "standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers"
+              }
+            ]
+          },
+          {
+            "id": "no_hardcoded_creds",
+            "description": "No hardcoded credentials",
+            "status": "pass",
+            "evidence": [
+              "✓ No vulnerable patterns found"
+            ],
+            "code_snippets": []
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ Secure session configuration",
+          "✓ Authentication rate limiting",
+          "✓ No hardcoded credentials"
+        ],
+        "code_evidence": [
+          {
+            "file": "server.js",
+            "line": 34,
+            "code": "const session = require('express-session');"
+          },
+          {
+            "file": "server.js",
+            "line": 66,
+            "code": "const { CentralizedLogger, correlationMiddleware, accessLogMiddleware, sessio..."
+          },
+          {
+            "file": "server.js",
+            "line": 225,
+            "code": "// CRITICAL: Body parsers MUST come first (before session and passport)"
+          },
+          {
+            "file": "server.js",
+            "line": 230,
+            "code": "// Security check: Require SESSION_SECRET in production"
+          },
+          {
+            "file": "server.js",
+            "line": 231,
+            "code": "if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {"
+          },
+          {
+            "file": "server.js",
+            "line": 118,
+            "code": "const authLimiter = rateLimit({"
+          },
+          {
+            "file": "server.js",
+            "line": 128,
+            "code": "app.use('/auth/', authLimiter);"
+          },
+          {
+            "file": "server.js",
+            "line": 37,
+            "code": "const rateLimit = require('express-rate-limit'); // Rate limiting"
+          },
+          {
+            "file": "server.js",
+            "line": 105,
+            "code": "const apiLimiter = rateLimit({"
+          },
+          {
+            "file": "server.js",
+            "line": 109,
+            "code": "standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 3,
+        "checks_total": 3
+      },
+      {
+        "id": "A08:2021",
+        "name": "Software and Data Integrity Failures",
+        "severity": "high",
+        "official_text": "Software and data integrity failures relate to code and infrastructure that does not protect against integrity violations.",
+        "source_reference": "OWASP Top 10 2021 - A08:2021",
+        "checks": [
+          {
+            "id": "signed_sessions",
+            "description": "Signed cookies/sessions",
+            "status": "pass",
+            "evidence": [
+              "server.js:211 → const siemConfigured = !!(process.env.SIEM_API_KEY && process.env.SIEM_API_SE...",
+              "server.js:221 → console.log('⚠️ SIEM API not configured (set SIEM_API_KEY, SIEM_API_SECRET, S...",
+              "server.js:230 → // Security check: Require SESSION_SECRET in production",
+              "server.js:231 → if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {",
+              "server.js:232 → console.error('❌ CRITICAL: SESSION_SECRET environment variable is required in...",
+              "... and 2 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "server.js",
+                "line": 211,
+                "code": "const siemConfigured = !!(process.env.SIEM_API_KEY && process.env.SIEM_API_SE..."
+              },
+              {
+                "file": "server.js",
+                "line": 221,
+                "code": "console.log('⚠️ SIEM API not configured (set SIEM_API_KEY, SIEM_API_SECRET, S..."
+              },
+              {
+                "file": "server.js",
+                "line": 230,
+                "code": "// Security check: Require SESSION_SECRET in production"
+              },
+              {
+                "file": "server.js",
+                "line": 231,
+                "code": "if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {"
+              },
+              {
+                "file": "server.js",
+                "line": 232,
+                "code": "console.error('❌ CRITICAL: SESSION_SECRET environment variable is required in..."
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ Signed cookies/sessions"
+        ],
+        "code_evidence": [
+          {
+            "file": "server.js",
+            "line": 211,
+            "code": "const siemConfigured = !!(process.env.SIEM_API_KEY && process.env.SIEM_API_SE..."
+          },
+          {
+            "file": "server.js",
+            "line": 221,
+            "code": "console.log('⚠️ SIEM API not configured (set SIEM_API_KEY, SIEM_API_SECRET, S..."
+          },
+          {
+            "file": "server.js",
+            "line": 230,
+            "code": "// Security check: Require SESSION_SECRET in production"
+          },
+          {
+            "file": "server.js",
+            "line": 231,
+            "code": "if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {"
+          },
+          {
+            "file": "server.js",
+            "line": 232,
+            "code": "console.error('❌ CRITICAL: SESSION_SECRET environment variable is required in..."
+          }
+        ],
+        "score": 100,
+        "checks_passed": 1,
+        "checks_total": 1
+      },
+      {
+        "id": "A09:2021",
+        "name": "Security Logging and Monitoring Failures",
+        "severity": "high",
+        "official_text": "This category is to help detect, escalate, and respond to active breaches. Without logging and monitoring, breaches cannot be detected.",
+        "source_reference": "OWASP Top 10 2021 - A09:2021",
+        "checks": [
+          {
+            "id": "security_logging",
+            "description": "Security event logging implemented",
+            "status": "pass",
+            "evidence": [
+              "lib/masters-manager.js:13 → let auditLog = [];",
+              "lib/masters-manager.js:14 → let policyAuditLog = []; // Separate audit for policy changes",
+              "lib/masters-manager.js:39 → auditLog = audit.logs;",
+              "lib/masters-manager.js:40 → console.log(`Loaded ${auditLog.length} audit log entries from S3`);",
+              "lib/masters-manager.js:46 → policyAuditLog = policyAudit.logs;",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "lib/masters-manager.js",
+                "line": 13,
+                "code": "let auditLog = [];"
+              },
+              {
+                "file": "lib/masters-manager.js",
+                "line": 14,
+                "code": "let policyAuditLog = []; // Separate audit for policy changes"
+              },
+              {
+                "file": "lib/masters-manager.js",
+                "line": 39,
+                "code": "auditLog = audit.logs;"
+              },
+              {
+                "file": "lib/masters-manager.js",
+                "line": 40,
+                "code": "console.log(`Loaded ${auditLog.length} audit log entries from S3`);"
+              },
+              {
+                "file": "lib/masters-manager.js",
+                "line": 46,
+                "code": "policyAuditLog = policyAudit.logs;"
+              }
+            ]
+          },
+          {
+            "id": "pii_protection_logs",
+            "description": "PII protected in logs",
+            "status": "pass",
+            "evidence": [
+              "lib/centralized-logger.js:25 → const { maskPII, maskObject, maskIP, hashValue } = require('./pii-handler');",
+              "lib/centralized-logger.js:413 → message: message ? maskPII(message) : null,",
+              "lib/centralized-logger.js:182 → console.log(`${emoji} [SECURITY] ${action}: ${JSON.stringify(maskObject(detai...",
+              "lib/centralized-logger.js:293 → ...maskObject(details)",
+              "lib/centralized-logger.js:345 → query: maskObject(req.query || {}),",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "lib/centralized-logger.js",
+                "line": 25,
+                "code": "const { maskPII, maskObject, maskIP, hashValue } = require('./pii-handler');"
+              },
+              {
+                "file": "lib/centralized-logger.js",
+                "line": 413,
+                "code": "message: message ? maskPII(message) : null,"
+              },
+              {
+                "file": "lib/centralized-logger.js",
+                "line": 182,
+                "code": "console.log(`${emoji} [SECURITY] ${action}: ${JSON.stringify(maskObject(detai..."
+              },
+              {
+                "file": "lib/centralized-logger.js",
+                "line": 293,
+                "code": "...maskObject(details)"
+              },
+              {
+                "file": "lib/centralized-logger.js",
+                "line": 345,
+                "code": "query: maskObject(req.query || {}),"
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ Security event logging implemented",
+          "✓ PII protected in logs"
+        ],
+        "code_evidence": [
+          {
+            "file": "lib/masters-manager.js",
+            "line": 13,
+            "code": "let auditLog = [];"
+          },
+          {
+            "file": "lib/masters-manager.js",
+            "line": 14,
+            "code": "let policyAuditLog = []; // Separate audit for policy changes"
+          },
+          {
+            "file": "lib/masters-manager.js",
+            "line": 39,
+            "code": "auditLog = audit.logs;"
+          },
+          {
+            "file": "lib/masters-manager.js",
+            "line": 40,
+            "code": "console.log(`Loaded ${auditLog.length} audit log entries from S3`);"
+          },
+          {
+            "file": "lib/masters-manager.js",
+            "line": 46,
+            "code": "policyAuditLog = policyAudit.logs;"
+          },
+          {
+            "file": "lib/centralized-logger.js",
+            "line": 25,
+            "code": "const { maskPII, maskObject, maskIP, hashValue } = require('./pii-handler');"
+          },
+          {
+            "file": "lib/centralized-logger.js",
+            "line": 413,
+            "code": "message: message ? maskPII(message) : null,"
+          },
+          {
+            "file": "lib/centralized-logger.js",
+            "line": 182,
+            "code": "console.log(`${emoji} [SECURITY] ${action}: ${JSON.stringify(maskObject(detai..."
+          },
+          {
+            "file": "lib/centralized-logger.js",
+            "line": 293,
+            "code": "...maskObject(details)"
+          },
+          {
+            "file": "lib/centralized-logger.js",
+            "line": 345,
+            "code": "query: maskObject(req.query || {}),"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      },
+      {
+        "id": "A10:2021",
+        "name": "Server-Side Request Forgery (SSRF)",
+        "severity": "high",
+        "official_text": "SSRF flaws occur whenever a web application is fetching a remote resource without validating the user-supplied URL.",
+        "source_reference": "OWASP Top 10 2021 - A10:2021",
+        "checks": [
+          {
+            "id": "no_user_url_fetch",
+            "description": "No unvalidated URL fetching from user input",
+            "status": "pass",
+            "evidence": [
+              "✓ No vulnerable patterns found"
+            ],
+            "code_snippets": []
+          },
+          {
+            "id": "url_allowlist",
+            "description": "URL allowlist for external calls",
+            "status": "pass",
+            "evidence": [
+              "lib/aml-screening-manager.js:208 → // Check whitelist to avoid false positives",
+              "lib/aml-screening-manager.js:209 → const whitelisted = checkWhitelist(entity);",
+              "lib/aml-screening-manager.js:210 → if (whitelisted && entityResult.matches.length > 0) {",
+              "lib/aml-screening-manager.js:213 → match.review_comments = 'Whitelisted entity';",
+              "lib/aml-screening-manager.js:310 → * Check if entity is whitelisted",
+              "... and 15 more occurrences"
+            ],
+            "code_snippets": [
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 208,
+                "code": "// Check whitelist to avoid false positives"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 209,
+                "code": "const whitelisted = checkWhitelist(entity);"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 210,
+                "code": "if (whitelisted && entityResult.matches.length > 0) {"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 213,
+                "code": "match.review_comments = 'Whitelisted entity';"
+              },
+              {
+                "file": "lib/aml-screening-manager.js",
+                "line": 310,
+                "code": "* Check if entity is whitelisted"
+              }
+            ]
+          }
+        ],
+        "status": "pass",
+        "evidence": [
+          "✓ No unvalidated URL fetching from user input",
+          "✓ URL allowlist for external calls"
+        ],
+        "code_evidence": [
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 208,
+            "code": "// Check whitelist to avoid false positives"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 209,
+            "code": "const whitelisted = checkWhitelist(entity);"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 210,
+            "code": "if (whitelisted && entityResult.matches.length > 0) {"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 213,
+            "code": "match.review_comments = 'Whitelisted entity';"
+          },
+          {
+            "file": "lib/aml-screening-manager.js",
+            "line": 310,
+            "code": "* Check if entity is whitelisted"
+          }
+        ],
+        "score": 100,
+        "checks_passed": 2,
+        "checks_total": 2
+      }
+    ],
+    "summary": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "partial": 0
+    },
+    "score": 100
+  },
+  "nist": {
+    "framework": "NIST Cybersecurity Framework",
+    "version": "2.0",
+    "source": "https://www.nist.gov/cyberframework",
+    "note": "This scanner checks CODE-RELATED controls only. Organizational/process controls require manual assessment.",
+    "functions": [
+      {
+        "id": "PR",
+        "name": "PROTECT",
+        "description": "Develop and implement appropriate safeguards to ensure delivery of critical services.",
+        "categories": [
+          {
+            "id": "PR.AC",
+            "name": "Identity Management, Authentication and Access Control",
+            "official_text": "Access to physical and logical assets and associated facilities is limited to authorized users, processes, and devices, and is managed consistent with the assessed risk of unauthorized access to authorized activities and transactions.",
+            "source_reference": "NIST CSF 2.0 - PR.AC",
+            "controls": [
+              {
+                "subcategory": "PR.AC-1",
+                "description": "Identities and credentials are issued, managed, verified, revoked, and audited",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in server.js"
+                ]
+              },
+              {
+                "subcategory": "PR.AC-3",
+                "description": "Remote access is managed",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              },
+              {
+                "subcategory": "PR.AC-4",
+                "description": "Access permissions and authorizations are managed with least privilege",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/centralized-logger.js"
+                ]
+              },
+              {
+                "subcategory": "PR.AC-5",
+                "description": "Network integrity is protected",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "PR.DS",
+            "name": "Data Security",
+            "official_text": "Information and records (data) are managed consistent with the organization's risk strategy to protect the confidentiality, integrity, and availability of information.",
+            "source_reference": "NIST CSF 2.0 - PR.DS",
+            "controls": [
+              {
+                "subcategory": "PR.DS-1",
+                "description": "Data-at-rest is protected",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/s3-migration.js"
+                ]
+              },
+              {
+                "subcategory": "PR.DS-2",
+                "description": "Data-in-transit is protected",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              },
+              {
+                "subcategory": "PR.DS-5",
+                "description": "Protections against data leaks are implemented",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/claude-extractor.js",
+                  "Found in lib/claude-processor.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "PR.IP",
+            "name": "Information Protection Processes and Procedures",
+            "official_text": "Security policies, processes, and procedures are maintained and used to manage protection of information systems and assets.",
+            "source_reference": "NIST CSF 2.0 - PR.IP",
+            "controls": [
+              {
+                "subcategory": "PR.IP-1",
+                "description": "Configuration of systems incorporates security principles",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              },
+              {
+                "subcategory": "PR.IP-9",
+                "description": "Response and recovery plans are in place",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/forensic-export.js",
+                  "Found in lib/job-queue.js"
+                ]
+              },
+              {
+                "subcategory": "PR.IP-12",
+                "description": "A vulnerability management plan is developed and implemented",
+                "status": "pass",
+                "evidence": []
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "PR.PT",
+            "name": "Protective Technology",
+            "official_text": "Technical security solutions are managed to ensure the security and resilience of systems and assets, consistent with related policies, procedures, and agreements.",
+            "source_reference": "NIST CSF 2.0 - PR.PT",
+            "controls": [
+              {
+                "subcategory": "PR.PT-1",
+                "description": "Audit/log records are determined, documented, implemented, and reviewed",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/security-logger.js",
+                  "Found in server.js"
+                ]
+              },
+              {
+                "subcategory": "PR.PT-3",
+                "description": "The principle of least functionality is incorporated",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              },
+              {
+                "subcategory": "PR.PT-4",
+                "description": "Communications and control networks are protected",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      },
+      {
+        "id": "DE",
+        "name": "DETECT",
+        "description": "Develop and implement appropriate activities to identify the occurrence of a cybersecurity event.",
+        "categories": [
+          {
+            "id": "DE.AE",
+            "name": "Anomalies and Events",
+            "official_text": "Anomalous activity is detected and the potential impact of events is understood.",
+            "source_reference": "NIST CSF 2.0 - DE.AE",
+            "controls": [
+              {
+                "subcategory": "DE.AE-1",
+                "description": "A baseline of network operations and expected data flows is established",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/aml-screening-manager.js",
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/calculation-engine.js"
+                ]
+              },
+              {
+                "subcategory": "DE.AE-3",
+                "description": "Event data are collected and correlated from multiple sources",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in server.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "DE.CM",
+            "name": "Security Continuous Monitoring",
+            "official_text": "The information system and assets are monitored to identify cybersecurity events and verify the effectiveness of protective measures.",
+            "source_reference": "NIST CSF 2.0 - DE.CM",
+            "controls": [
+              {
+                "subcategory": "DE.CM-1",
+                "description": "The network is monitored to detect potential cybersecurity events",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              },
+              {
+                "subcategory": "DE.CM-4",
+                "description": "Malicious code is detected",
+                "status": "pass",
+                "evidence": []
+              },
+              {
+                "subcategory": "DE.CM-7",
+                "description": "Monitoring for unauthorized personnel, connections, devices, and software is performed",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/centralized-logger.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "DE.DP",
+            "name": "Detection Processes",
+            "official_text": "Detection processes and procedures are maintained and tested to ensure awareness of anomalous events.",
+            "source_reference": "NIST CSF 2.0 - DE.DP",
+            "controls": [
+              {
+                "subcategory": "DE.DP-4",
+                "description": "Event detection information is communicated",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/investigation-fraud-manager.js",
+                  "Found in lib/masters-manager.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      }
+    ],
+    "excluded": [
+      {
+        "id": "ID",
+        "name": "IDENTIFY",
+        "reason": "Organizational process - asset inventory, risk assessment, governance",
+        "requires": "Manual assessment"
+      },
+      {
+        "id": "RS",
+        "name": "RESPOND",
+        "reason": "Organizational process - incident response planning, communications",
+        "requires": "Manual assessment"
+      },
+      {
+        "id": "RC",
+        "name": "RECOVER",
+        "reason": "Organizational process - recovery planning, improvements",
+        "requires": "Manual assessment"
+      }
+    ],
+    "summary": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "partial": 0
+    },
+    "score": 100
+  },
+  "csa": {
+    "framework": "CSA Cloud Controls Matrix",
+    "version": "4.0",
+    "source": "https://cloudsecurityalliance.org/research/cloud-controls-matrix/",
+    "note": "This scanner checks CODE-RELATED controls only. Infrastructure and organizational controls require manual assessment.",
+    "domains": [
+      {
+        "id": "AIS",
+        "name": "Application & Interface Security",
+        "description": "Controls that address the security of application interfaces and software development.",
+        "controls": [
+          {
+            "id": "AIS-01",
+            "name": "Application Security Policy",
+            "official_text": "Policies and procedures shall be established, and supporting business processes and technical measures implemented, to ensure protection of application services throughout its lifecycle.",
+            "source_reference": "CSA CCM v4.0 - AIS-01",
+            "checks": [
+              {
+                "id": "ais_01_input_validation",
+                "description": "Input validation implemented",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/aml-screening-manager.js",
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "AIS-02",
+            "name": "Application Security Baseline Requirements",
+            "official_text": "Baseline requirements shall be established for securing different types of applications (e.g., web, mobile, cloud-native).",
+            "source_reference": "CSA CCM v4.0 - AIS-02",
+            "checks": [
+              {
+                "id": "ais_02_security_headers",
+                "description": "Security headers configured",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              },
+              {
+                "id": "ais_02_secure_defaults",
+                "description": "Secure defaults configured",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/claude-extractor.js",
+                  "Found in server.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "AIS-03",
+            "name": "Application Security Metrics",
+            "official_text": "Technical security metrics shall be defined, implemented, and reported.",
+            "source_reference": "CSA CCM v4.0 - AIS-03",
+            "checks": [
+              {
+                "id": "ais_03_logging",
+                "description": "Security metrics logging",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/calculation-engine.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "AIS-04",
+            "name": "Secure Application Design and Development",
+            "official_text": "Applications shall be designed, developed, deployed, and tested in accordance with industry-accepted secure design and development practices.",
+            "source_reference": "CSA CCM v4.0 - AIS-04",
+            "checks": [
+              {
+                "id": "ais_04_no_eval",
+                "description": "No dangerous code patterns",
+                "status": "pass",
+                "evidence": [
+                  "Checked via automated tool"
+                ]
+              },
+              {
+                "id": "ais_04_error_handling",
+                "description": "Proper error handling",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/aml-screening-manager.js",
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "AIS-07",
+            "name": "Application Vulnerability Remediation",
+            "official_text": "Technical vulnerabilities in applications shall be corrected in a timely manner.",
+            "source_reference": "CSA CCM v4.0 - AIS-07",
+            "checks": [
+              {
+                "id": "ais_07_npm_audit",
+                "description": "Dependency vulnerability scanning",
+                "status": "pass",
+                "evidence": [
+                  "Checked via automated tool"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      },
+      {
+        "id": "DSI",
+        "name": "Data Security & Information Lifecycle Management",
+        "description": "Controls that address data security throughout its lifecycle.",
+        "controls": [
+          {
+            "id": "DSI-01",
+            "name": "Data Security Policy",
+            "official_text": "Policies and procedures shall be established for the classification, protection, and handling of data throughout its lifecycle.",
+            "source_reference": "CSA CCM v4.0 - DSI-01",
+            "checks": [
+              {
+                "id": "dsi_01_data_masking",
+                "description": "Data masking for sensitive data",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/claude-extractor.js",
+                  "Found in lib/claude-processor.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "DSI-02",
+            "name": "Data Classification",
+            "official_text": "Data and assets shall be classified according to their business value and criticality.",
+            "source_reference": "CSA CCM v4.0 - DSI-02",
+            "checks": [
+              {
+                "id": "dsi_02_pii_handling",
+                "description": "PII identification and handling",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/comprehensive-field-mapper.js",
+                  "Found in lib/forensic-export.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "DSI-05",
+            "name": "Data Flow Documentation",
+            "official_text": "Data flows shall be documented and maintained.",
+            "source_reference": "CSA CCM v4.0 - DSI-05",
+            "checks": [
+              {
+                "id": "dsi_05_audit_trail",
+                "description": "Audit trail of data access",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/forensic-export.js",
+                  "Found in lib/masters-manager.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "DSI-07",
+            "name": "Encryption and Key Management",
+            "official_text": "Data shall be protected using encryption throughout its lifecycle where technically feasible and legally permitted.",
+            "source_reference": "CSA CCM v4.0 - DSI-07",
+            "checks": [
+              {
+                "id": "dsi_07_encryption_transit",
+                "description": "Encryption in transit",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/centralized-logger.js"
+                ]
+              },
+              {
+                "id": "dsi_07_encryption_rest",
+                "description": "Encryption at rest",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/claude-extractor.js",
+                  "Found in lib/masters-manager.js",
+                  "Found in lib/s3-migration.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      },
+      {
+        "id": "IAM",
+        "name": "Identity & Access Management",
+        "description": "Controls that address identity management and access control.",
+        "controls": [
+          {
+            "id": "IAM-01",
+            "name": "Identity and Access Management Policy",
+            "official_text": "Identity and access management policies and procedures shall be established.",
+            "source_reference": "CSA CCM v4.0 - IAM-01",
+            "checks": [
+              {
+                "id": "iam_01_auth_system",
+                "description": "Authentication system implemented",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/pii-handler.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "IAM-02",
+            "name": "Strong Authentication",
+            "official_text": "Strong authentication shall be implemented for access to systems and applications.",
+            "source_reference": "CSA CCM v4.0 - IAM-02",
+            "checks": [
+              {
+                "id": "iam_02_sso",
+                "description": "SSO/Federation implemented",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/centralized-logger.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "IAM-04",
+            "name": "Separation of Duties",
+            "official_text": "Segregation of duties shall be implemented within the identity and access management processes.",
+            "source_reference": "CSA CCM v4.0 - IAM-04",
+            "checks": [
+              {
+                "id": "iam_04_rbac",
+                "description": "Role-based access control",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/claude-extractor.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "IAM-06",
+            "name": "User Access Provisioning",
+            "official_text": "User access provisioning shall follow the principles of least privilege.",
+            "source_reference": "CSA CCM v4.0 - IAM-06",
+            "checks": [
+              {
+                "id": "iam_06_least_privilege",
+                "description": "Least privilege enforcement",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/bull-queue.js",
+                  "Found in lib/claude-extractor.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "IAM-08",
+            "name": "User Access Review",
+            "official_text": "User access shall be reviewed and revalidated for appropriateness on a regular basis.",
+            "source_reference": "CSA CCM v4.0 - IAM-08",
+            "checks": [
+              {
+                "id": "iam_08_user_management",
+                "description": "User management capabilities",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/auth-config.js",
+                  "Found in lib/user-manager.js",
+                  "Found in server.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      },
+      {
+        "id": "IVS",
+        "name": "Infrastructure & Virtualization Security",
+        "description": "Controls that address infrastructure security.",
+        "controls": [
+          {
+            "id": "IVS-03",
+            "name": "Network Security",
+            "official_text": "Networks shall be designed, developed, deployed, and configured to restrict unauthorized traffic.",
+            "source_reference": "CSA CCM v4.0 - IVS-03",
+            "checks": [
+              {
+                "id": "ivs_03_cors",
+                "description": "CORS configuration",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/socket-manager.js",
+                  "Found in server.js"
+                ]
+              },
+              {
+                "id": "ivs_03_rate_limit",
+                "description": "Rate limiting for DoS protection",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/claude-extractor.js",
+                  "Found in lib/claude-processor.js",
+                  "Found in lib/siem-api.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "IVS-09",
+            "name": "Network Defense",
+            "official_text": "Network-based intrusion detection and prevention systems shall be deployed to protect network traffic.",
+            "source_reference": "CSA CCM v4.0 - IVS-09",
+            "checks": [
+              {
+                "id": "ivs_09_waf_headers",
+                "description": "WAF/Security headers",
+                "status": "pass",
+                "evidence": [
+                  "Found in server.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      },
+      {
+        "id": "SEF",
+        "name": "Security Incident Management, E-Discovery & Cloud Forensics",
+        "description": "Controls that address security incident management and forensics.",
+        "controls": [
+          {
+            "id": "SEF-02",
+            "name": "Incident Management Policy",
+            "official_text": "Policies and procedures shall be established to triage security incidents and preserve forensic evidence.",
+            "source_reference": "CSA CCM v4.0 - SEF-02",
+            "checks": [
+              {
+                "id": "sef_02_security_logging",
+                "description": "Security incident logging",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/calculation-engine.js",
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/claude-extractor.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "SEF-03",
+            "name": "Incident Response Plans",
+            "official_text": "Incident response plans shall include identification of roles and responsibilities.",
+            "source_reference": "CSA CCM v4.0 - SEF-03",
+            "checks": [
+              {
+                "id": "sef_03_audit_trail",
+                "description": "Audit trail for incident investigation",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/forensic-export.js",
+                  "Found in lib/siem-api.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "SEF-04",
+            "name": "Incident Response Testing",
+            "official_text": "Incident response capabilities shall be tested on a planned basis.",
+            "source_reference": "CSA CCM v4.0 - SEF-04",
+            "checks": [
+              {
+                "id": "sef_04_forensic_export",
+                "description": "Forensic data export capability",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/forensic-export.js",
+                  "Found in lib/siem-api.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      },
+      {
+        "id": "LOG",
+        "name": "Logging and Monitoring",
+        "description": "Controls that address logging and monitoring.",
+        "controls": [
+          {
+            "id": "LOG-01",
+            "name": "Logging and Monitoring Policy",
+            "official_text": "Logging and monitoring policies and procedures shall be established and maintained.",
+            "source_reference": "CSA CCM v4.0 - LOG-01",
+            "checks": [
+              {
+                "id": "log_01_centralized",
+                "description": "Centralized logging",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/siem-api.js",
+                  "Found in lib/siem-storage.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "LOG-03",
+            "name": "Security Monitoring and Alerting",
+            "official_text": "Security-related events shall be identified and logged.",
+            "source_reference": "CSA CCM v4.0 - LOG-03",
+            "checks": [
+              {
+                "id": "log_03_security_events",
+                "description": "Security event logging",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/calculation-engine.js",
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/claude-extractor.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          },
+          {
+            "id": "LOG-05",
+            "name": "Audit Logging",
+            "official_text": "Audit logs shall be collected, protected, and retained.",
+            "source_reference": "CSA CCM v4.0 - LOG-05",
+            "checks": [
+              {
+                "id": "log_05_pii_protection",
+                "description": "PII protection in logs",
+                "status": "pass",
+                "evidence": [
+                  "Found in lib/centralized-logger.js",
+                  "Found in lib/pii-handler.js",
+                  "Found in lib/security-logger.js"
+                ]
+              }
+            ],
+            "status": "pass",
+            "evidence": [],
+            "score": 100
+          }
+        ],
+        "score": 100
+      }
+    ],
+    "excluded": [
+      {
+        "id": "AAC",
+        "name": "Audit Assurance & Compliance",
+        "reason": "Organizational process - requires manual assessment"
+      },
+      {
+        "id": "BCR",
+        "name": "Business Continuity Management & Operational Resilience",
+        "reason": "Organizational/infrastructure - requires manual assessment"
+      },
+      {
+        "id": "CEK",
+        "name": "Cryptography, Encryption & Key Management",
+        "reason": "Partially covered in DSI-07, infrastructure controls require manual assessment"
+      },
+      {
+        "id": "GRC",
+        "name": "Governance, Risk & Compliance",
+        "reason": "Organizational process - requires manual assessment"
+      },
+      {
+        "id": "HRS",
+        "name": "Human Resources Security",
+        "reason": "HR process - not code related"
+      },
+      {
+        "id": "STA",
+        "name": "Supply Chain Management, Transparency, and Accountability",
+        "reason": "Vendor management - not code related"
+      },
+      {
+        "id": "TVM",
+        "name": "Threat & Vulnerability Management",
+        "reason": "Partially covered via npm audit, full scope requires manual assessment"
+      },
+      {
+        "id": "UEM",
+        "name": "Universal Endpoint Management",
+        "reason": "Endpoint management - not application code related"
+      }
+    ],
+    "summary": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "partial": 0
+    },
+    "score": 100
+  }
+}

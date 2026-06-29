@@ -1,0 +1,499 @@
+{
+  "schema_version": "2.0",
+  "total_documents": 56,
+  "required_count": 34,
+  "optional_count": 22,
+  "categories": [
+    {
+      "id": "financial_statements",
+      "name": "Financial Statements",
+      "documents": [
+        {
+          "id": "balance_sheet_fy23",
+          "name": "Balance Sheet FY23",
+          "required": true,
+          "category": "Financial Statements",
+          "description": "Audited Balance Sheet for Financial Year 2022-23"
+        },
+        {
+          "id": "balance_sheet_fy24",
+          "name": "Balance Sheet FY24",
+          "required": true,
+          "category": "Financial Statements",
+          "description": "Audited Balance Sheet for Financial Year 2023-24"
+        },
+        {
+          "id": "balance_sheet_fy25",
+          "name": "Balance Sheet FY25",
+          "required": true,
+          "category": "Financial Statements",
+          "description": "Balance Sheet for Financial Year 2024-25 (Provisional/Audited)"
+        },
+        {
+          "id": "pl_statement_fy23",
+          "name": "P&L Statement FY23",
+          "required": true,
+          "category": "Financial Statements",
+          "description": "Profit & Loss Statement for FY 2022-23"
+        },
+        {
+          "id": "pl_statement_fy24",
+          "name": "P&L Statement FY24",
+          "required": true,
+          "category": "Financial Statements",
+          "description": "Profit & Loss Statement for FY 2023-24"
+        },
+        {
+          "id": "pl_statement_fy25",
+          "name": "P&L Statement FY25",
+          "required": true,
+          "category": "Financial Statements",
+          "description": "Profit & Loss Statement for FY 2024-25 (Provisional/Audited)"
+        },
+        {
+          "id": "cash_flow_fy23",
+          "name": "Cash Flow Statement FY23",
+          "required": false,
+          "category": "Financial Statements",
+          "description": "Cash Flow Statement for FY 2022-23"
+        },
+        {
+          "id": "cash_flow_fy24",
+          "name": "Cash Flow Statement FY24",
+          "required": false,
+          "category": "Financial Statements",
+          "description": "Cash Flow Statement for FY 2023-24"
+        },
+        {
+          "id": "cash_flow_fy25",
+          "name": "Cash Flow Statement FY25",
+          "required": false,
+          "category": "Financial Statements",
+          "description": "Cash Flow Statement for FY 2024-25"
+        },
+        {
+          "id": "auditors_report_fy25",
+          "name": "Auditor's Report FY25",
+          "required": true,
+          "category": "Financial Statements",
+          "description": "Independent Auditor's Report for latest financial year"
+        },
+        {
+          "id": "notes_to_accounts",
+          "name": "Notes to Accounts FY25",
+          "required": false,
+          "category": "Financial Statements",
+          "description": "Notes to Accounts and significant accounting policies"
+        }
+      ]
+    },
+    {
+      "id": "statutory_documents",
+      "name": "Statutory & Registration Documents",
+      "documents": [
+        {
+          "id": "cin_certificate",
+          "name": "CIN/Incorporation Certificate",
+          "required": true,
+          "category": "Statutory Documents",
+          "description": "Certificate of Incorporation from MCA"
+        },
+        {
+          "id": "moa",
+          "name": "Memorandum of Association",
+          "required": true,
+          "category": "Statutory Documents",
+          "description": "MOA of the company"
+        },
+        {
+          "id": "aoa",
+          "name": "Articles of Association",
+          "required": false,
+          "category": "Statutory Documents",
+          "description": "AOA of the company"
+        },
+        {
+          "id": "gst_certificate",
+          "name": "GST Registration Certificate",
+          "required": true,
+          "category": "Statutory Documents",
+          "description": "GSTIN Registration Certificate"
+        },
+        {
+          "id": "pan_card",
+          "name": "PAN Card (Company)",
+          "required": true,
+          "category": "Statutory Documents",
+          "description": "Company PAN Card"
+        },
+        {
+          "id": "tan_certificate",
+          "name": "TAN Certificate",
+          "required": true,
+          "category": "Statutory Documents",
+          "description": "Tax Deduction Account Number Certificate"
+        },
+        {
+          "id": "shop_establishment",
+          "name": "Shop & Establishment License",
+          "required": false,
+          "category": "Statutory Documents",
+          "description": "Shop Act Registration"
+        },
+        {
+          "id": "trade_license",
+          "name": "Trade License",
+          "required": false,
+          "category": "Statutory Documents",
+          "description": "Municipal Trade License"
+        }
+      ]
+    },
+    {
+      "id": "tax_documents",
+      "name": "Tax Returns & Compliance",
+      "documents": [
+        {
+          "id": "itr_fy23",
+          "name": "ITR FY23 with Acknowledgment",
+          "required": true,
+          "category": "Tax Documents",
+          "description": "Income Tax Return for FY 2022-23"
+        },
+        {
+          "id": "itr_fy24",
+          "name": "ITR FY24 with Acknowledgment",
+          "required": true,
+          "category": "Tax Documents",
+          "description": "Income Tax Return for FY 2023-24"
+        },
+        {
+          "id": "itr_fy25",
+          "name": "ITR FY25 with Acknowledgment",
+          "required": false,
+          "category": "Tax Documents",
+          "description": "Income Tax Return for FY 2024-25 (if filed)"
+        },
+        {
+          "id": "form_26as",
+          "name": "Form 26AS FY25",
+          "required": true,
+          "category": "Tax Documents",
+          "description": "Tax Credit Statement (26AS) for latest year"
+        },
+        {
+          "id": "gst_returns_12m",
+          "name": "GST Returns (Last 12 Months)",
+          "required": true,
+          "category": "Tax Documents",
+          "description": "GSTR-3B or relevant GST returns for 12 months"
+        },
+        {
+          "id": "tds_returns",
+          "name": "TDS Returns (Last 4 Quarters)",
+          "required": false,
+          "category": "Tax Documents",
+          "description": "Quarterly TDS returns (Form 24Q, 26Q)"
+        }
+      ]
+    },
+    {
+      "id": "banking_documents",
+      "name": "Banking Documents",
+      "documents": [
+        {
+          "id": "bank_statement_current",
+          "name": "Bank Statement - Current Account (12 Months)",
+          "required": true,
+          "category": "Banking Documents",
+          "description": "Primary current account statement for last 12 months"
+        },
+        {
+          "id": "bank_statement_odcc",
+          "name": "Bank Statement - OD/CC Account (12 Months)",
+          "required": false,
+          "category": "Banking Documents",
+          "description": "Overdraft or Cash Credit account statement"
+        },
+        {
+          "id": "sanction_letters",
+          "name": "Sanction Letters - Existing Loans",
+          "required": false,
+          "category": "Banking Documents",
+          "description": "Loan sanction letters from existing lenders"
+        },
+        {
+          "id": "noc_lenders",
+          "name": "NOC from Existing Lenders",
+          "required": false,
+          "category": "Banking Documents",
+          "description": "No Objection Certificate from existing banks (if applicable)"
+        }
+      ]
+    },
+    {
+      "id": "kyc_documents",
+      "name": "KYC Documents",
+      "documents": [
+        {
+          "id": "director_aadhaar",
+          "name": "Director Aadhaar Card",
+          "required": true,
+          "category": "KYC Documents",
+          "description": "Aadhaar card of primary director/promoter"
+        },
+        {
+          "id": "director_pan",
+          "name": "Director PAN Card",
+          "required": true,
+          "category": "KYC Documents",
+          "description": "PAN card of primary director/promoter"
+        },
+        {
+          "id": "director_photo",
+          "name": "Director Photograph",
+          "required": true,
+          "category": "KYC Documents",
+          "description": "Recent passport size photograph"
+        },
+        {
+          "id": "company_address_proof",
+          "name": "Company Address Proof",
+          "required": true,
+          "category": "KYC Documents",
+          "description": "Registered office address proof (Electricity bill/Rent agreement)"
+        }
+      ]
+    },
+    {
+      "id": "credit_bureau",
+      "name": "Credit Bureau Reports",
+      "documents": [
+        {
+          "id": "cibil_company",
+          "name": "CIBIL Report - Company",
+          "required": true,
+          "category": "Credit Bureau",
+          "description": "Company credit report from CIBIL/Experian/Equifax"
+        },
+        {
+          "id": "cibil_directors",
+          "name": "CIBIL Report - Directors/Guarantors",
+          "required": true,
+          "category": "Credit Bureau",
+          "description": "Personal credit reports of all directors/guarantors"
+        }
+      ]
+    },
+    {
+      "id": "property_documents",
+      "name": "Property Documents (If Applicable)",
+      "documents": [
+        {
+          "id": "property_title_deed",
+          "name": "Property Title Deed",
+          "required": false,
+          "category": "Property Documents",
+          "description": "Title deed of property offered as collateral"
+        },
+        {
+          "id": "encumbrance_certificate",
+          "name": "Encumbrance Certificate",
+          "required": false,
+          "category": "Property Documents",
+          "description": "EC for last 13/30 years"
+        },
+        {
+          "id": "property_valuation",
+          "name": "Property Valuation Report",
+          "required": false,
+          "category": "Property Documents",
+          "description": "Approved valuer's property valuation report"
+        },
+        {
+          "id": "property_tax_receipts",
+          "name": "Property Tax Receipts",
+          "required": false,
+          "category": "Property Documents",
+          "description": "Latest property tax paid receipts"
+        }
+      ]
+    },
+    {
+      "id": "business_documents",
+      "name": "Business Operations Documents",
+      "documents": [
+        {
+          "id": "stock_statement",
+          "name": "Latest Stock Statement",
+          "required": true,
+          "category": "Business Documents",
+          "description": "Current inventory/stock details with valuation"
+        },
+        {
+          "id": "receivables_list",
+          "name": "Receivables List with Aging",
+          "required": true,
+          "category": "Business Documents",
+          "description": "Debtor list with aging analysis"
+        },
+        {
+          "id": "payables_list",
+          "name": "Payables List with Aging",
+          "required": false,
+          "category": "Business Documents",
+          "description": "Creditor list with aging analysis"
+        },
+        {
+          "id": "customer_list",
+          "name": "Top 10 Customer List",
+          "required": true,
+          "category": "Business Documents",
+          "description": "List of top customers with contribution percentage"
+        },
+        {
+          "id": "supplier_list",
+          "name": "Top 10 Supplier List",
+          "required": false,
+          "category": "Business Documents",
+          "description": "List of top suppliers with dependency analysis"
+        }
+      ]
+    },
+    {
+      "id": "legal_collateral_documents",
+      "name": "Legal & Collateral Documents",
+      "description": "Documents for legal risk assessment - uploaded per property",
+      "multi_property": true,
+      "property_documents": [
+        {
+          "id": "title_search_report",
+          "name": "Title Search Report (TSR)",
+          "required": true,
+          "category": "Legal & Collateral",
+          "description": "Advocate's Title Search Report covering 30+ years of title history",
+          "extracts_to": "legal_risk_assessment.properties[].tsr_data"
+        },
+        {
+          "id": "encumbrance_certificate",
+          "name": "Encumbrance Certificate (EC)",
+          "required": true,
+          "category": "Legal & Collateral",
+          "description": "EC from Sub-Registrar for last 13/30 years",
+          "extracts_to": "legal_risk_assessment.properties[].ec_data"
+        },
+        {
+          "id": "legal_opinion",
+          "name": "Legal Opinion / Advocate Opinion",
+          "required": true,
+          "category": "Legal & Collateral",
+          "description": "Advocate's opinion on title validity and enforceability",
+          "extracts_to": "legal_risk_assessment.properties[].advocate_opinion"
+        },
+        {
+          "id": "roc_search_report",
+          "name": "ROC Search Report",
+          "required": false,
+          "category": "Legal & Collateral",
+          "description": "ROC/MCA search for charges on company assets (for company borrowers)",
+          "extracts_to": "legal_risk_assessment.properties[].roc_data"
+        },
+        {
+          "id": "mutation_extract",
+          "name": "Mutation Entry / 7/12 Extract / Khata",
+          "required": true,
+          "category": "Legal & Collateral",
+          "description": "Revenue record extract showing current ownership",
+          "extracts_to": "legal_risk_assessment.properties[].revenue_data"
+        },
+        {
+          "id": "property_tax_receipt",
+          "name": "Property Tax Receipt",
+          "required": true,
+          "category": "Legal & Collateral",
+          "description": "Latest property tax paid receipt from municipal authority",
+          "extracts_to": "legal_risk_assessment.properties[].tax_data"
+        },
+        {
+          "id": "approved_plan",
+          "name": "Approved Building Plan / Layout",
+          "required": false,
+          "category": "Legal & Collateral",
+          "description": "Sanctioned building plan or approved layout from competent authority",
+          "extracts_to": "legal_risk_assessment.properties[].building_approval"
+        },
+        {
+          "id": "occupancy_certificate",
+          "name": "Occupancy Certificate (OC) / Completion Certificate",
+          "required": false,
+          "category": "Legal & Collateral",
+          "description": "OC or CC from municipal/development authority",
+          "extracts_to": "legal_risk_assessment.properties[].oc_data"
+        },
+        {
+          "id": "na_order",
+          "name": "NA Conversion Order",
+          "required": false,
+          "category": "Legal & Collateral",
+          "description": "Non-Agricultural conversion order (for agricultural land converted)",
+          "extracts_to": "legal_risk_assessment.properties[].na_conversion"
+        },
+        {
+          "id": "sale_deed",
+          "name": "Sale Deed / Conveyance Deed",
+          "required": true,
+          "category": "Legal & Collateral",
+          "description": "Registered sale deed or conveyance of the property",
+          "extracts_to": "legal_risk_assessment.properties[].sale_deed_data"
+        },
+        {
+          "id": "prior_chain_documents",
+          "name": "Prior Chain Documents",
+          "required": false,
+          "category": "Legal & Collateral",
+          "description": "Previous sale deeds, partition deeds, gift deeds in title chain",
+          "extracts_to": "legal_risk_assessment.properties[].chain_documents"
+        },
+        {
+          "id": "society_noc",
+          "name": "Society NOC / Share Certificate",
+          "required": false,
+          "category": "Legal & Collateral",
+          "description": "Housing society NOC and share certificate (for apartments)",
+          "extracts_to": "legal_risk_assessment.properties[].society_data"
+        }
+      ],
+      "property_metadata": {
+        "id": "property_info",
+        "name": "Property Information",
+        "fields": [
+          {"name": "property_id", "label": "Property ID", "type": "auto", "description": "Auto-generated: PROP-001, PROP-002, etc."},
+          {"name": "property_address", "label": "Property Address", "type": "textarea", "required": true},
+          {"name": "property_type", "label": "Property Type", "type": "select", "required": true, "source": "masters.property_types"},
+          {"name": "state", "label": "State", "type": "select", "required": true, "source": "masters.state_legal_rules"},
+          {"name": "district", "label": "District/City", "type": "text", "required": true},
+          {"name": "survey_number", "label": "Survey/CTS/Plot Number", "type": "text", "required": false},
+          {"name": "area_sqft", "label": "Area (Sq.Ft.)", "type": "number", "required": false},
+          {"name": "estimated_value_lakhs", "label": "Estimated Value (Lakhs)", "type": "number", "required": false}
+        ]
+      }
+    }
+  ],
+  "document_summary": {
+    "by_requirement": {
+      "required": 34,
+      "optional": 22
+    },
+    "by_category": {
+      "Financial Statements": 11,
+      "Statutory Documents": 8,
+      "Tax Documents": 6,
+      "Banking Documents": 4,
+      "KYC Documents": 4,
+      "Credit Bureau": 2,
+      "Property Documents": 4,
+      "Business Documents": 5,
+      "Legal & Collateral": 12
+    }
+  }
+}

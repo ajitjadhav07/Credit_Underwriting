@@ -1,0 +1,290 @@
+{
+  "_comment": "Credit scoring configuration - edit values here to change scoring model",
+  "_version": "1.0",
+  "_lastUpdated": "2026-01-01",
+  
+  "scoring_weights": [
+    {
+      "category_code": "FINANCIAL",
+      "category_name": "Financial Strength",
+      "max_score": 35,
+      "display_order": 1,
+      "description": "Assessment of financial ratios including liquidity, leverage, and profitability"
+    },
+    {
+      "category_code": "BANKING",
+      "category_name": "Banking Conduct",
+      "max_score": 20,
+      "display_order": 2,
+      "description": "Assessment of banking behavior, account conduct, and payment discipline"
+    },
+    {
+      "category_code": "CREDIT_HISTORY",
+      "category_name": "Credit History",
+      "max_score": 15,
+      "display_order": 3,
+      "description": "Assessment of credit bureau scores and repayment history"
+    },
+    {
+      "category_code": "BUSINESS",
+      "category_name": "Business Stability",
+      "max_score": 15,
+      "display_order": 4,
+      "description": "Assessment of business vintage, growth, and compliance"
+    },
+    {
+      "category_code": "SECURITY",
+      "category_name": "Security Coverage",
+      "max_score": 15,
+      "display_order": 5,
+      "description": "Assessment of collateral value and coverage"
+    }
+  ],
+  
+  "scoring_metrics": [
+    {
+      "metric_code": "CURRENT_RATIO",
+      "metric_name": "Current Ratio",
+      "category_code": "FINANCIAL",
+      "max_score": 7,
+      "threshold_1": 1.5, "score_1": 7,
+      "threshold_2": 1.25, "score_2": 5,
+      "threshold_3": 1.0, "score_3": 3,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "number"
+    },
+    {
+      "metric_code": "DEBT_EQUITY",
+      "metric_name": "Debt to Equity",
+      "category_code": "FINANCIAL",
+      "max_score": 7,
+      "threshold_1": 0.5, "score_1": 7,
+      "threshold_2": 1.0, "score_2": 5,
+      "threshold_3": 2.0, "score_3": 3,
+      "default_score": 1,
+      "comparison_type": "lower_better",
+      "display_format": "number"
+    },
+    {
+      "metric_code": "INTEREST_COVERAGE",
+      "metric_name": "Interest Coverage",
+      "category_code": "FINANCIAL",
+      "max_score": 7,
+      "threshold_1": 3.0, "score_1": 7,
+      "threshold_2": 2.0, "score_2": 5,
+      "threshold_3": 1.5, "score_3": 3,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "times"
+    },
+    {
+      "metric_code": "NET_MARGIN",
+      "metric_name": "Net Profit Margin",
+      "category_code": "FINANCIAL",
+      "max_score": 7,
+      "threshold_1": 5.0, "score_1": 7,
+      "threshold_2": 3.0, "score_2": 5,
+      "threshold_3": 1.0, "score_3": 3,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "percentage"
+    },
+    {
+      "metric_code": "ROE",
+      "metric_name": "Return on Equity",
+      "category_code": "FINANCIAL",
+      "max_score": 7,
+      "threshold_1": 20.0, "score_1": 7,
+      "threshold_2": 15.0, "score_2": 5,
+      "threshold_3": 10.0, "score_3": 3,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "percentage"
+    },
+    {
+      "metric_code": "AVG_BALANCE",
+      "metric_name": "Average Bank Balance",
+      "category_code": "BANKING",
+      "max_score": 7,
+      "threshold_1": 1000000, "score_1": 7,
+      "threshold_2": 500000, "score_2": 5,
+      "threshold_3": 100000, "score_3": 3,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "currency"
+    },
+    {
+      "metric_code": "CHEQUE_RETURN",
+      "metric_name": "Cheque Return Rate",
+      "category_code": "BANKING",
+      "max_score": 7,
+      "threshold_1": 1.0, "score_1": 7,
+      "threshold_2": 2.0, "score_2": 5,
+      "threshold_3": 5.0, "score_3": 3,
+      "default_score": 0,
+      "comparison_type": "lower_better",
+      "display_format": "percentage"
+    },
+    {
+      "metric_code": "EMI_BURDEN",
+      "metric_name": "EMI Burden Ratio",
+      "category_code": "BANKING",
+      "max_score": 6,
+      "threshold_1": 30.0, "score_1": 6,
+      "threshold_2": 50.0, "score_2": 4,
+      "threshold_3": 70.0, "score_3": 2,
+      "default_score": 0,
+      "comparison_type": "lower_better",
+      "display_format": "percentage"
+    },
+    {
+      "metric_code": "CIBIL_SCORE",
+      "metric_name": "CIBIL Score",
+      "category_code": "CREDIT_HISTORY",
+      "max_score": 8,
+      "threshold_1": 750, "score_1": 8,
+      "threshold_2": 700, "score_2": 6,
+      "threshold_3": 650, "score_3": 4,
+      "default_score": 0,
+      "comparison_type": "higher_better",
+      "display_format": "number"
+    },
+    {
+      "metric_code": "DPD_HISTORY",
+      "metric_name": "DPD History (Max Days)",
+      "category_code": "CREDIT_HISTORY",
+      "max_score": 7,
+      "threshold_1": 0, "score_1": 7,
+      "threshold_2": 30, "score_2": 4,
+      "threshold_3": 60, "score_3": 2,
+      "default_score": 0,
+      "comparison_type": "lower_better",
+      "display_format": "number"
+    },
+    {
+      "metric_code": "REVENUE_GROWTH",
+      "metric_name": "Revenue Growth",
+      "category_code": "BUSINESS",
+      "max_score": 5,
+      "threshold_1": 10.0, "score_1": 5,
+      "threshold_2": 5.0, "score_2": 4,
+      "threshold_3": 0.0, "score_3": 2,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "percentage"
+    },
+    {
+      "metric_code": "BUSINESS_VINTAGE",
+      "metric_name": "Business Vintage (Years)",
+      "category_code": "BUSINESS",
+      "max_score": 5,
+      "threshold_1": 5, "score_1": 5,
+      "threshold_2": 3, "score_2": 4,
+      "threshold_3": 2, "score_3": 2,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "number"
+    },
+    {
+      "metric_code": "GST_COMPLIANCE",
+      "metric_name": "GST Filing Compliance (%)",
+      "category_code": "BUSINESS",
+      "max_score": 5,
+      "threshold_1": 100, "score_1": 5,
+      "threshold_2": 90, "score_2": 3,
+      "threshold_3": 75, "score_3": 2,
+      "default_score": 1,
+      "comparison_type": "higher_better",
+      "display_format": "percentage"
+    },
+    {
+      "metric_code": "COLLATERAL_VALUE",
+      "metric_name": "Collateral Value",
+      "category_code": "SECURITY",
+      "max_score": 8,
+      "threshold_1": 10000000, "score_1": 8,
+      "threshold_2": 5000000, "score_2": 6,
+      "threshold_3": 1000000, "score_3": 4,
+      "default_score": 2,
+      "comparison_type": "higher_better",
+      "display_format": "currency"
+    },
+    {
+      "metric_code": "TITLE_STATUS",
+      "metric_name": "Title Clear Status",
+      "category_code": "SECURITY",
+      "max_score": 7,
+      "threshold_1": 1, "score_1": 7,
+      "threshold_2": 0, "score_2": 2,
+      "threshold_3": -1, "score_3": 0,
+      "default_score": 0,
+      "comparison_type": "higher_better",
+      "display_format": "number",
+      "_note": "1 = Clear, 0 = Encumbered, -1 = Unknown"
+    }
+  ],
+  
+  "scoring_grades": [
+    {
+      "grade": "A+",
+      "min_score": 85,
+      "max_score": 100,
+      "decision": "Approve",
+      "decision_code": "AUTO_APPROVE",
+      "interest_rate_markup": 0,
+      "color_code": "#10b981",
+      "description": "Excellent credit profile - Auto approve with best terms"
+    },
+    {
+      "grade": "A",
+      "min_score": 75,
+      "max_score": 84,
+      "decision": "Approve",
+      "decision_code": "APPROVED",
+      "interest_rate_markup": 0.25,
+      "color_code": "#22c55e",
+      "description": "Very good credit profile - Approve with standard terms"
+    },
+    {
+      "grade": "B+",
+      "min_score": 65,
+      "max_score": 74,
+      "decision": "Refer to Credit Committee",
+      "decision_code": "APPROVED_WITH_CONDITIONS",
+      "interest_rate_markup": 0.50,
+      "color_code": "#eab308",
+      "description": "Good credit profile - Refer for enhanced collateral"
+    },
+    {
+      "grade": "B",
+      "min_score": 55,
+      "max_score": 64,
+      "decision": "Refer to Credit Committee",
+      "decision_code": "PARTIAL_APPROVAL",
+      "interest_rate_markup": 1.00,
+      "color_code": "#f97316",
+      "description": "Fair credit profile - Requires credit committee approval"
+    },
+    {
+      "grade": "C",
+      "min_score": 45,
+      "max_score": 54,
+      "decision": "Decline",
+      "decision_code": "REFER_TO_CREDIT",
+      "interest_rate_markup": 2.00,
+      "color_code": "#ef4444",
+      "description": "Weak credit profile - Decline unless exceptional circumstances"
+    },
+    {
+      "grade": "D",
+      "min_score": 0,
+      "max_score": 44,
+      "decision": "Decline",
+      "decision_code": "REJECTED",
+      "interest_rate_markup": 0,
+      "color_code": "#dc2626",
+      "description": "Poor credit profile - Auto decline"
+    }
+  ]
+}

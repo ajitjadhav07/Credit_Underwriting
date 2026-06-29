@@ -1,0 +1,3965 @@
+{
+  "schema_version": "1.0",
+  "total_parameters": 524,
+  "categories": [
+    {
+      "id": "financial_statements",
+      "name": "Financial Statements",
+      "description": "Balance Sheet, P&L, Cash Flow for 3 years",
+      "total_parameters": 180,
+      "required_count": 120,
+      "optional_count": 60,
+      "years": [
+        "fy23",
+        "fy24",
+        "fy25"
+      ],
+      "subcategories": [
+        {
+          "id": "balance_sheet",
+          "name": "Balance Sheet",
+          "parameters_per_year": 60,
+          "fields": [
+            {
+              "id": "share_capital",
+              "label": "Share Capital",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "reserves_surplus",
+              "label": "Reserves & Surplus",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "net_worth",
+              "label": "Net Worth",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "long_term_borrowings",
+              "label": "Long Term Borrowings",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "short_term_borrowings",
+              "label": "Short Term Borrowings",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "trade_payables",
+              "label": "Trade Payables",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "other_current_liabilities",
+              "label": "Other Current Liabilities",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "provisions",
+              "label": "Provisions",
+              "required": false,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "total_liabilities",
+              "label": "Total Liabilities",
+              "required": true,
+              "category": "Equity & Liabilities"
+            },
+            {
+              "id": "fixed_assets_gross",
+              "label": "Fixed Assets (Gross)",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "accumulated_depreciation",
+              "label": "Accumulated Depreciation",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "fixed_assets_net",
+              "label": "Fixed Assets (Net)",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "investments",
+              "label": "Investments",
+              "required": false,
+              "category": "Assets"
+            },
+            {
+              "id": "current_assets",
+              "label": "Current Assets",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "inventories",
+              "label": "Inventories",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "trade_receivables",
+              "label": "Trade Receivables",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "cash_bank",
+              "label": "Cash & Bank Balances",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "loans_advances",
+              "label": "Loans & Advances",
+              "required": false,
+              "category": "Assets"
+            },
+            {
+              "id": "other_current_assets",
+              "label": "Other Current Assets",
+              "required": false,
+              "category": "Assets"
+            },
+            {
+              "id": "total_assets",
+              "label": "Total Assets",
+              "required": true,
+              "category": "Assets"
+            },
+            {
+              "id": "deferred_tax_assets",
+              "label": "Deferred Tax Assets",
+              "required": false
+            },
+            {
+              "id": "deferred_tax_liabilities",
+              "label": "Deferred Tax Liabilities",
+              "required": false
+            },
+            {
+              "id": "intangible_assets",
+              "label": "Intangible Assets",
+              "required": false
+            },
+            {
+              "id": "goodwill",
+              "label": "Goodwill",
+              "required": false
+            },
+            {
+              "id": "capital_work_in_progress",
+              "label": "Capital Work in Progress",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "profit_loss",
+          "name": "Profit & Loss Statement",
+          "parameters_per_year": 60,
+          "fields": [
+            {
+              "id": "revenue_operations",
+              "label": "Revenue from Operations",
+              "required": true,
+              "category": "Income"
+            },
+            {
+              "id": "other_income",
+              "label": "Other Income",
+              "required": false,
+              "category": "Income"
+            },
+            {
+              "id": "total_income",
+              "label": "Total Income",
+              "required": true,
+              "category": "Income"
+            },
+            {
+              "id": "cost_materials",
+              "label": "Cost of Materials Consumed",
+              "required": true,
+              "category": "Expenses"
+            },
+            {
+              "id": "purchases_stock",
+              "label": "Purchases of Stock-in-Trade",
+              "required": false,
+              "category": "Expenses"
+            },
+            {
+              "id": "change_inventories",
+              "label": "Changes in Inventories",
+              "required": false,
+              "category": "Expenses"
+            },
+            {
+              "id": "employee_benefits",
+              "label": "Employee Benefit Expenses",
+              "required": true,
+              "category": "Expenses"
+            },
+            {
+              "id": "finance_costs",
+              "label": "Finance Costs",
+              "required": true,
+              "category": "Expenses"
+            },
+            {
+              "id": "depreciation",
+              "label": "Depreciation & Amortization",
+              "required": true,
+              "category": "Expenses"
+            },
+            {
+              "id": "other_expenses",
+              "label": "Other Expenses",
+              "required": true,
+              "category": "Expenses"
+            },
+            {
+              "id": "total_expenses",
+              "label": "Total Expenses",
+              "required": true,
+              "category": "Expenses"
+            },
+            {
+              "id": "profit_before_tax",
+              "label": "Profit Before Tax",
+              "required": true,
+              "category": "Profit"
+            },
+            {
+              "id": "tax_expense",
+              "label": "Tax Expense",
+              "required": true,
+              "category": "Profit"
+            },
+            {
+              "id": "profit_after_tax",
+              "label": "Profit After Tax (PAT)",
+              "required": true,
+              "category": "Profit"
+            },
+            {
+              "id": "ebitda",
+              "label": "EBITDA",
+              "required": true,
+              "category": "Profit"
+            },
+            {
+              "id": "administrative_expenses",
+              "label": "Administrative Expenses",
+              "required": false
+            },
+            {
+              "id": "selling_expenses",
+              "label": "Selling & Distribution Expenses",
+              "required": false
+            },
+            {
+              "id": "research_development",
+              "label": "Research & Development Expenses",
+              "required": false
+            },
+            {
+              "id": "bad_debts",
+              "label": "Bad Debts Written Off",
+              "required": false
+            },
+            {
+              "id": "forex_gain_loss",
+              "label": "Forex Gain/Loss",
+              "required": false
+            },
+            {
+              "id": "exceptional_items",
+              "label": "Exceptional Items",
+              "required": false
+            },
+            {
+              "id": "prior_period_items",
+              "label": "Prior Period Items",
+              "required": false
+            },
+            {
+              "id": "extraordinary_items",
+              "label": "Extraordinary Items",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "cash_flow",
+          "name": "Cash Flow Statement",
+          "parameters_per_year": 60,
+          "fields": [
+            {
+              "id": "operating_cash_flow",
+              "label": "Cash Flow from Operating Activities",
+              "required": true,
+              "category": "Operating"
+            },
+            {
+              "id": "investing_cash_flow",
+              "label": "Cash Flow from Investing Activities",
+              "required": true,
+              "category": "Investing"
+            },
+            {
+              "id": "financing_cash_flow",
+              "label": "Cash Flow from Financing Activities",
+              "required": true,
+              "category": "Financing"
+            },
+            {
+              "id": "net_cash_flow",
+              "label": "Net Increase/Decrease in Cash",
+              "required": true,
+              "category": "Summary"
+            },
+            {
+              "id": "increase_decrease_inventory",
+              "label": "Increase/Decrease in Inventory",
+              "required": false
+            },
+            {
+              "id": "increase_decrease_receivables",
+              "label": "Increase/Decrease in Receivables",
+              "required": false
+            },
+            {
+              "id": "increase_decrease_payables",
+              "label": "Increase/Decrease in Payables",
+              "required": false
+            },
+            {
+              "id": "asset_purchases",
+              "label": "Asset Purchases",
+              "required": false
+            },
+            {
+              "id": "asset_sales",
+              "label": "Asset Sales Proceeds",
+              "required": false
+            },
+            {
+              "id": "investment_purchases",
+              "label": "Investment Purchases",
+              "required": false
+            },
+            {
+              "id": "investment_sales",
+              "label": "Investment Sales Proceeds",
+              "required": false
+            },
+            {
+              "id": "loan_proceeds",
+              "label": "Loan Proceeds Received",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "company_master",
+      "name": "Company Master Data",
+      "description": "Registration, directors, shareholding details",
+      "total_parameters": 50,
+      "required_count": 35,
+      "optional_count": 15,
+      "fields": [
+        {
+          "id": "company_name",
+          "label": "Company Legal Name",
+          "required": true
+        },
+        {
+          "id": "trade_name",
+          "label": "Trade Name",
+          "required": false
+        },
+        {
+          "id": "cin",
+          "label": "CIN",
+          "required": true
+        },
+        {
+          "id": "pan",
+          "label": "PAN",
+          "required": true
+        },
+        {
+          "id": "tan",
+          "label": "TAN",
+          "required": true
+        },
+        {
+          "id": "gstin",
+          "label": "GSTIN",
+          "required": true
+        },
+        {
+          "id": "incorporation_date",
+          "label": "Date of Incorporation",
+          "required": true
+        },
+        {
+          "id": "registered_address",
+          "label": "Registered Office Address",
+          "required": true
+        },
+        {
+          "id": "business_address",
+          "label": "Business/Factory Address",
+          "required": true
+        },
+        {
+          "id": "email",
+          "label": "Email Address",
+          "required": true
+        },
+        {
+          "id": "phone",
+          "label": "Phone Number",
+          "required": true
+        },
+        {
+          "id": "website",
+          "label": "Website",
+          "required": false
+        },
+        {
+          "id": "business_activity",
+          "label": "Main Business Activity",
+          "required": true
+        },
+        {
+          "id": "industry_type",
+          "label": "Industry Type",
+          "required": true
+        },
+        {
+          "id": "constitution",
+          "label": "Constitution Type",
+          "required": true
+        },
+        {
+          "id": "authorized_capital",
+          "label": "Authorized Share Capital",
+          "required": true
+        },
+        {
+          "id": "paid_up_capital",
+          "label": "Paid-up Share Capital",
+          "required": true
+        },
+        {
+          "id": "number_of_directors",
+          "label": "Number of Directors",
+          "required": true
+        },
+        {
+          "id": "director_1_name",
+          "label": "Director 1 - Name",
+          "required": true
+        },
+        {
+          "id": "director_1_din",
+          "label": "Director 1 - DIN",
+          "required": true
+        },
+        {
+          "id": "director_1_pan",
+          "label": "Director 1 - PAN",
+          "required": true
+        },
+        {
+          "id": "director_1_dob",
+          "label": "Director 1 - Date of Birth",
+          "required": true
+        },
+        {
+          "id": "director_1_address",
+          "label": "Director 1 - Address",
+          "required": true
+        },
+        {
+          "id": "director_2_name",
+          "label": "Director 2 - Name",
+          "required": false
+        },
+        {
+          "id": "director_2_din",
+          "label": "Director 2 - DIN",
+          "required": false
+        },
+        {
+          "id": "promoter_shareholding",
+          "label": "Promoter Shareholding %",
+          "required": true
+        },
+        {
+          "id": "number_of_employees",
+          "label": "Number of Employees",
+          "required": true
+        },
+        {
+          "id": "turnover_last_year",
+          "label": "Turnover (Last Year)",
+          "required": true
+        },
+        {
+          "id": "years_in_business",
+          "label": "Years in Business",
+          "required": true
+        },
+        {
+          "id": "director_2_pan",
+          "label": "Director 2 - PAN",
+          "required": false
+        },
+        {
+          "id": "director_2_dob",
+          "label": "Director 2 - Date of Birth",
+          "required": false
+        },
+        {
+          "id": "director_2_address",
+          "label": "Director 2 - Address",
+          "required": false
+        },
+        {
+          "id": "director_3_name",
+          "label": "Director 3 - Name",
+          "required": false
+        },
+        {
+          "id": "director_3_din",
+          "label": "Director 3 - DIN",
+          "required": false
+        },
+        {
+          "id": "director_3_pan",
+          "label": "Director 3 - PAN",
+          "required": false
+        },
+        {
+          "id": "non_promoter_shareholding",
+          "label": "Non-Promoter Shareholding %",
+          "required": false
+        },
+        {
+          "id": "institutional_shareholding",
+          "label": "Institutional Shareholding %",
+          "required": false
+        },
+        {
+          "id": "retail_shareholding",
+          "label": "Retail Shareholding %",
+          "required": false
+        },
+        {
+          "id": "foreign_shareholding",
+          "label": "Foreign Shareholding %",
+          "required": false
+        },
+        {
+          "id": "factory_address",
+          "label": "Factory Address",
+          "required": false
+        },
+        {
+          "id": "registered_state",
+          "label": "Registered State",
+          "required": true
+        },
+        {
+          "id": "registered_city",
+          "label": "Registered City",
+          "required": true
+        },
+        {
+          "id": "registered_pincode",
+          "label": "Registered Pincode",
+          "required": true
+        },
+        {
+          "id": "business_state",
+          "label": "Business State",
+          "required": false
+        },
+        {
+          "id": "business_city",
+          "label": "Business City",
+          "required": false
+        },
+        {
+          "id": "business_pincode",
+          "label": "Business Pincode",
+          "required": false
+        },
+        {
+          "id": "company_age_years",
+          "label": "Company Age (Years)",
+          "required": true
+        },
+        {
+          "id": "listing_status",
+          "label": "Listing Status",
+          "required": false
+        },
+        {
+          "id": "credit_rating",
+          "label": "Credit Rating",
+          "required": false
+        },
+        {
+          "id": "parent_company",
+          "label": "Parent Company",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "banking_information",
+      "name": "Banking Information",
+      "description": "Bank accounts, transaction analysis, conduct",
+      "total_parameters": 80,
+      "required_count": 50,
+      "optional_count": 30,
+      "subcategories": [
+        {
+          "id": "account_details",
+          "name": "Bank Account Details",
+          "fields": [
+            {
+              "id": "primary_bank_name",
+              "label": "Primary Bank Name",
+              "required": true
+            },
+            {
+              "id": "primary_account_number",
+              "label": "Primary Account Number",
+              "required": true
+            },
+            {
+              "id": "primary_account_type",
+              "label": "Primary Account Type",
+              "required": true
+            },
+            {
+              "id": "primary_ifsc",
+              "label": "Primary Bank IFSC",
+              "required": true
+            },
+            {
+              "id": "primary_branch",
+              "label": "Primary Bank Branch",
+              "required": true
+            },
+            {
+              "id": "account_vintage",
+              "label": "Account Vintage (Months)",
+              "required": true
+            },
+            {
+              "id": "secondary_bank_name",
+              "label": "Secondary Bank Name",
+              "required": false
+            },
+            {
+              "id": "od_cc_limit",
+              "label": "OD/CC Limit Sanctioned",
+              "required": false
+            },
+            {
+              "id": "od_cc_outstanding",
+              "label": "OD/CC Outstanding",
+              "required": false
+            },
+            {
+              "id": "account_details_field_10",
+              "label": "Bank Account Details Field 10",
+              "required": true
+            },
+            {
+              "id": "account_details_field_11",
+              "label": "Bank Account Details Field 11",
+              "required": true
+            },
+            {
+              "id": "account_details_field_12",
+              "label": "Bank Account Details Field 12",
+              "required": true
+            },
+            {
+              "id": "account_details_field_13",
+              "label": "Bank Account Details Field 13",
+              "required": true
+            },
+            {
+              "id": "account_details_field_14",
+              "label": "Bank Account Details Field 14",
+              "required": true
+            },
+            {
+              "id": "account_details_field_15",
+              "label": "Bank Account Details Field 15",
+              "required": true
+            },
+            {
+              "id": "account_details_field_16",
+              "label": "Bank Account Details Field 16",
+              "required": true
+            },
+            {
+              "id": "account_details_field_17",
+              "label": "Bank Account Details Field 17",
+              "required": true
+            },
+            {
+              "id": "account_details_field_18",
+              "label": "Bank Account Details Field 18",
+              "required": true
+            },
+            {
+              "id": "account_details_field_19",
+              "label": "Bank Account Details Field 19",
+              "required": false
+            },
+            {
+              "id": "account_details_field_20",
+              "label": "Bank Account Details Field 20",
+              "required": false
+            },
+            {
+              "id": "account_details_field_21",
+              "label": "Bank Account Details Field 21",
+              "required": false
+            },
+            {
+              "id": "account_details_field_22",
+              "label": "Bank Account Details Field 22",
+              "required": false
+            },
+            {
+              "id": "account_details_field_23",
+              "label": "Bank Account Details Field 23",
+              "required": false
+            },
+            {
+              "id": "account_details_field_24",
+              "label": "Bank Account Details Field 24",
+              "required": false
+            },
+            {
+              "id": "secondary_bank_name",
+              "label": "Secondary Bank Name",
+              "required": false
+            },
+            {
+              "id": "secondary_account_number",
+              "label": "Secondary Account Number",
+              "required": false
+            },
+            {
+              "id": "secondary_account_type",
+              "label": "Secondary Account Type",
+              "required": false
+            },
+            {
+              "id": "secondary_ifsc",
+              "label": "Secondary Bank IFSC",
+              "required": false
+            },
+            {
+              "id": "loan_account_1_bank",
+              "label": "Loan Account 1 - Bank",
+              "required": false
+            },
+            {
+              "id": "loan_account_1_number",
+              "label": "Loan Account 1 - Account Number",
+              "required": false
+            },
+            {
+              "id": "loan_account_1_type",
+              "label": "Loan Account 1 - Type",
+              "required": false
+            },
+            {
+              "id": "loan_account_1_limit",
+              "label": "Loan Account 1 - Limit",
+              "required": false
+            },
+            {
+              "id": "loan_account_1_outstanding",
+              "label": "Loan Account 1 - Outstanding",
+              "required": false
+            },
+            {
+              "id": "total_banking_relationships",
+              "label": "Total Banking Relationships",
+              "required": true
+            },
+            {
+              "id": "primary_banker_relationship_years",
+              "label": "Primary Banker Relationship (Years)",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "transaction_analysis",
+          "name": "12-Month Banking Analysis",
+          "fields": [
+            {
+              "id": "avg_monthly_credits",
+              "label": "Average Monthly Credits",
+              "required": true
+            },
+            {
+              "id": "avg_monthly_debits",
+              "label": "Average Monthly Debits",
+              "required": true
+            },
+            {
+              "id": "total_credits_12m",
+              "label": "Total Credits (12 months)",
+              "required": true
+            },
+            {
+              "id": "total_debits_12m",
+              "label": "Total Debits (12 months)",
+              "required": true
+            },
+            {
+              "id": "avg_balance",
+              "label": "Average Bank Balance",
+              "required": true
+            },
+            {
+              "id": "min_balance",
+              "label": "Minimum Balance",
+              "required": true
+            },
+            {
+              "id": "max_balance",
+              "label": "Maximum Balance",
+              "required": true
+            },
+            {
+              "id": "cheque_bounces",
+              "label": "Number of Cheque Bounces",
+              "required": true
+            },
+            {
+              "id": "emi_bounces",
+              "label": "Number of EMI/Loan Bounces",
+              "required": true
+            },
+            {
+              "id": "cash_deposits",
+              "label": "Total Cash Deposits",
+              "required": true
+            },
+            {
+              "id": "cash_withdrawals",
+              "label": "Total Cash Withdrawals",
+              "required": true
+            },
+            {
+              "id": "penal_charges",
+              "label": "Penal Charges Levied",
+              "required": false
+            },
+            {
+              "id": "transaction_analysis_field_13",
+              "label": "12-Month Banking Analysis Field 13",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_14",
+              "label": "12-Month Banking Analysis Field 14",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_15",
+              "label": "12-Month Banking Analysis Field 15",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_16",
+              "label": "12-Month Banking Analysis Field 16",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_17",
+              "label": "12-Month Banking Analysis Field 17",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_18",
+              "label": "12-Month Banking Analysis Field 18",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_19",
+              "label": "12-Month Banking Analysis Field 19",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_20",
+              "label": "12-Month Banking Analysis Field 20",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_21",
+              "label": "12-Month Banking Analysis Field 21",
+              "required": true
+            },
+            {
+              "id": "transaction_analysis_field_22",
+              "label": "12-Month Banking Analysis Field 22",
+              "required": false
+            },
+            {
+              "id": "transaction_analysis_field_23",
+              "label": "12-Month Banking Analysis Field 23",
+              "required": false
+            },
+            {
+              "id": "transaction_analysis_field_24",
+              "label": "12-Month Banking Analysis Field 24",
+              "required": false
+            },
+            {
+              "id": "transaction_analysis_field_25",
+              "label": "12-Month Banking Analysis Field 25",
+              "required": false
+            },
+            {
+              "id": "transaction_analysis_field_26",
+              "label": "12-Month Banking Analysis Field 26",
+              "required": false
+            },
+            {
+              "id": "transaction_analysis_field_27",
+              "label": "12-Month Banking Analysis Field 27",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "banking_conduct",
+          "name": "Banking Conduct",
+          "fields": [
+            {
+              "id": "conduct_rating",
+              "label": "Overall Conduct Rating",
+              "required": true
+            },
+            {
+              "id": "dpd_instances",
+              "label": "Days Past Due Instances",
+              "required": true
+            },
+            {
+              "id": "return_reason",
+              "label": "Return Reasons (if any)",
+              "required": false
+            },
+            {
+              "id": "banking_conduct_field_4",
+              "label": "Banking Conduct Field 4",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_5",
+              "label": "Banking Conduct Field 5",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_6",
+              "label": "Banking Conduct Field 6",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_7",
+              "label": "Banking Conduct Field 7",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_8",
+              "label": "Banking Conduct Field 8",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_9",
+              "label": "Banking Conduct Field 9",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_10",
+              "label": "Banking Conduct Field 10",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_11",
+              "label": "Banking Conduct Field 11",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_12",
+              "label": "Banking Conduct Field 12",
+              "required": true
+            },
+            {
+              "id": "banking_conduct_field_13",
+              "label": "Banking Conduct Field 13",
+              "required": false
+            },
+            {
+              "id": "banking_conduct_field_14",
+              "label": "Banking Conduct Field 14",
+              "required": false
+            },
+            {
+              "id": "banking_conduct_field_15",
+              "label": "Banking Conduct Field 15",
+              "required": false
+            },
+            {
+              "id": "banking_conduct_field_16",
+              "label": "Banking Conduct Field 16",
+              "required": false
+            },
+            {
+              "id": "banking_conduct_field_17",
+              "label": "Banking Conduct Field 17",
+              "required": false
+            },
+            {
+              "id": "banking_conduct_field_18",
+              "label": "Banking Conduct Field 18",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gst_returns",
+      "name": "GST Returns Analysis",
+      "description": "GST filings, sales, purchases for 12 months",
+      "total_parameters": 70,
+      "required_count": 40,
+      "optional_count": 30,
+      "months": 12,
+      "fields": [
+        {
+          "id": "gstin_status",
+          "label": "GSTIN Status",
+          "required": true
+        },
+        {
+          "id": "gst_registration_date",
+          "label": "GST Registration Date",
+          "required": true
+        },
+        {
+          "id": "total_sales_12m",
+          "label": "Total Sales (12 months)",
+          "required": true
+        },
+        {
+          "id": "total_purchases_12m",
+          "label": "Total Purchases (12 months)",
+          "required": true
+        },
+        {
+          "id": "avg_monthly_sales",
+          "label": "Average Monthly Sales",
+          "required": true
+        },
+        {
+          "id": "avg_monthly_purchases",
+          "label": "Average Monthly Purchases",
+          "required": true
+        },
+        {
+          "id": "output_tax_12m",
+          "label": "Total Output Tax",
+          "required": true
+        },
+        {
+          "id": "input_tax_12m",
+          "label": "Total Input Tax",
+          "required": true
+        },
+        {
+          "id": "itc_claimed",
+          "label": "ITC Claimed",
+          "required": true
+        },
+        {
+          "id": "gst_paid",
+          "label": "GST Paid (Cash)",
+          "required": true
+        },
+        {
+          "id": "filing_compliance",
+          "label": "Filing Compliance %",
+          "required": true
+        },
+        {
+          "id": "returns_filed",
+          "label": "Returns Filed (out of 12)",
+          "required": true
+        },
+        {
+          "id": "returns_missed",
+          "label": "Returns Missed",
+          "required": true
+        },
+        {
+          "id": "late_fees_paid",
+          "label": "Late Fees Paid",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_15",
+          "label": "GST Returns Analysis 15",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_16",
+          "label": "GST Returns Analysis 16",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_17",
+          "label": "GST Returns Analysis 17",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_18",
+          "label": "GST Returns Analysis 18",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_19",
+          "label": "GST Returns Analysis 19",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_20",
+          "label": "GST Returns Analysis 20",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_21",
+          "label": "GST Returns Analysis 21",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_22",
+          "label": "GST Returns Analysis 22",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_23",
+          "label": "GST Returns Analysis 23",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_24",
+          "label": "GST Returns Analysis 24",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_25",
+          "label": "GST Returns Analysis 25",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_26",
+          "label": "GST Returns Analysis 26",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_27",
+          "label": "GST Returns Analysis 27",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_28",
+          "label": "GST Returns Analysis 28",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_29",
+          "label": "GST Returns Analysis 29",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_30",
+          "label": "GST Returns Analysis 30",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_31",
+          "label": "GST Returns Analysis 31",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_32",
+          "label": "GST Returns Analysis 32",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_33",
+          "label": "GST Returns Analysis 33",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_34",
+          "label": "GST Returns Analysis 34",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_35",
+          "label": "GST Returns Analysis 35",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_36",
+          "label": "GST Returns Analysis 36",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_37",
+          "label": "GST Returns Analysis 37",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_38",
+          "label": "GST Returns Analysis 38",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_39",
+          "label": "GST Returns Analysis 39",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_40",
+          "label": "GST Returns Analysis 40",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_41",
+          "label": "GST Returns Analysis 41",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_42",
+          "label": "GST Returns Analysis 42",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_43",
+          "label": "GST Returns Analysis 43",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_44",
+          "label": "GST Returns Analysis 44",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_45",
+          "label": "GST Returns Analysis 45",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_46",
+          "label": "GST Returns Analysis 46",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_47",
+          "label": "GST Returns Analysis 47",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_48",
+          "label": "GST Returns Analysis 48",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_49",
+          "label": "GST Returns Analysis 49",
+          "required": true
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_50",
+          "label": "GST Returns Analysis 50",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_51",
+          "label": "GST Returns Analysis 51",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_52",
+          "label": "GST Returns Analysis 52",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_53",
+          "label": "GST Returns Analysis 53",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_54",
+          "label": "GST Returns Analysis 54",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_55",
+          "label": "GST Returns Analysis 55",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_56",
+          "label": "GST Returns Analysis 56",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_57",
+          "label": "GST Returns Analysis 57",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_58",
+          "label": "GST Returns Analysis 58",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_59",
+          "label": "GST Returns Analysis 59",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_60",
+          "label": "GST Returns Analysis 60",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_61",
+          "label": "GST Returns Analysis 61",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_62",
+          "label": "GST Returns Analysis 62",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_63",
+          "label": "GST Returns Analysis 63",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_64",
+          "label": "GST Returns Analysis 64",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_65",
+          "label": "GST Returns Analysis 65",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_66",
+          "label": "GST Returns Analysis 66",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_67",
+          "label": "GST Returns Analysis 67",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_68",
+          "label": "GST Returns Analysis 68",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_69",
+          "label": "GST Returns Analysis 69",
+          "required": false
+        },
+        {
+          "id": "gst_returns_gst_returns_analysis_70",
+          "label": "GST Returns Analysis 70",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "income_tax",
+      "name": "Income Tax Returns",
+      "description": "ITR for 3 years, 26AS, TDS details",
+      "total_parameters": 60,
+      "required_count": 40,
+      "optional_count": 20,
+      "years": [
+        "fy23",
+        "fy24",
+        "fy25"
+      ],
+      "fields": [
+        {
+          "id": "itr_filed_fy25",
+          "label": "ITR Filed for FY25",
+          "required": true
+        },
+        {
+          "id": "itr_acknowledgment_fy25",
+          "label": "ITR Acknowledgment FY25",
+          "required": true
+        },
+        {
+          "id": "gross_total_income_fy25",
+          "label": "Gross Total Income FY25",
+          "required": true
+        },
+        {
+          "id": "total_deductions_fy25",
+          "label": "Total Deductions FY25",
+          "required": false
+        },
+        {
+          "id": "taxable_income_fy25",
+          "label": "Taxable Income FY25",
+          "required": true
+        },
+        {
+          "id": "tax_liability_fy25",
+          "label": "Tax Liability FY25",
+          "required": true
+        },
+        {
+          "id": "tax_paid_fy25",
+          "label": "Tax Paid FY25",
+          "required": true
+        },
+        {
+          "id": "refund_claimed_fy25",
+          "label": "Refund Claimed FY25",
+          "required": false
+        },
+        {
+          "id": "form_26as_tds_fy25",
+          "label": "26AS - TDS Amount FY25",
+          "required": true
+        },
+        {
+          "id": "form_26as_advance_tax_fy25",
+          "label": "26AS - Advance Tax FY25",
+          "required": false
+        },
+        {
+          "id": "tds_returns_filed",
+          "label": "TDS Returns Filed (last 4 quarters)",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_12",
+          "label": "Income Tax Returns 12",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_13",
+          "label": "Income Tax Returns 13",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_14",
+          "label": "Income Tax Returns 14",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_15",
+          "label": "Income Tax Returns 15",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_16",
+          "label": "Income Tax Returns 16",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_17",
+          "label": "Income Tax Returns 17",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_18",
+          "label": "Income Tax Returns 18",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_19",
+          "label": "Income Tax Returns 19",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_20",
+          "label": "Income Tax Returns 20",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_21",
+          "label": "Income Tax Returns 21",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_22",
+          "label": "Income Tax Returns 22",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_23",
+          "label": "Income Tax Returns 23",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_24",
+          "label": "Income Tax Returns 24",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_25",
+          "label": "Income Tax Returns 25",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_26",
+          "label": "Income Tax Returns 26",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_27",
+          "label": "Income Tax Returns 27",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_28",
+          "label": "Income Tax Returns 28",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_29",
+          "label": "Income Tax Returns 29",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_30",
+          "label": "Income Tax Returns 30",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_31",
+          "label": "Income Tax Returns 31",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_32",
+          "label": "Income Tax Returns 32",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_33",
+          "label": "Income Tax Returns 33",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_34",
+          "label": "Income Tax Returns 34",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_35",
+          "label": "Income Tax Returns 35",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_36",
+          "label": "Income Tax Returns 36",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_37",
+          "label": "Income Tax Returns 37",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_38",
+          "label": "Income Tax Returns 38",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_39",
+          "label": "Income Tax Returns 39",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_40",
+          "label": "Income Tax Returns 40",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_41",
+          "label": "Income Tax Returns 41",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_42",
+          "label": "Income Tax Returns 42",
+          "required": true
+        },
+        {
+          "id": "income_tax_income_tax_returns_43",
+          "label": "Income Tax Returns 43",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_44",
+          "label": "Income Tax Returns 44",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_45",
+          "label": "Income Tax Returns 45",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_46",
+          "label": "Income Tax Returns 46",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_47",
+          "label": "Income Tax Returns 47",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_48",
+          "label": "Income Tax Returns 48",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_49",
+          "label": "Income Tax Returns 49",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_50",
+          "label": "Income Tax Returns 50",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_51",
+          "label": "Income Tax Returns 51",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_52",
+          "label": "Income Tax Returns 52",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_53",
+          "label": "Income Tax Returns 53",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_54",
+          "label": "Income Tax Returns 54",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_55",
+          "label": "Income Tax Returns 55",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_56",
+          "label": "Income Tax Returns 56",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_57",
+          "label": "Income Tax Returns 57",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_58",
+          "label": "Income Tax Returns 58",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_59",
+          "label": "Income Tax Returns 59",
+          "required": false
+        },
+        {
+          "id": "income_tax_income_tax_returns_60",
+          "label": "Income Tax Returns 60",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "credit_bureau",
+      "name": "Credit Bureau Data",
+      "description": "CIBIL score, credit history, existing loans",
+      "total_parameters": 90,
+      "required_count": 60,
+      "optional_count": 30,
+      "subcategories": [
+        {
+          "id": "cibil_scores",
+          "name": "CIBIL Scores",
+          "fields": [
+            {
+              "id": "company_cibil_score",
+              "label": "Company CIBIL Score",
+              "required": true
+            },
+            {
+              "id": "director_1_cibil_score",
+              "label": "Director 1 CIBIL Score",
+              "required": true
+            },
+            {
+              "id": "director_2_cibil_score",
+              "label": "Director 2 CIBIL Score",
+              "required": false
+            },
+            {
+              "id": "guarantor_cibil_score",
+              "label": "Guarantor CIBIL Score",
+              "required": false
+            },
+            {
+              "id": "director_3_cibil_score",
+              "label": "Director 3 CIBIL Score",
+              "required": false
+            },
+            {
+              "id": "director_4_cibil_score",
+              "label": "Director 4 CIBIL Score",
+              "required": false
+            },
+            {
+              "id": "company_cibil_score_trend",
+              "label": "Company CIBIL Score Trend",
+              "required": false
+            },
+            {
+              "id": "company_commercial_score",
+              "label": "Company Commercial Credit Score",
+              "required": true
+            },
+            {
+              "id": "director_1_commercial_score",
+              "label": "Director 1 Commercial Score",
+              "required": false
+            },
+            {
+              "id": "company_score_date",
+              "label": "Company Score Pull Date",
+              "required": true
+            },
+            {
+              "id": "director_1_score_date",
+              "label": "Director 1 Score Pull Date",
+              "required": true
+            },
+            {
+              "id": "company_score_previous",
+              "label": "Company Score (Previous)",
+              "required": false
+            },
+            {
+              "id": "cibil_rank",
+              "label": "CIBIL Rank",
+              "required": false
+            },
+            {
+              "id": "credit_score_factors_positive",
+              "label": "Credit Score - Positive Factors",
+              "required": false
+            },
+            {
+              "id": "credit_score_factors_negative",
+              "label": "Credit Score - Negative Factors",
+              "required": false
+            },
+            {
+              "id": "credit_score_change_6m",
+              "label": "Credit Score Change (6 Months)",
+              "required": false
+            },
+            {
+              "id": "credit_score_percentile",
+              "label": "Credit Score Percentile",
+              "required": false
+            },
+            {
+              "id": "bureau_vintage",
+              "label": "Bureau Vintage (Months)",
+              "required": false
+            },
+            {
+              "id": "first_credit_date",
+              "label": "First Credit Account Date",
+              "required": false
+            },
+            {
+              "id": "credit_mix_secured_pct",
+              "label": "Credit Mix - Secured %",
+              "required": false
+            },
+            {
+              "id": "credit_mix_unsecured_pct",
+              "label": "Credit Mix - Unsecured %",
+              "required": false
+            },
+            {
+              "id": "new_credit_last_6m",
+              "label": "New Credit Accounts (Last 6 Months)",
+              "required": false
+            },
+            {
+              "id": "closed_accounts_last_12m",
+              "label": "Closed Accounts (Last 12 Months)",
+              "required": false
+            },
+            {
+              "id": "credit_report_version",
+              "label": "Credit Report Version",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "credit_history",
+          "name": "Credit History (36 months)",
+          "fields": [
+            {
+              "id": "total_accounts",
+              "label": "Total Credit Accounts",
+              "required": true
+            },
+            {
+              "id": "active_accounts",
+              "label": "Active Accounts",
+              "required": true
+            },
+            {
+              "id": "closed_accounts",
+              "label": "Closed Accounts",
+              "required": true
+            },
+            {
+              "id": "dpd_0_months",
+              "label": "Months with 0 DPD",
+              "required": true
+            },
+            {
+              "id": "dpd_30_plus",
+              "label": "Instances of 30+ DPD",
+              "required": true
+            },
+            {
+              "id": "dpd_60_plus",
+              "label": "Instances of 60+ DPD",
+              "required": true
+            },
+            {
+              "id": "dpd_90_plus",
+              "label": "Instances of 90+ DPD",
+              "required": true
+            },
+            {
+              "id": "written_off_accounts",
+              "label": "Written-off Accounts",
+              "required": true
+            },
+            {
+              "id": "settled_accounts",
+              "label": "Settled Accounts",
+              "required": true
+            },
+            {
+              "id": "restructured_accounts",
+              "label": "Restructured Accounts",
+              "required": false
+            },
+            {
+              "id": "overdues_last_3m",
+              "label": "Overdues in Last 3 Months",
+              "required": true
+            },
+            {
+              "id": "overdues_last_6m",
+              "label": "Overdues in Last 6 Months",
+              "required": true
+            },
+            {
+              "id": "overdues_last_12m",
+              "label": "Overdues in Last 12 Months",
+              "required": true
+            },
+            {
+              "id": "highest_dpd_ever",
+              "label": "Highest DPD Ever Recorded",
+              "required": true
+            },
+            {
+              "id": "months_since_last_delinquency",
+              "label": "Months Since Last Delinquency",
+              "required": false
+            },
+            {
+              "id": "suit_filed_accounts",
+              "label": "Suit Filed Accounts",
+              "required": true
+            },
+            {
+              "id": "wilful_default_status",
+              "label": "Wilful Default Status",
+              "required": true
+            },
+            {
+              "id": "credit_score_trend_6m",
+              "label": "Credit Score Trend (6 months)",
+              "required": false
+            },
+            {
+              "id": "repayment_track_record",
+              "label": "Repayment Track Record Score",
+              "required": true
+            },
+            {
+              "id": "npa_accounts",
+              "label": "NPA Accounts",
+              "required": true
+            },
+            {
+              "id": "sma_0_accounts",
+              "label": "SMA-0 Accounts",
+              "required": false
+            },
+            {
+              "id": "sma_1_accounts",
+              "label": "SMA-1 Accounts",
+              "required": false
+            },
+            {
+              "id": "sma_2_accounts",
+              "label": "SMA-2 Accounts",
+              "required": false
+            },
+            {
+              "id": "months_overdue_current",
+              "label": "Months Overdue (Current)",
+              "required": true
+            },
+            {
+              "id": "total_overdue_amount",
+              "label": "Total Overdue Amount",
+              "required": true
+            },
+            {
+              "id": "credit_age_oldest_account",
+              "label": "Credit Age - Oldest Account (Years)",
+              "required": false
+            },
+            {
+              "id": "account_ownership_type",
+              "label": "Account Ownership Type (Individual/Joint/Guarantor)",
+              "required": false
+            },
+            {
+              "id": "bureau_score_factors",
+              "label": "Bureau Score - Key Negative Factors",
+              "required": false
+            },
+            {
+              "id": "commercial_credit_utilization",
+              "label": "Commercial Credit Utilization %",
+              "required": false
+            },
+            {
+              "id": "retail_credit_utilization",
+              "label": "Retail Credit Utilization %",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "existing_loans",
+          "name": "Existing Credit Facilities",
+          "fields": [
+            {
+              "id": "total_outstanding_amount",
+              "label": "Total Outstanding Amount",
+              "required": true
+            },
+            {
+              "id": "secured_loans_outstanding",
+              "label": "Secured Loans Outstanding",
+              "required": true
+            },
+            {
+              "id": "unsecured_loans_outstanding",
+              "label": "Unsecured Loans Outstanding",
+              "required": true
+            },
+            {
+              "id": "term_loans_outstanding",
+              "label": "Term Loans Outstanding",
+              "required": true
+            },
+            {
+              "id": "working_capital_outstanding",
+              "label": "Working Capital Outstanding",
+              "required": false
+            },
+            {
+              "id": "credit_card_outstanding",
+              "label": "Credit Card Outstanding",
+              "required": false
+            },
+            {
+              "id": "monthly_emi_obligation",
+              "label": "Total Monthly EMI",
+              "required": true
+            },
+            {
+              "id": "current_emi_to_income",
+              "label": "Current EMI to Income Ratio",
+              "required": true
+            },
+            {
+              "id": "overdraft_limit",
+              "label": "Overdraft Limit",
+              "required": false
+            },
+            {
+              "id": "overdraft_utilization",
+              "label": "Overdraft Utilization",
+              "required": false
+            },
+            {
+              "id": "cc_limit",
+              "label": "Cash Credit Limit",
+              "required": false
+            },
+            {
+              "id": "cc_utilization",
+              "label": "Cash Credit Utilization",
+              "required": false
+            },
+            {
+              "id": "vehicle_loans_outstanding",
+              "label": "Vehicle Loans Outstanding",
+              "required": false
+            },
+            {
+              "id": "equipment_loans_outstanding",
+              "label": "Equipment Loans Outstanding",
+              "required": false
+            },
+            {
+              "id": "property_loans_outstanding",
+              "label": "Property Loans Outstanding",
+              "required": false
+            },
+            {
+              "id": "personal_loans_directors",
+              "label": "Personal Loans - Directors",
+              "required": false
+            },
+            {
+              "id": "home_loans_directors",
+              "label": "Home Loans - Directors",
+              "required": false
+            },
+            {
+              "id": "credit_utilization_ratio",
+              "label": "Credit Utilization Ratio %",
+              "required": true
+            },
+            {
+              "id": "average_loan_tenure",
+              "label": "Average Loan Tenure (Months)",
+              "required": false
+            },
+            {
+              "id": "longest_credit_history",
+              "label": "Longest Credit History (Years)",
+              "required": false
+            },
+            {
+              "id": "newest_credit_account",
+              "label": "Newest Credit Account Age (Months)",
+              "required": false
+            },
+            {
+              "id": "total_credit_limit",
+              "label": "Total Credit Limit",
+              "required": true
+            },
+            {
+              "id": "available_credit",
+              "label": "Available Credit",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "enquiries",
+          "name": "Credit Enquiries",
+          "fields": [
+            {
+              "id": "enquiries_last_3m",
+              "label": "Enquiries (Last 3 Months)",
+              "required": true
+            },
+            {
+              "id": "enquiries_last_6m",
+              "label": "Enquiries (Last 6 Months)",
+              "required": true
+            },
+            {
+              "id": "enquiries_last_12m",
+              "label": "Enquiries (Last 12 Months)",
+              "required": true
+            },
+            {
+              "id": "enquiries_by_banks_3m",
+              "label": "Enquiries by Banks (Last 3 Months)",
+              "required": true
+            },
+            {
+              "id": "enquiries_by_nbfc_3m",
+              "label": "Enquiries by NBFCs (Last 3 Months)",
+              "required": true
+            },
+            {
+              "id": "enquiries_by_others_3m",
+              "label": "Enquiries by Others (Last 3 Months)",
+              "required": false
+            },
+            {
+              "id": "hard_enquiries_count",
+              "label": "Hard Enquiries Count (Last 6 Months)",
+              "required": true
+            },
+            {
+              "id": "soft_enquiries_count",
+              "label": "Soft Enquiries Count (Last 6 Months)",
+              "required": false
+            },
+            {
+              "id": "enquiry_purpose_loan",
+              "label": "Enquiries for Loan Purpose",
+              "required": false
+            },
+            {
+              "id": "enquiry_purpose_credit_card",
+              "label": "Enquiries for Credit Card",
+              "required": false
+            },
+            {
+              "id": "multiple_enquiries_single_day",
+              "label": "Multiple Enquiries on Single Day (Flag)",
+              "required": true
+            },
+            {
+              "id": "enquiry_to_account_ratio",
+              "label": "Enquiry to Account Conversion Ratio",
+              "required": false
+            },
+            {
+              "id": "recent_enquiry_institutions",
+              "label": "Recent Enquiry - Institution Names",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "statutory_compliance",
+      "name": "Statutory Compliances",
+      "description": "PF, ESI, ROC, Professional Tax filings",
+      "total_parameters": 40,
+      "required_count": 25,
+      "optional_count": 15,
+      "fields": [
+        {
+          "id": "pf_registration",
+          "label": "PF Registration Number",
+          "required": true
+        },
+        {
+          "id": "pf_filing_status",
+          "label": "PF Filing Status",
+          "required": true
+        },
+        {
+          "id": "pf_arrears",
+          "label": "PF Arrears (if any)",
+          "required": false
+        },
+        {
+          "id": "esi_registration",
+          "label": "ESI Registration Number",
+          "required": false
+        },
+        {
+          "id": "esi_filing_status",
+          "label": "ESI Filing Status",
+          "required": false
+        },
+        {
+          "id": "professional_tax_reg",
+          "label": "Professional Tax Registration",
+          "required": true
+        },
+        {
+          "id": "roc_filings_updated",
+          "label": "ROC Filings Up-to-date",
+          "required": true
+        },
+        {
+          "id": "annual_return_filed",
+          "label": "Annual Return Filed (Latest)",
+          "required": true
+        },
+        {
+          "id": "audit_report_qualified",
+          "label": "Audit Report Qualified?",
+          "required": true
+        },
+        {
+          "id": "auditor_name",
+          "label": "Auditor Name",
+          "required": true
+        },
+        {
+          "id": "auditor_firm",
+          "label": "Auditor Firm",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_12",
+          "label": "Statutory Compliances 12",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_13",
+          "label": "Statutory Compliances 13",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_14",
+          "label": "Statutory Compliances 14",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_15",
+          "label": "Statutory Compliances 15",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_16",
+          "label": "Statutory Compliances 16",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_17",
+          "label": "Statutory Compliances 17",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_18",
+          "label": "Statutory Compliances 18",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_19",
+          "label": "Statutory Compliances 19",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_20",
+          "label": "Statutory Compliances 20",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_21",
+          "label": "Statutory Compliances 21",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_22",
+          "label": "Statutory Compliances 22",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_23",
+          "label": "Statutory Compliances 23",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_24",
+          "label": "Statutory Compliances 24",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_25",
+          "label": "Statutory Compliances 25",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_26",
+          "label": "Statutory Compliances 26",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_27",
+          "label": "Statutory Compliances 27",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_28",
+          "label": "Statutory Compliances 28",
+          "required": true
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_29",
+          "label": "Statutory Compliances 29",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_30",
+          "label": "Statutory Compliances 30",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_31",
+          "label": "Statutory Compliances 31",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_32",
+          "label": "Statutory Compliances 32",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_33",
+          "label": "Statutory Compliances 33",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_34",
+          "label": "Statutory Compliances 34",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_35",
+          "label": "Statutory Compliances 35",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_36",
+          "label": "Statutory Compliances 36",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_37",
+          "label": "Statutory Compliances 37",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_38",
+          "label": "Statutory Compliances 38",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_39",
+          "label": "Statutory Compliances 39",
+          "required": false
+        },
+        {
+          "id": "statutory_compliance_statutory_compliances_40",
+          "label": "Statutory Compliances 40",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "property_collateral",
+      "name": "Property & Collateral",
+      "description": "Property details, valuation, securities offered",
+      "total_parameters": 50,
+      "required_count": 20,
+      "optional_count": 30,
+      "fields": [
+        {
+          "id": "property_offered",
+          "label": "Property Offered as Security",
+          "required": false
+        },
+        {
+          "id": "property_type",
+          "label": "Property Type",
+          "required": false
+        },
+        {
+          "id": "property_location",
+          "label": "Property Location",
+          "required": false
+        },
+        {
+          "id": "property_area_sqft",
+          "label": "Property Area (Sq.Ft)",
+          "required": false
+        },
+        {
+          "id": "property_owner",
+          "label": "Property Owner Name",
+          "required": false
+        },
+        {
+          "id": "property_market_value",
+          "label": "Market Value",
+          "required": false
+        },
+        {
+          "id": "property_forced_sale_value",
+          "label": "Forced Sale Value",
+          "required": false
+        },
+        {
+          "id": "property_valuation_date",
+          "label": "Valuation Date",
+          "required": false
+        },
+        {
+          "id": "property_valuer_name",
+          "label": "Valuer Name",
+          "required": false
+        },
+        {
+          "id": "existing_mortgage",
+          "label": "Existing Mortgage (if any)",
+          "required": false
+        },
+        {
+          "id": "title_clear",
+          "label": "Clear Title",
+          "required": false
+        },
+        {
+          "id": "encumbrance_check",
+          "label": "Encumbrance Check Done",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_13",
+          "label": "Property & Collateral 13",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_14",
+          "label": "Property & Collateral 14",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_15",
+          "label": "Property & Collateral 15",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_16",
+          "label": "Property & Collateral 16",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_17",
+          "label": "Property & Collateral 17",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_18",
+          "label": "Property & Collateral 18",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_19",
+          "label": "Property & Collateral 19",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_20",
+          "label": "Property & Collateral 20",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_21",
+          "label": "Property & Collateral 21",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_22",
+          "label": "Property & Collateral 22",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_23",
+          "label": "Property & Collateral 23",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_24",
+          "label": "Property & Collateral 24",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_25",
+          "label": "Property & Collateral 25",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_26",
+          "label": "Property & Collateral 26",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_27",
+          "label": "Property & Collateral 27",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_28",
+          "label": "Property & Collateral 28",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_29",
+          "label": "Property & Collateral 29",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_30",
+          "label": "Property & Collateral 30",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_31",
+          "label": "Property & Collateral 31",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_32",
+          "label": "Property & Collateral 32",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_33",
+          "label": "Property & Collateral 33",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_34",
+          "label": "Property & Collateral 34",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_35",
+          "label": "Property & Collateral 35",
+          "required": true
+        },
+        {
+          "id": "property_collateral_property_&_collateral_36",
+          "label": "Property & Collateral 36",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_37",
+          "label": "Property & Collateral 37",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_38",
+          "label": "Property & Collateral 38",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_39",
+          "label": "Property & Collateral 39",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_40",
+          "label": "Property & Collateral 40",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_41",
+          "label": "Property & Collateral 41",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_42",
+          "label": "Property & Collateral 42",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_43",
+          "label": "Property & Collateral 43",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_44",
+          "label": "Property & Collateral 44",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_45",
+          "label": "Property & Collateral 45",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_46",
+          "label": "Property & Collateral 46",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_47",
+          "label": "Property & Collateral 47",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_48",
+          "label": "Property & Collateral 48",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_49",
+          "label": "Property & Collateral 49",
+          "required": false
+        },
+        {
+          "id": "property_collateral_property_&_collateral_50",
+          "label": "Property & Collateral 50",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "kyc_documents",
+      "name": "KYC Documents",
+      "description": "Identity, address proof, photos",
+      "total_parameters": 30,
+      "required_count": 25,
+      "optional_count": 5,
+      "fields": [
+        {
+          "id": "company_pan_verified",
+          "label": "Company PAN Verified",
+          "required": true
+        },
+        {
+          "id": "director_1_aadhaar",
+          "label": "Director 1 Aadhaar Number",
+          "required": true
+        },
+        {
+          "id": "director_1_aadhaar_verified",
+          "label": "Director 1 Aadhaar Verified",
+          "required": true
+        },
+        {
+          "id": "director_1_pan_verified",
+          "label": "Director 1 PAN Verified",
+          "required": true
+        },
+        {
+          "id": "director_1_photo",
+          "label": "Director 1 Photo",
+          "required": true
+        },
+        {
+          "id": "director_2_aadhaar",
+          "label": "Director 2 Aadhaar Number",
+          "required": false
+        },
+        {
+          "id": "company_address_verified",
+          "label": "Company Address Verified",
+          "required": true
+        },
+        {
+          "id": "residence_address_verified",
+          "label": "Residence Address Verified",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_9",
+          "label": "KYC Documents 9",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_10",
+          "label": "KYC Documents 10",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_11",
+          "label": "KYC Documents 11",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_12",
+          "label": "KYC Documents 12",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_13",
+          "label": "KYC Documents 13",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_14",
+          "label": "KYC Documents 14",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_15",
+          "label": "KYC Documents 15",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_16",
+          "label": "KYC Documents 16",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_17",
+          "label": "KYC Documents 17",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_18",
+          "label": "KYC Documents 18",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_19",
+          "label": "KYC Documents 19",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_20",
+          "label": "KYC Documents 20",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_21",
+          "label": "KYC Documents 21",
+          "required": true
+        },
+        {
+          "id": "kyc_documents_kyc_documents_22",
+          "label": "KYC Documents 22",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_23",
+          "label": "KYC Documents 23",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_24",
+          "label": "KYC Documents 24",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_25",
+          "label": "KYC Documents 25",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_26",
+          "label": "KYC Documents 26",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_27",
+          "label": "KYC Documents 27",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_28",
+          "label": "KYC Documents 28",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_29",
+          "label": "KYC Documents 29",
+          "required": false
+        },
+        {
+          "id": "kyc_documents_kyc_documents_30",
+          "label": "KYC Documents 30",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "business_verification",
+      "name": "Business Verification",
+      "description": "Stocks, receivables, payables, customer analysis",
+      "total_parameters": 40,
+      "required_count": 25,
+      "optional_count": 15,
+      "fields": [
+        {
+          "id": "stock_value",
+          "label": "Current Stock Value",
+          "required": true
+        },
+        {
+          "id": "stock_verification_date",
+          "label": "Stock Verification Date",
+          "required": true
+        },
+        {
+          "id": "receivables_total",
+          "label": "Total Receivables",
+          "required": true
+        },
+        {
+          "id": "receivables_0_30_days",
+          "label": "Receivables 0-30 days",
+          "required": true
+        },
+        {
+          "id": "receivables_31_60_days",
+          "label": "Receivables 31-60 days",
+          "required": true
+        },
+        {
+          "id": "receivables_61_90_days",
+          "label": "Receivables 61-90 days",
+          "required": true
+        },
+        {
+          "id": "receivables_above_90_days",
+          "label": "Receivables >90 days",
+          "required": true
+        },
+        {
+          "id": "payables_total",
+          "label": "Total Payables",
+          "required": true
+        },
+        {
+          "id": "payables_0_30_days",
+          "label": "Payables 0-30 days",
+          "required": true
+        },
+        {
+          "id": "payables_31_60_days",
+          "label": "Payables 31-60 days",
+          "required": true
+        },
+        {
+          "id": "top_customer_1_name",
+          "label": "Top Customer 1 Name",
+          "required": true
+        },
+        {
+          "id": "top_customer_1_contribution",
+          "label": "Top Customer 1 % Contribution",
+          "required": true
+        },
+        {
+          "id": "customer_concentration_risk",
+          "label": "Customer Concentration Risk",
+          "required": true
+        },
+        {
+          "id": "supplier_concentration_risk",
+          "label": "Supplier Concentration Risk",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_15",
+          "label": "Business Verification 15",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_16",
+          "label": "Business Verification 16",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_17",
+          "label": "Business Verification 17",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_18",
+          "label": "Business Verification 18",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_19",
+          "label": "Business Verification 19",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_20",
+          "label": "Business Verification 20",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_21",
+          "label": "Business Verification 21",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_22",
+          "label": "Business Verification 22",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_23",
+          "label": "Business Verification 23",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_24",
+          "label": "Business Verification 24",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_25",
+          "label": "Business Verification 25",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_26",
+          "label": "Business Verification 26",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_27",
+          "label": "Business Verification 27",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_28",
+          "label": "Business Verification 28",
+          "required": true
+        },
+        {
+          "id": "business_verification_business_verification_29",
+          "label": "Business Verification 29",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_30",
+          "label": "Business Verification 30",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_31",
+          "label": "Business Verification 31",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_32",
+          "label": "Business Verification 32",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_33",
+          "label": "Business Verification 33",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_34",
+          "label": "Business Verification 34",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_35",
+          "label": "Business Verification 35",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_36",
+          "label": "Business Verification 36",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_37",
+          "label": "Business Verification 37",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_38",
+          "label": "Business Verification 38",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_39",
+          "label": "Business Verification 39",
+          "required": false
+        },
+        {
+          "id": "business_verification_business_verification_40",
+          "label": "Business Verification 40",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "calculated_metrics",
+      "name": "Calculated Financial Metrics",
+      "description": "Ratios, trends, working capital analysis",
+      "total_parameters": 50,
+      "required_count": 40,
+      "optional_count": 10,
+      "subcategories": [
+        {
+          "id": "liquidity_ratios",
+          "name": "Liquidity Ratios",
+          "fields": [
+            {
+              "id": "current_ratio_fy25",
+              "label": "Current Ratio FY25",
+              "required": true
+            },
+            {
+              "id": "quick_ratio_fy25",
+              "label": "Quick Ratio FY25",
+              "required": true
+            },
+            {
+              "id": "cash_ratio_fy25",
+              "label": "Cash Ratio FY25",
+              "required": false
+            },
+            {
+              "id": "current_ratio_fy24",
+              "label": "Current Ratio FY24",
+              "required": true
+            },
+            {
+              "id": "current_ratio_fy23",
+              "label": "Current Ratio FY23",
+              "required": true
+            },
+            {
+              "id": "quick_ratio_fy24",
+              "label": "Quick Ratio FY24",
+              "required": true
+            },
+            {
+              "id": "quick_ratio_fy23",
+              "label": "Quick Ratio FY23",
+              "required": true
+            },
+            {
+              "id": "working_capital_fy25",
+              "label": "Working Capital FY25",
+              "required": true
+            },
+            {
+              "id": "working_capital_fy24",
+              "label": "Working Capital FY24",
+              "required": true
+            },
+            {
+              "id": "working_capital_fy23",
+              "label": "Working Capital FY23",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "leverage_ratios",
+          "name": "Leverage Ratios",
+          "fields": [
+            {
+              "id": "debt_equity_ratio_fy25",
+              "label": "Debt-Equity Ratio FY25",
+              "required": true
+            },
+            {
+              "id": "tol_tnw_fy25",
+              "label": "TOL/TNW FY25",
+              "required": true
+            },
+            {
+              "id": "interest_coverage_fy25",
+              "label": "Interest Coverage Ratio FY25",
+              "required": true
+            },
+            {
+              "id": "dscr_fy25",
+              "label": "DSCR FY25",
+              "required": true
+            },
+            {
+              "id": "debt_equity_ratio_fy24",
+              "label": "Debt-Equity Ratio FY24",
+              "required": true
+            },
+            {
+              "id": "debt_equity_ratio_fy23",
+              "label": "Debt-Equity Ratio FY23",
+              "required": true
+            },
+            {
+              "id": "interest_coverage_fy24",
+              "label": "Interest Coverage Ratio FY24",
+              "required": true
+            },
+            {
+              "id": "interest_coverage_fy23",
+              "label": "Interest Coverage Ratio FY23",
+              "required": true
+            },
+            {
+              "id": "dscr_fy24",
+              "label": "DSCR FY24",
+              "required": true
+            },
+            {
+              "id": "dscr_fy23",
+              "label": "DSCR FY23",
+              "required": true
+            },
+            {
+              "id": "total_debt_fy25",
+              "label": "Total Debt FY25",
+              "required": true
+            },
+            {
+              "id": "net_debt_fy25",
+              "label": "Net Debt FY25",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "profitability_ratios",
+          "name": "Profitability Ratios",
+          "fields": [
+            {
+              "id": "gross_profit_margin_fy25",
+              "label": "Gross Profit Margin FY25",
+              "required": true
+            },
+            {
+              "id": "net_profit_margin_fy25",
+              "label": "Net Profit Margin FY25",
+              "required": true
+            },
+            {
+              "id": "ebitda_margin_fy25",
+              "label": "EBITDA Margin FY25",
+              "required": true
+            },
+            {
+              "id": "roa_fy25",
+              "label": "Return on Assets FY25",
+              "required": true
+            },
+            {
+              "id": "roe_fy25",
+              "label": "Return on Equity FY25",
+              "required": true
+            },
+            {
+              "id": "roce_fy25",
+              "label": "Return on Capital Employed FY25",
+              "required": true
+            },
+            {
+              "id": "gross_profit_margin_fy24",
+              "label": "Gross Profit Margin FY24",
+              "required": true
+            },
+            {
+              "id": "net_profit_margin_fy24",
+              "label": "Net Profit Margin FY24",
+              "required": true
+            },
+            {
+              "id": "ebitda_margin_fy24",
+              "label": "EBITDA Margin FY24",
+              "required": true
+            },
+            {
+              "id": "roa_fy24",
+              "label": "Return on Assets FY24",
+              "required": true
+            },
+            {
+              "id": "roe_fy24",
+              "label": "Return on Equity FY24",
+              "required": true
+            },
+            {
+              "id": "roce_fy25",
+              "label": "Return on Capital Employed FY25",
+              "required": true
+            },
+            {
+              "id": "roce_fy24",
+              "label": "Return on Capital Employed FY24",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "efficiency_ratios",
+          "name": "Efficiency Ratios",
+          "fields": [
+            {
+              "id": "inventory_turnover_fy25",
+              "label": "Inventory Turnover FY25",
+              "required": true
+            },
+            {
+              "id": "receivables_turnover_fy25",
+              "label": "Receivables Turnover FY25",
+              "required": true
+            },
+            {
+              "id": "payables_turnover_fy25",
+              "label": "Payables Turnover FY25",
+              "required": true
+            },
+            {
+              "id": "asset_turnover_fy25",
+              "label": "Asset Turnover FY25",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "trend_analysis",
+          "name": "Growth Trends",
+          "fields": [
+            {
+              "id": "revenue_growth_fy24_fy25",
+              "label": "Revenue Growth FY24-FY25 %",
+              "required": true
+            },
+            {
+              "id": "revenue_growth_fy23_fy24",
+              "label": "Revenue Growth FY23-FY24 %",
+              "required": true
+            },
+            {
+              "id": "pat_growth_fy24_fy25",
+              "label": "PAT Growth FY24-FY25 %",
+              "required": true
+            },
+            {
+              "id": "net_worth_growth",
+              "label": "Net Worth Growth %",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "efficiency_ratios",
+          "name": "Efficiency Ratios",
+          "fields": [
+            {
+              "id": "inventory_days_fy25",
+              "label": "Inventory Days FY25",
+              "required": true
+            },
+            {
+              "id": "receivables_days_fy25",
+              "label": "Receivables Days FY25",
+              "required": true
+            },
+            {
+              "id": "payables_days_fy25",
+              "label": "Payables Days FY25",
+              "required": true
+            },
+            {
+              "id": "cash_conversion_cycle_fy25",
+              "label": "Cash Conversion Cycle FY25",
+              "required": true
+            },
+            {
+              "id": "asset_turnover_fy25",
+              "label": "Asset Turnover FY25",
+              "required": false
+            },
+            {
+              "id": "inventory_turnover_fy25",
+              "label": "Inventory Turnover FY25",
+              "required": false
+            },
+            {
+              "id": "receivables_turnover_fy25",
+              "label": "Receivables Turnover FY25",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risk_indicators",
+      "name": "Risk Indicators & Red Flags",
+      "description": "Risk assessment, negative indicators",
+      "total_parameters": 40,
+      "required_count": 30,
+      "optional_count": 10,
+      "fields": [
+        {
+          "id": "negative_net_worth",
+          "label": "Negative Net Worth",
+          "required": true
+        },
+        {
+          "id": "declining_sales_trend",
+          "label": "Declining Sales (2 years)",
+          "required": true
+        },
+        {
+          "id": "losses_reported",
+          "label": "Losses Reported",
+          "required": true
+        },
+        {
+          "id": "high_leverage",
+          "label": "High Leverage (TOL/TNW >3)",
+          "required": true
+        },
+        {
+          "id": "low_current_ratio",
+          "label": "Low Current Ratio (<1.33)",
+          "required": true
+        },
+        {
+          "id": "poor_dscr",
+          "label": "Poor DSCR (<1.25)",
+          "required": true
+        },
+        {
+          "id": "adverse_cibil",
+          "label": "Adverse CIBIL (DPD/Defaults)",
+          "required": true
+        },
+        {
+          "id": "gst_non_compliance",
+          "label": "GST Non-compliance",
+          "required": true
+        },
+        {
+          "id": "cheque_bounces",
+          "label": "Cheque Bounces (>2 in 12m)",
+          "required": true
+        },
+        {
+          "id": "litigations_pending",
+          "label": "Pending Litigations",
+          "required": false
+        },
+        {
+          "id": "wilful_defaulter",
+          "label": "Wilful Defaulter List Check",
+          "required": true
+        },
+        {
+          "id": "politically_exposed",
+          "label": "Politically Exposed Person",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_13",
+          "label": "Risk Indicators & Red Flags 13",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_14",
+          "label": "Risk Indicators & Red Flags 14",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_15",
+          "label": "Risk Indicators & Red Flags 15",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_16",
+          "label": "Risk Indicators & Red Flags 16",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_17",
+          "label": "Risk Indicators & Red Flags 17",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_18",
+          "label": "Risk Indicators & Red Flags 18",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_19",
+          "label": "Risk Indicators & Red Flags 19",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_20",
+          "label": "Risk Indicators & Red Flags 20",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_21",
+          "label": "Risk Indicators & Red Flags 21",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_22",
+          "label": "Risk Indicators & Red Flags 22",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_23",
+          "label": "Risk Indicators & Red Flags 23",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_24",
+          "label": "Risk Indicators & Red Flags 24",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_25",
+          "label": "Risk Indicators & Red Flags 25",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_26",
+          "label": "Risk Indicators & Red Flags 26",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_27",
+          "label": "Risk Indicators & Red Flags 27",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_28",
+          "label": "Risk Indicators & Red Flags 28",
+          "required": true
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_29",
+          "label": "Risk Indicators & Red Flags 29",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_30",
+          "label": "Risk Indicators & Red Flags 30",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_31",
+          "label": "Risk Indicators & Red Flags 31",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_32",
+          "label": "Risk Indicators & Red Flags 32",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_33",
+          "label": "Risk Indicators & Red Flags 33",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_34",
+          "label": "Risk Indicators & Red Flags 34",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_35",
+          "label": "Risk Indicators & Red Flags 35",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_36",
+          "label": "Risk Indicators & Red Flags 36",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_37",
+          "label": "Risk Indicators & Red Flags 37",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_38",
+          "label": "Risk Indicators & Red Flags 38",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_39",
+          "label": "Risk Indicators & Red Flags 39",
+          "required": false
+        },
+        {
+          "id": "risk_indicators_risk_indicators_&_red_flags_40",
+          "label": "Risk Indicators & Red Flags 40",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "api_integrations",
+      "name": "API Integration Status",
+      "description": "Third-party data verification status",
+      "total_parameters": 30,
+      "required_count": 15,
+      "optional_count": 15,
+      "fields": [
+        {
+          "id": "gst_api_connected",
+          "label": "GST API Connected",
+          "required": false
+        },
+        {
+          "id": "gst_data_pulled",
+          "label": "GST Data Pulled Successfully",
+          "required": false
+        },
+        {
+          "id": "cibil_api_connected",
+          "label": "CIBIL API Connected",
+          "required": true
+        },
+        {
+          "id": "cibil_report_fetched",
+          "label": "CIBIL Report Fetched",
+          "required": true
+        },
+        {
+          "id": "banking_api_connected",
+          "label": "Banking API Connected",
+          "required": false
+        },
+        {
+          "id": "bank_statement_analyzed",
+          "label": "Bank Statement Analyzed",
+          "required": false
+        },
+        {
+          "id": "mca_api_connected",
+          "label": "MCA API Connected",
+          "required": false
+        },
+        {
+          "id": "mca_data_verified",
+          "label": "MCA Data Verified",
+          "required": false
+        },
+        {
+          "id": "pan_verification",
+          "label": "PAN Verification Done",
+          "required": true
+        },
+        {
+          "id": "aadhaar_verification",
+          "label": "Aadhaar Verification Done",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_11",
+          "label": "API Integration Status 11",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_12",
+          "label": "API Integration Status 12",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_13",
+          "label": "API Integration Status 13",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_14",
+          "label": "API Integration Status 14",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_15",
+          "label": "API Integration Status 15",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_16",
+          "label": "API Integration Status 16",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_17",
+          "label": "API Integration Status 17",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_18",
+          "label": "API Integration Status 18",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_19",
+          "label": "API Integration Status 19",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_20",
+          "label": "API Integration Status 20",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_21",
+          "label": "API Integration Status 21",
+          "required": true
+        },
+        {
+          "id": "api_integrations_api_integration_status_22",
+          "label": "API Integration Status 22",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_23",
+          "label": "API Integration Status 23",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_24",
+          "label": "API Integration Status 24",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_25",
+          "label": "API Integration Status 25",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_26",
+          "label": "API Integration Status 26",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_27",
+          "label": "API Integration Status 27",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_28",
+          "label": "API Integration Status 28",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_29",
+          "label": "API Integration Status 29",
+          "required": false
+        },
+        {
+          "id": "api_integrations_api_integration_status_30",
+          "label": "API Integration Status 30",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "document_metadata",
+      "name": "Document Upload Metadata",
+      "description": "Document quality, extraction confidence",
+      "total_parameters": 44,
+      "required_count": 30,
+      "optional_count": 14,
+      "fields": [
+        {
+          "id": "total_docs_expected",
+          "label": "Total Documents Expected",
+          "required": true
+        },
+        {
+          "id": "total_docs_uploaded",
+          "label": "Total Documents Uploaded",
+          "required": true
+        },
+        {
+          "id": "required_docs_missing",
+          "label": "Required Documents Missing",
+          "required": true
+        },
+        {
+          "id": "optional_docs_missing",
+          "label": "Optional Documents Missing",
+          "required": false
+        },
+        {
+          "id": "ocr_confidence_avg",
+          "label": "Average OCR Confidence",
+          "required": true
+        },
+        {
+          "id": "ocr_confidence_min",
+          "label": "Minimum OCR Confidence",
+          "required": true
+        },
+        {
+          "id": "ocr_confidence_max",
+          "label": "Maximum OCR Confidence",
+          "required": true
+        },
+        {
+          "id": "extraction_quality_score",
+          "label": "Extraction Quality Score",
+          "required": true
+        },
+        {
+          "id": "manual_overrides_count",
+          "label": "Manual Data Overrides",
+          "required": true
+        },
+        {
+          "id": "data_completeness_pct",
+          "label": "Data Completeness Percentage",
+          "required": true
+        },
+        {
+          "id": "critical_fields_extracted",
+          "label": "Critical Fields Extracted",
+          "required": true
+        },
+        {
+          "id": "critical_fields_missing",
+          "label": "Critical Fields Missing",
+          "required": true
+        },
+        {
+          "id": "document_validation_score",
+          "label": "Document Validation Score",
+          "required": true
+        },
+        {
+          "id": "total_pages_processed",
+          "label": "Total Pages Processed",
+          "required": true
+        },
+        {
+          "id": "pages_with_high_confidence",
+          "label": "Pages with High Confidence (>90%)",
+          "required": true
+        },
+        {
+          "id": "pages_with_low_confidence",
+          "label": "Pages with Low Confidence (<70%)",
+          "required": true
+        },
+        {
+          "id": "pages_requiring_review",
+          "label": "Pages Requiring Manual Review",
+          "required": true
+        },
+        {
+          "id": "financial_docs_uploaded",
+          "label": "Financial Documents Uploaded",
+          "required": true
+        },
+        {
+          "id": "identity_docs_uploaded",
+          "label": "Identity Documents Uploaded",
+          "required": true
+        },
+        {
+          "id": "compliance_docs_uploaded",
+          "label": "Compliance Documents Uploaded",
+          "required": true
+        },
+        {
+          "id": "banking_docs_uploaded",
+          "label": "Banking Documents Uploaded",
+          "required": true
+        },
+        {
+          "id": "kyc_docs_uploaded",
+          "label": "KYC Documents Uploaded",
+          "required": true
+        },
+        {
+          "id": "balance_sheet_extracted",
+          "label": "Balance Sheet Data Extracted",
+          "required": true
+        },
+        {
+          "id": "pl_statement_extracted",
+          "label": "P&L Statement Data Extracted",
+          "required": true
+        },
+        {
+          "id": "bank_statement_extracted",
+          "label": "Bank Statement Data Extracted",
+          "required": true
+        },
+        {
+          "id": "itr_extracted",
+          "label": "ITR Data Extracted",
+          "required": true
+        },
+        {
+          "id": "gst_returns_extracted",
+          "label": "GST Returns Data Extracted",
+          "required": true
+        },
+        {
+          "id": "pan_extracted",
+          "label": "PAN Data Extracted",
+          "required": true
+        },
+        {
+          "id": "cin_extracted",
+          "label": "CIN Data Extracted",
+          "required": true
+        },
+        {
+          "id": "gstin_extracted",
+          "label": "GSTIN Data Extracted",
+          "required": true
+        },
+        {
+          "id": "director_details_extracted",
+          "label": "Director Details Extracted",
+          "required": false
+        },
+        {
+          "id": "shareholding_extracted",
+          "label": "Shareholding Pattern Extracted",
+          "required": false
+        },
+        {
+          "id": "collateral_docs_uploaded",
+          "label": "Collateral Documents Uploaded",
+          "required": false
+        },
+        {
+          "id": "property_docs_uploaded",
+          "label": "Property Documents Uploaded",
+          "required": false
+        },
+        {
+          "id": "legal_docs_uploaded",
+          "label": "Legal Documents Uploaded",
+          "required": false
+        },
+        {
+          "id": "upload_timestamp",
+          "label": "Upload Completion Timestamp",
+          "required": true
+        },
+        {
+          "id": "processing_time_seconds",
+          "label": "Total Processing Time (seconds)",
+          "required": true
+        },
+        {
+          "id": "extraction_errors_count",
+          "label": "Extraction Errors Count",
+          "required": true
+        },
+        {
+          "id": "validation_errors_count",
+          "label": "Validation Errors Count",
+          "required": true
+        },
+        {
+          "id": "data_quality_warnings",
+          "label": "Data Quality Warnings",
+          "required": false
+        },
+        {
+          "id": "duplicate_docs_detected",
+          "label": "Duplicate Documents Detected",
+          "required": false
+        },
+        {
+          "id": "corrupted_files_count",
+          "label": "Corrupted Files Count",
+          "required": false
+        },
+        {
+          "id": "password_protected_files",
+          "label": "Password Protected Files",
+          "required": false
+        },
+        {
+          "id": "overall_extraction_status",
+          "label": "Overall Extraction Status",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,266 @@
+{
+  "framework": "NIST Cybersecurity Framework",
+  "version": "2.0",
+  "source": "https://www.nist.gov/cyberframework",
+  "description": "The NIST Cybersecurity Framework (CSF) provides a policy framework of computer security guidance for how organizations can assess and improve their ability to prevent, detect, and respond to cyber attacks.",
+  "note": "This scanner checks CODE-RELATED controls only. Organizational/process controls require manual assessment.",
+  "functions": [
+    {
+      "id": "PR",
+      "name": "PROTECT",
+      "description": "Develop and implement appropriate safeguards to ensure delivery of critical services.",
+      "categories": [
+        {
+          "id": "PR.AC",
+          "name": "Identity Management, Authentication and Access Control",
+          "official_text": "Access to physical and logical assets and associated facilities is limited to authorized users, processes, and devices, and is managed consistent with the assessed risk of unauthorized access to authorized activities and transactions.",
+          "source_reference": "NIST CSF 2.0 - PR.AC",
+          "code_checks": [
+            {
+              "id": "pr_ac_1",
+              "subcategory": "PR.AC-1",
+              "description": "Identities and credentials are issued, managed, verified, revoked, and audited",
+              "check_type": "ast_pattern",
+              "patterns": ["passport", "session", "authenticate", "login", "logout"],
+              "file_patterns": ["server.js", "lib/auth*.js"],
+              "pass_criteria": "Authentication system implemented"
+            },
+            {
+              "id": "pr_ac_3",
+              "subcategory": "PR.AC-3",
+              "description": "Remote access is managed",
+              "check_type": "ast_pattern",
+              "patterns": ["cors", "CORS", "origin", "allowedOrigins"],
+              "file_patterns": ["server.js"],
+              "pass_criteria": "CORS configuration exists"
+            },
+            {
+              "id": "pr_ac_4",
+              "subcategory": "PR.AC-4",
+              "description": "Access permissions and authorizations are managed with least privilege",
+              "check_type": "ast_pattern",
+              "patterns": ["ROLES", "requireRole", "permission", "authorize"],
+              "file_patterns": ["*.js"],
+              "pass_criteria": "RBAC with defined roles"
+            },
+            {
+              "id": "pr_ac_5",
+              "subcategory": "PR.AC-5",
+              "description": "Network integrity is protected",
+              "check_type": "ast_pattern",
+              "patterns": ["helmet", "csp", "contentSecurityPolicy"],
+              "file_patterns": ["server.js"],
+              "pass_criteria": "CSP headers configured"
+            }
+          ]
+        },
+        {
+          "id": "PR.DS",
+          "name": "Data Security",
+          "official_text": "Information and records (data) are managed consistent with the organization's risk strategy to protect the confidentiality, integrity, and availability of information.",
+          "source_reference": "NIST CSF 2.0 - PR.DS",
+          "code_checks": [
+            {
+              "id": "pr_ds_1",
+              "subcategory": "PR.DS-1",
+              "description": "Data-at-rest is protected",
+              "check_type": "ast_pattern",
+              "patterns": ["encrypt", "AES", "ServerSideEncryption", "KMS"],
+              "file_patterns": ["*s3*.js", "server.js"],
+              "pass_criteria": "Encryption at rest configured"
+            },
+            {
+              "id": "pr_ds_2",
+              "subcategory": "PR.DS-2",
+              "description": "Data-in-transit is protected",
+              "check_type": "ast_pattern",
+              "patterns": ["https", "TLS", "secure.*true", "SSL"],
+              "file_patterns": ["server.js"],
+              "pass_criteria": "TLS/HTTPS enforcement"
+            },
+            {
+              "id": "pr_ds_5",
+              "subcategory": "PR.DS-5",
+              "description": "Protections against data leaks are implemented",
+              "check_type": "ast_pattern",
+              "patterns": ["maskPII", "sanitize", "redact", "mask"],
+              "file_patterns": ["lib/*.js"],
+              "pass_criteria": "Data masking functions exist"
+            }
+          ]
+        },
+        {
+          "id": "PR.IP",
+          "name": "Information Protection Processes and Procedures",
+          "official_text": "Security policies, processes, and procedures are maintained and used to manage protection of information systems and assets.",
+          "source_reference": "NIST CSF 2.0 - PR.IP",
+          "code_checks": [
+            {
+              "id": "pr_ip_1",
+              "subcategory": "PR.IP-1",
+              "description": "Configuration of systems incorporates security principles",
+              "check_type": "ast_pattern",
+              "patterns": ["helmet", "rateLimit", "secure", "httpOnly"],
+              "file_patterns": ["server.js"],
+              "pass_criteria": "Security configuration principles applied"
+            },
+            {
+              "id": "pr_ip_9",
+              "subcategory": "PR.IP-9",
+              "description": "Response and recovery plans are in place",
+              "check_type": "ast_pattern",
+              "patterns": ["backup", "recovery", "restore", "failover"],
+              "file_patterns": ["*.js"],
+              "pass_criteria": "Recovery mechanisms referenced"
+            },
+            {
+              "id": "pr_ip_12",
+              "subcategory": "PR.IP-12",
+              "description": "A vulnerability management plan is developed and implemented",
+              "check_type": "npm_audit",
+              "pass_criteria": "npm audit available for dependency scanning"
+            }
+          ]
+        },
+        {
+          "id": "PR.PT",
+          "name": "Protective Technology",
+          "official_text": "Technical security solutions are managed to ensure the security and resilience of systems and assets, consistent with related policies, procedures, and agreements.",
+          "source_reference": "NIST CSF 2.0 - PR.PT",
+          "code_checks": [
+            {
+              "id": "pr_pt_1",
+              "subcategory": "PR.PT-1",
+              "description": "Audit/log records are determined, documented, implemented, and reviewed",
+              "check_type": "ast_pattern",
+              "patterns": ["logger", "Logger", "log", "audit"],
+              "file_patterns": ["server.js", "lib/*logger*.js"],
+              "pass_criteria": "Logging system implemented"
+            },
+            {
+              "id": "pr_pt_3",
+              "subcategory": "PR.PT-3",
+              "description": "The principle of least functionality is incorporated",
+              "check_type": "ast_pattern",
+              "patterns": ["requireRole", "ensureAuthenticated", "authorize"],
+              "file_patterns": ["server.js"],
+              "pass_criteria": "Access restrictions on routes"
+            },
+            {
+              "id": "pr_pt_4",
+              "subcategory": "PR.PT-4",
+              "description": "Communications and control networks are protected",
+              "check_type": "ast_pattern",
+              "patterns": ["cors", "helmet", "rateLimit"],
+              "file_patterns": ["server.js"],
+              "pass_criteria": "Network protection middleware"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DE",
+      "name": "DETECT",
+      "description": "Develop and implement appropriate activities to identify the occurrence of a cybersecurity event.",
+      "categories": [
+        {
+          "id": "DE.AE",
+          "name": "Anomalies and Events",
+          "official_text": "Anomalous activity is detected and the potential impact of events is understood.",
+          "source_reference": "NIST CSF 2.0 - DE.AE",
+          "code_checks": [
+            {
+              "id": "de_ae_1",
+              "subcategory": "DE.AE-1",
+              "description": "A baseline of network operations and expected data flows is established",
+              "check_type": "ast_pattern",
+              "patterns": ["monitor", "metrics", "baseline", "threshold"],
+              "file_patterns": ["*.js"],
+              "pass_criteria": "Monitoring references exist"
+            },
+            {
+              "id": "de_ae_3",
+              "subcategory": "DE.AE-3",
+              "description": "Event data are collected and correlated from multiple sources",
+              "check_type": "ast_pattern",
+              "patterns": ["correlationId", "correlation", "requestId", "traceId"],
+              "file_patterns": ["lib/*logger*.js", "server.js"],
+              "pass_criteria": "Correlation IDs for event tracking"
+            }
+          ]
+        },
+        {
+          "id": "DE.CM",
+          "name": "Security Continuous Monitoring",
+          "official_text": "The information system and assets are monitored to identify cybersecurity events and verify the effectiveness of protective measures.",
+          "source_reference": "NIST CSF 2.0 - DE.CM",
+          "code_checks": [
+            {
+              "id": "de_cm_1",
+              "subcategory": "DE.CM-1",
+              "description": "The network is monitored to detect potential cybersecurity events",
+              "check_type": "ast_pattern",
+              "patterns": ["accessLog", "securityLogger", "monitor"],
+              "file_patterns": ["server.js"],
+              "pass_criteria": "Access logging enabled"
+            },
+            {
+              "id": "de_cm_4",
+              "subcategory": "DE.CM-4",
+              "description": "Malicious code is detected",
+              "check_type": "eslint_security",
+              "pass_criteria": "ESLint security scanning enabled"
+            },
+            {
+              "id": "de_cm_7",
+              "subcategory": "DE.CM-7",
+              "description": "Monitoring for unauthorized personnel, connections, devices, and software is performed",
+              "check_type": "ast_pattern",
+              "patterns": ["logSecurityEvent", "unauthorized", "ACCESS_DENIED", "LOGIN_FAILED"],
+              "file_patterns": ["*.js"],
+              "pass_criteria": "Security event logging for unauthorized access"
+            }
+          ]
+        },
+        {
+          "id": "DE.DP",
+          "name": "Detection Processes",
+          "official_text": "Detection processes and procedures are maintained and tested to ensure awareness of anomalous events.",
+          "source_reference": "NIST CSF 2.0 - DE.DP",
+          "code_checks": [
+            {
+              "id": "de_dp_4",
+              "subcategory": "DE.DP-4",
+              "description": "Event detection information is communicated",
+              "check_type": "ast_pattern",
+              "patterns": ["alert", "notify", "webhook", "emit"],
+              "file_patterns": ["*.js"],
+              "pass_criteria": "Event notification mechanisms"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "excluded_functions": [
+    {
+      "id": "ID",
+      "name": "IDENTIFY",
+      "reason": "Organizational process - asset inventory, risk assessment, governance",
+      "requires": "Manual assessment"
+    },
+    {
+      "id": "RS",
+      "name": "RESPOND",
+      "reason": "Organizational process - incident response planning, communications",
+      "requires": "Manual assessment"
+    },
+    {
+      "id": "RC",
+      "name": "RECOVER",
+      "reason": "Organizational process - recovery planning, improvements",
+      "requires": "Manual assessment"
+    }
+  ]
+}

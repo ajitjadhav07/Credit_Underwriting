@@ -1,0 +1,153 @@
+{
+  "balance_sheet": {
+    "fy25": [
+      { "field": "total_assets", "label": "Total Assets", "category": "Assets", "required": true, "unit": "INR" },
+      { "field": "fixed_assets_net", "label": "Fixed Assets (Net)", "category": "Assets", "required": true, "unit": "INR" },
+      { "field": "current_assets", "label": "Current Assets", "category": "Assets", "required": true, "unit": "INR" },
+      { "field": "inventory", "label": "Inventory", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "trade_receivables", "label": "Trade Receivables", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "cash_bank", "label": "Cash & Bank", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "other_current_assets", "label": "Other Current Assets", "category": "Current Assets", "required": false, "unit": "INR" },
+      { "field": "investments", "label": "Investments", "category": "Assets", "required": false, "unit": "INR" },
+      { "field": "intangible_assets", "label": "Intangible Assets", "category": "Assets", "required": false, "unit": "INR" },
+      { "field": "goodwill", "label": "Goodwill", "category": "Assets", "required": false, "unit": "INR" },
+      { "field": "deferred_tax_assets", "label": "Deferred Tax Assets", "category": "Assets", "required": false, "unit": "INR" },
+      { "field": "net_worth", "label": "Net Worth", "category": "Equity", "required": true, "unit": "INR" },
+      { "field": "share_capital", "label": "Share Capital", "category": "Equity", "required": true, "unit": "INR" },
+      { "field": "reserves_surplus", "label": "Reserves & Surplus", "category": "Equity", "required": true, "unit": "INR" },
+      { "field": "long_term_borrowings", "label": "Long Term Borrowings", "category": "Liabilities", "required": true, "unit": "INR" },
+      { "field": "short_term_borrowings", "label": "Short Term Borrowings", "category": "Liabilities", "required": true, "unit": "INR" },
+      { "field": "trade_payables", "label": "Trade Payables", "category": "Current Liabilities", "required": true, "unit": "INR" },
+      { "field": "other_current_liabilities", "label": "Other Current Liabilities", "category": "Current Liabilities", "required": true, "unit": "INR" },
+      { "field": "provisions", "label": "Provisions", "category": "Liabilities", "required": false, "unit": "INR" },
+      { "field": "deferred_tax_liabilities", "label": "Deferred Tax Liabilities", "category": "Liabilities", "required": false, "unit": "INR" },
+      { "field": "secured_loans", "label": "Secured Loans", "category": "Borrowings", "required": false, "unit": "INR" },
+      { "field": "unsecured_loans", "label": "Unsecured Loans", "category": "Borrowings", "required": false, "unit": "INR" },
+      { "field": "working_capital", "label": "Working Capital", "category": "Computed", "required": false, "unit": "INR" },
+      { "field": "tangible_net_worth", "label": "Tangible Net Worth", "category": "Computed", "required": false, "unit": "INR" }
+    ],
+    "fy24": [
+      { "field": "total_assets", "label": "Total Assets", "category": "Assets", "required": true, "unit": "INR" },
+      { "field": "fixed_assets_net", "label": "Fixed Assets (Net)", "category": "Assets", "required": false, "unit": "INR" },
+      { "field": "current_assets", "label": "Current Assets", "category": "Assets", "required": true, "unit": "INR" },
+      { "field": "inventory", "label": "Inventory", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "trade_receivables", "label": "Trade Receivables", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "cash_bank", "label": "Cash & Bank", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "other_current_assets", "label": "Other Current Assets", "category": "Current Assets", "required": false, "unit": "INR" },
+      { "field": "investments", "label": "Investments", "category": "Assets", "required": false, "unit": "INR" },
+      { "field": "intangible_assets", "label": "Intangible Assets", "category": "Assets", "required": false, "unit": "INR" },
+      { "field": "net_worth", "label": "Net Worth", "category": "Equity", "required": true, "unit": "INR" },
+      { "field": "share_capital", "label": "Share Capital", "category": "Equity", "required": false, "unit": "INR" },
+      { "field": "reserves_surplus", "label": "Reserves & Surplus", "category": "Equity", "required": false, "unit": "INR" },
+      { "field": "long_term_borrowings", "label": "Long Term Borrowings", "category": "Liabilities", "required": true, "unit": "INR" },
+      { "field": "short_term_borrowings", "label": "Short Term Borrowings", "category": "Liabilities", "required": true, "unit": "INR" },
+      { "field": "trade_payables", "label": "Trade Payables", "category": "Current Liabilities", "required": true, "unit": "INR" },
+      { "field": "other_current_liabilities", "label": "Other Current Liabilities", "category": "Current Liabilities", "required": true, "unit": "INR" },
+      { "field": "provisions", "label": "Provisions", "category": "Liabilities", "required": false, "unit": "INR" },
+      { "field": "secured_loans", "label": "Secured Loans", "category": "Borrowings", "required": false, "unit": "INR" },
+      { "field": "unsecured_loans", "label": "Unsecured Loans", "category": "Borrowings", "required": false, "unit": "INR" }
+    ],
+    "fy23": [
+      { "field": "total_assets", "label": "Total Assets", "category": "Assets", "required": true, "unit": "INR" },
+      { "field": "current_assets", "label": "Current Assets", "category": "Assets", "required": true, "unit": "INR" },
+      { "field": "inventory", "label": "Inventory", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "trade_receivables", "label": "Trade Receivables", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "cash_bank", "label": "Cash & Bank", "category": "Current Assets", "required": true, "unit": "INR" },
+      { "field": "other_current_assets", "label": "Other Current Assets", "category": "Current Assets", "required": false, "unit": "INR" },
+      { "field": "net_worth", "label": "Net Worth", "category": "Equity", "required": true, "unit": "INR" },
+      { "field": "long_term_borrowings", "label": "Long Term Borrowings", "category": "Liabilities", "required": true, "unit": "INR" },
+      { "field": "short_term_borrowings", "label": "Short Term Borrowings", "category": "Liabilities", "required": true, "unit": "INR" },
+      { "field": "trade_payables", "label": "Trade Payables", "category": "Current Liabilities", "required": true, "unit": "INR" },
+      { "field": "other_current_liabilities", "label": "Other Current Liabilities", "category": "Current Liabilities", "required": true, "unit": "INR" }
+    ]
+  },
+  "profit_and_loss": {
+    "fy25": [
+      { "field": "revenue", "label": "Revenue / Turnover", "category": "Income", "required": true, "unit": "INR" },
+      { "field": "cost_of_goods_sold", "label": "Cost of Goods Sold", "category": "Expenses", "required": true, "unit": "INR" },
+      { "field": "gross_profit", "label": "Gross Profit", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "employee_expenses", "label": "Employee Expenses", "category": "Operating Expenses", "required": true, "unit": "INR" },
+      { "field": "admin_expenses", "label": "Administrative Expenses", "category": "Operating Expenses", "required": true, "unit": "INR" },
+      { "field": "selling_expenses", "label": "Selling & Distribution Expenses", "category": "Operating Expenses", "required": true, "unit": "INR" },
+      { "field": "other_expenses", "label": "Other Expenses", "category": "Operating Expenses", "required": false, "unit": "INR" },
+      { "field": "ebitda", "label": "EBITDA", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "depreciation", "label": "Depreciation & Amortization", "category": "Non-Cash Expenses", "required": true, "unit": "INR" },
+      { "field": "ebit", "label": "EBIT", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "interest_expense", "label": "Interest Expense", "category": "Financial Costs", "required": true, "unit": "INR" },
+      { "field": "profit_before_tax", "label": "Profit Before Tax (PBT)", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "tax_expense", "label": "Tax Expense", "category": "Tax", "required": true, "unit": "INR" },
+      { "field": "profit_after_tax", "label": "Profit After Tax (PAT)", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "other_income", "label": "Other Income", "category": "Income", "required": false, "unit": "INR" },
+      { "field": "exceptional_items", "label": "Exceptional Items", "category": "Non-Operating", "required": false, "unit": "INR" },
+      { "field": "extraordinary_items", "label": "Extraordinary Items", "category": "Non-Operating", "required": false, "unit": "INR" },
+      { "field": "finance_costs", "label": "Finance Costs", "category": "Financial Costs", "required": false, "unit": "INR" }
+    ],
+    "fy24": [
+      { "field": "revenue", "label": "Revenue / Turnover", "category": "Income", "required": true, "unit": "INR" },
+      { "field": "cost_of_goods_sold", "label": "Cost of Goods Sold", "category": "Expenses", "required": true, "unit": "INR" },
+      { "field": "gross_profit", "label": "Gross Profit", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "employee_expenses", "label": "Employee Expenses", "category": "Operating Expenses", "required": false, "unit": "INR" },
+      { "field": "admin_expenses", "label": "Administrative Expenses", "category": "Operating Expenses", "required": false, "unit": "INR" },
+      { "field": "selling_expenses", "label": "Selling & Distribution Expenses", "category": "Operating Expenses", "required": false, "unit": "INR" },
+      { "field": "ebitda", "label": "EBITDA", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "depreciation", "label": "Depreciation & Amortization", "category": "Non-Cash Expenses", "required": true, "unit": "INR" },
+      { "field": "ebit", "label": "EBIT", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "interest_expense", "label": "Interest Expense", "category": "Financial Costs", "required": true, "unit": "INR" },
+      { "field": "profit_before_tax", "label": "Profit Before Tax (PBT)", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "tax_expense", "label": "Tax Expense", "category": "Tax", "required": true, "unit": "INR" },
+      { "field": "profit_after_tax", "label": "Profit After Tax (PAT)", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "other_income", "label": "Other Income", "category": "Income", "required": false, "unit": "INR" }
+    ],
+    "fy23": [
+      { "field": "revenue", "label": "Revenue / Turnover", "category": "Income", "required": true, "unit": "INR" },
+      { "field": "cost_of_goods_sold", "label": "Cost of Goods Sold", "category": "Expenses", "required": true, "unit": "INR" },
+      { "field": "gross_profit", "label": "Gross Profit", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "ebitda", "label": "EBITDA", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "depreciation", "label": "Depreciation & Amortization", "category": "Non-Cash Expenses", "required": true, "unit": "INR" },
+      { "field": "ebit", "label": "EBIT", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "interest_expense", "label": "Interest Expense", "category": "Financial Costs", "required": true, "unit": "INR" },
+      { "field": "profit_before_tax", "label": "Profit Before Tax (PBT)", "category": "Profit", "required": true, "unit": "INR" },
+      { "field": "tax_expense", "label": "Tax Expense", "category": "Tax", "required": true, "unit": "INR" },
+      { "field": "profit_after_tax", "label": "Profit After Tax (PAT)", "category": "Profit", "required": true, "unit": "INR" }
+    ]
+  },
+  "cash_flow": {
+    "fy25": [
+      { "field": "operating_cash_flow", "label": "Operating Cash Flow", "category": "Operating Activities", "required": false, "unit": "INR" },
+      { "field": "investing_cash_flow", "label": "Investing Cash Flow", "category": "Investing Activities", "required": false, "unit": "INR" },
+      { "field": "financing_cash_flow", "label": "Financing Cash Flow", "category": "Financing Activities", "required": false, "unit": "INR" },
+      { "field": "net_cash_flow", "label": "Net Cash Flow", "category": "Net Change", "required": false, "unit": "INR" },
+      { "field": "free_cash_flow", "label": "Free Cash Flow", "category": "Computed", "required": false, "unit": "INR" }
+    ],
+    "fy24": [
+      { "field": "operating_cash_flow", "label": "Operating Cash Flow", "category": "Operating Activities", "required": false, "unit": "INR" },
+      { "field": "investing_cash_flow", "label": "Investing Cash Flow", "category": "Investing Activities", "required": false, "unit": "INR" },
+      { "field": "financing_cash_flow", "label": "Financing Cash Flow", "category": "Financing Activities", "required": false, "unit": "INR" },
+      { "field": "net_cash_flow", "label": "Net Cash Flow", "category": "Net Change", "required": false, "unit": "INR" }
+    ],
+    "fy23": [
+      { "field": "operating_cash_flow", "label": "Operating Cash Flow", "category": "Operating Activities", "required": false, "unit": "INR" },
+      { "field": "investing_cash_flow", "label": "Investing Cash Flow", "category": "Investing Activities", "required": false, "unit": "INR" },
+      { "field": "financing_cash_flow", "label": "Financing Cash Flow", "category": "Financing Activities", "required": false, "unit": "INR" },
+      { "field": "net_cash_flow", "label": "Net Cash Flow", "category": "Net Change", "required": false, "unit": "INR" }
+    ]
+  },
+  "company_info": [
+    { "field": "company_name", "label": "Company Name", "category": "Basic Info", "required": true, "unit": "text" },
+    { "field": "gstin", "label": "GSTIN", "category": "Basic Info", "required": true, "unit": "text" },
+    { "field": "pan", "label": "PAN", "category": "Basic Info", "required": true, "unit": "text" },
+    { "field": "cin", "label": "CIN", "category": "Basic Info", "required": false, "unit": "text" },
+    { "field": "registered_address", "label": "Registered Address", "category": "Contact Info", "required": false, "unit": "text" },
+    { "field": "business_address", "label": "Business Address", "category": "Contact Info", "required": false, "unit": "text" },
+    { "field": "industry", "label": "Industry / Sector", "category": "Business Info", "required": false, "unit": "text" },
+    { "field": "business_vintage", "label": "Business Vintage (Years)", "category": "Business Info", "required": false, "unit": "number" },
+    { "field": "number_of_employees", "label": "Number of Employees", "category": "Business Info", "required": false, "unit": "number" }
+  ],
+  "banking_info": [
+    { "field": "bank_name", "label": "Primary Bank Name", "category": "Banking", "required": false, "unit": "text" },
+    { "field": "account_number", "label": "Account Number", "category": "Banking", "required": false, "unit": "text" },
+    { "field": "ifsc_code", "label": "IFSC Code", "category": "Banking", "required": false, "unit": "text" },
+    { "field": "existing_facilities", "label": "Existing Credit Facilities", "category": "Credit", "required": false, "unit": "text" },
+    { "field": "credit_rating", "label": "Credit Rating", "category": "Credit", "required": false, "unit": "text" }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "_comment": "Policy norms for credit assessment - edit values here to change thresholds",
+  "_version": "1.0",
+  "_lastUpdated": "2026-01-01",
+  
+  "policy_rules": [
+    {
+      "rule_code": "cr_001",
+      "parameter": "Current Ratio",
+      "clause_ref": "3.1.1",
+      "operator": ">=",
+      "threshold_value": 1.20,
+      "norm_display": ">= 1.20",
+      "severity": "Critical",
+      "is_mandatory": true
+    },
+    {
+      "rule_code": "cr_002",
+      "parameter": "Quick Ratio (Acid Test)",
+      "clause_ref": "3.1.5",
+      "operator": ">=",
+      "threshold_value": 1.00,
+      "norm_display": ">= 1.00",
+      "severity": "Warning",
+      "is_mandatory": false
+    },
+    {
+      "rule_code": "cr_003",
+      "parameter": "Cash Ratio",
+      "clause_ref": "3.1.6",
+      "operator": ">=",
+      "threshold_value": 0.20,
+      "norm_display": ">= 0.20",
+      "severity": "Warning",
+      "is_mandatory": false
+    },
+    {
+      "rule_code": "cr_004",
+      "parameter": "Debt to Equity Ratio",
+      "clause_ref": "3.1.2",
+      "operator": "<=",
+      "threshold_value": 2.00,
+      "norm_display": "<= 2.00",
+      "severity": "Critical",
+      "is_mandatory": true
+    },
+    {
+      "rule_code": "cr_005",
+      "parameter": "TOL/TNW",
+      "clause_ref": "3.1.3",
+      "operator": "<=",
+      "threshold_value": 3.00,
+      "norm_display": "<= 3.00",
+      "severity": "Critical",
+      "is_mandatory": true
+    },
+    {
+      "rule_code": "cr_006",
+      "parameter": "Interest Coverage Ratio (ICR)",
+      "clause_ref": "3.2.3",
+      "operator": ">=",
+      "threshold_value": 2.00,
+      "norm_display": ">= 2.00x",
+      "severity": "Critical",
+      "is_mandatory": true
+    },
+    {
+      "rule_code": "cr_007",
+      "parameter": "Debt Service Coverage Ratio (DSCR)",
+      "clause_ref": "3.2.1",
+      "operator": ">=",
+      "threshold_value": 1.25,
+      "norm_display": ">= 1.25x",
+      "severity": "Critical",
+      "is_mandatory": true
+    },
+    {
+      "rule_code": "cr_008",
+      "parameter": "Gross Profit Margin",
+      "clause_ref": "3.3.3",
+      "operator": ">=",
+      "threshold_value": 10.00,
+      "norm_display": ">= 10%",
+      "severity": "Warning",
+      "is_mandatory": false
+    },
+    {
+      "rule_code": "cr_009",
+      "parameter": "EBITDA Margin",
+      "clause_ref": "3.3.4",
+      "operator": ">=",
+      "threshold_value": 8.00,
+      "norm_display": ">= 8%",
+      "severity": "Warning",
+      "is_mandatory": false
+    },
+    {
+      "rule_code": "cr_010",
+      "parameter": "Net Profit Margin (PAT Margin)",
+      "clause_ref": "3.3.5",
+      "operator": ">=",
+      "threshold_value": 2.00,
+      "norm_display": ">= 2%",
+      "severity": "Warning",
+      "is_mandatory": false
+    },
+    {
+      "rule_code": "cr_011",
+      "parameter": "Return on Equity (ROE)",
+      "clause_ref": "3.3.6",
+      "operator": ">=",
+      "threshold_value": 15.00,
+      "norm_display": ">= 15%",
+      "severity": "Warning",
+      "is_mandatory": false
+    },
+    {
+      "rule_code": "cr_012",
+      "parameter": "Return on Assets (ROA)",
+      "clause_ref": "3.3.7",
+      "operator": ">=",
+      "threshold_value": 5.00,
+      "norm_display": ">= 5%",
+      "severity": "Warning",
+      "is_mandatory": false
+    }
+  ]
+}

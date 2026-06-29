@@ -1,0 +1,71 @@
+{
+  "name": "axis-underwriting-agent",
+  "version": "7.7.8",
+  "description": "AI-Powered MSME Underwriting Platform - PII-Safe Logging - Forensic Export - Compliance Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/styles.css --minify",
+    "compliance:scan": "node scripts/run-compliance-scan.js",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "prebuild": "npm run build:css",
+    "build": "npm run build:css && npm run compliance:scan",
+    "prestart": "npm run build:css",
+    "start": "node server.js",
+    "dev": "concurrently \"tailwindcss -i ./src/input.css -o ./public/styles.css --watch\" \"node server.js\"",
+    "dev:server": "node server.js",
+    "dev:css": "tailwindcss -i ./src/input.css -o ./public/styles.css --watch"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@aws-sdk/client-s3": "^3.500.0",
+    "@aws-sdk/lib-storage": "^3.500.0",
+    "@google-cloud/vision": "^4.0.0",
+    "archiver": "^6.0.1",
+    "bullmq": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "docx": "^8.5.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-session": "^1.17.3",
+    "helmet": "^7.1.0",
+    "ioredis": "^5.3.2",
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.7.0",
+    "passport-azure-ad": "^4.3.5",
+    "pdf-parse": "^1.1.1",
+    "pdfkit": "^0.13.0",
+    "sharp": "^0.33.0",
+    "socket.io": "^4.7.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-security": "^2.1.0",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.19"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "credit-assessment",
+    "msme",
+    "underwriting",
+    "ai",
+    "server-side-processing",
+    "bullmq",
+    "websocket",
+    "s3-persistence",
+    "google-vision",
+    "ocr",
+    "document-processing",
+    "pii-logging",
+    "forensic-export"
+  ],
+  "author": "Applied Cloud Computing",
+  "license": "MIT"
+}

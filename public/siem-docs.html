@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEM API Documentation - AFL Underwriting Platform</title>
+    <!-- Use same styles.css as index.html - CSP compliant -->
+    <link href="/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif}
+        body{background:#f9fafb;margin:0;padding:0}
+        .container{max-width:1200px;margin:0 auto;padding:0 16px}
+        .header{background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 0;position:sticky;top:0;z-index:50}
+        .header-inner{display:flex;align-items:center;justify-content:space-between}
+        .logo-section{display:flex;align-items:center;gap:12px}
+        .logo-icon{width:32px;height:32px;color:#2563eb}
+        .logo-title{font-size:20px;font-weight:700;color:#111827}
+        .logo-subtitle{font-size:14px;color:#6b7280}
+        .back-link{color:#2563eb;text-decoration:none;display:flex;align-items:center;gap:4px;font-size:14px}
+        .back-link:hover{color:#1d4ed8}
+        .main-content{padding:32px 0}
+        .section{margin-bottom:48px}
+        .section-title{font-size:24px;font-weight:700;color:#111827;margin-bottom:16px}
+        .section-text{color:#4b5563;margin-bottom:16px;line-height:1.6}
+        .info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:16px;margin-bottom:16px}
+        .info-box-title{font-weight:600;color:#1e40af;margin-bottom:8px}
+        .info-box code{background:#dbeafe;padding:2px 8px;border-radius:4px;color:#1e40af}
+        .warning-box{background:#fefce8;border:1px solid #fde047;border-radius:8px;padding:16px;margin-bottom:16px}
+        .warning-box-title{font-weight:600;color:#a16207;margin-bottom:8px}
+        .warning-box code{background:#fef9c3;padding:2px 8px;border-radius:4px}
+        .card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:16px}
+        .card-title{font-weight:600;color:#111827;margin-bottom:8px}
+        .card ul{margin:0;padding-left:20px;color:#4b5563}
+        .card li{margin-bottom:4px}
+        .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+        .table-wrapper{overflow-x:auto}
+        table{width:100%;border-collapse:collapse;font-size:14px}
+        th{background:#f9fafb;text-align:left;padding:12px 16px;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb}
+        td{padding:12px 16px;border-bottom:1px solid #e5e7eb;color:#4b5563}
+        td code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:12px}
+        .endpoint{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+        .badge{display:inline-block;padding:4px 10px;border-radius:4px;font-weight:600;font-size:12px}
+        .badge-get{background:#10b981;color:#fff}
+        .badge-post{background:#3b82f6;color:#fff}
+        .endpoint-path{font-size:24px;font-weight:700;color:#111827}
+        .code-block{background:#1e293b;color:#e2e8f0;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Monaco','Menlo',monospace;font-size:13px;line-height:1.6;margin-bottom:16px}
+        .code-block .k{color:#c678dd}
+        .code-block .s{color:#98c379}
+        .code-block .n{color:#d19a66}
+        .code-block .c{color:#7f848e}
+        .tag{display:inline-block;background:#f3f4f6;color:#374151;padding:4px 8px;border-radius:4px;font-size:12px;margin:2px}
+        .tag-yellow{background:#fef9c3;color:#a16207}
+        .tag-red{background:#fee2e2;color:#dc2626}
+        .required{color:#dc2626;font-weight:600}
+        .footer{border-top:1px solid #e5e7eb;padding:32px 0;text-align:center;color:#6b7280;font-size:14px}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <div class="logo-section">
+                <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <div>
+                    <div class="logo-title">SIEM API Documentation</div>
+                    <div class="logo-subtitle">AFL Underwriting Platform v7.4.2</div>
+                </div>
+            </div>
+            <a href="/" class="back-link">
+                <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to App
+            </a>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <!-- Overview -->
+        <section class="section" id="overview">
+            <h2 class="section-title">Overview</h2>
+            <p class="section-text">The SIEM API provides secure access to centralized logs from the AFL Underwriting Platform. Designed for integration with Splunk, QRadar, Azure Sentinel, and Elastic SIEM.</p>
+            
+            <div class="info-box">
+                <div class="info-box-title">Base URL</div>
+                <code>https://afl.acc.ltd/api/siem</code>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">Log Types</div>
+                    <ul>
+                        <li><strong>security</strong> - Authentication & access events</li>
+                        <li><strong>sessions</strong> - User session lifecycle</li>
+                        <li><strong>access</strong> - HTTP request logs</li>
+                        <li><strong>application</strong> - App logs (debug/info/warn/error)</li>
+                        <li><strong>pii-audit</strong> - Sensitive data access tracking</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title">Features</div>
+                    <ul>
+                        <li>API Key + HMAC authentication</li>
+                        <li>IP whitelist validation</li>
+                        <li>Cursor-based pagination</li>
+                        <li>CEF format support</li>
+                        <li>Real-time & historical access</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Authentication -->
+        <section class="section" id="authentication">
+            <h2 class="section-title">Authentication</h2>
+            <p class="section-text">All API requests (except <code>/health</code>) require three headers:</p>
+            
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Header</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>X-API-Key</code></td><td>Your SIEM API key</td></tr>
+                            <tr><td><code>X-Timestamp</code></td><td>ISO 8601 timestamp (within 5 min of server time)</td></tr>
+                            <tr><td><code>X-Signature</code></td><td>HMAC-SHA256 signature</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <div class="warning-box-title">⚠️ IP Whitelist</div>
+                <p>Only requests from whitelisted IPs are accepted. Add your SIEM server IP to <code>SIEM_ALLOWED_IPS</code> environment variable.</p>
+            </div>
+        </section>
+
+        <!-- Signature Generation -->
+        <section class="section" id="signature">
+            <h2 class="section-title">Signature Generation</h2>
+            <p class="section-text">Generate HMAC-SHA256 signature with this payload:</p>
+            
+            <div class="code-block"><span class="c">// Payload = timestamp + method + path + queryString</span>
+payload = <span class="s">"2025-02-06T10:30:00Z"</span> + <span class="s">"GET"</span> + <span class="s">"/api/siem/logs"</span> + <span class="s">"?start=2025-02-06T00:00:00Z"</span>
+signature = HMAC-SHA256(payload, api_secret)</div>
+        </section>
+
+        <!-- Rate Limiting -->
+        <section class="section" id="rate-limiting">
+            <h2 class="section-title">Rate Limiting</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>Limit:</strong> 100 requests per minute</li>
+                    <li><strong>Response:</strong> HTTP 429 when exceeded</li>
+                    <li><strong>Header:</strong> <code>retry_after</code> indicates seconds to wait</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- GET /health -->
+        <section class="section" id="health">
+            <div class="endpoint">
+                <span class="badge badge-get">GET</span>
+                <span class="endpoint-path">/health</span>
+            </div>
+            <p class="section-text">Health check. <strong>No authentication required.</strong></p>
+            
+            <div class="code-block">{
+    <span class="s">"status"</span>: <span class="s">"healthy"</span>,
+    <span class="s">"timestamp"</span>: <span class="s">"2025-02-06T10:30:00.123Z"</span>,
+    <span class="s">"version"</span>: <span class="s">"7.4.2"</span>,
+    <span class="s">"siem_configured"</span>: <span class="k">true</span>,
+    <span class="s">"storage"</span>: {
+        <span class="s">"logs_today"</span>: <span class="n">15234</span>,
+        <span class="s">"by_type"</span>: { <span class="s">"security"</span>: <span class="n">523</span>, <span class="s">"sessions"</span>: <span class="n">1247</span> }
+    }
+}</div>
+        </section>
+
+        <!-- GET /logs -->
+        <section class="section" id="logs">
+            <div class="endpoint">
+                <span class="badge badge-get">GET</span>
+                <span class="endpoint-path">/logs</span>
+            </div>
+            <p class="section-text">Query logs with filters and pagination.</p>
+            
+            <div class="card">
+                <div class="card-title">Query Parameters</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Parameter</th><th>Required</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>start</code></td><td class="required">Yes</td><td>Start time (ISO 8601)</td></tr>
+                            <tr><td><code>end</code></td><td>No</td><td>End time (default: now)</td></tr>
+                            <tr><td><code>type</code></td><td>No</td><td>Comma-separated: security,sessions,access,application,pii-audit</td></tr>
+                            <tr><td><code>limit</code></td><td>No</td><td>Max events (default: 1000, max: 10000)</td></tr>
+                            <tr><td><code>cursor</code></td><td>No</td><td>Pagination cursor</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="code-block">{
+    <span class="s">"success"</span>: <span class="k">true</span>,
+    <span class="s">"meta"</span>: { <span class="s">"returned_count"</span>: <span class="n">500</span>, <span class="s">"has_more"</span>: <span class="k">true</span> },
+    <span class="s">"logs"</span>: [ ... ],
+    <span class="s">"cursor"</span>: <span class="s">"eyJ0cyI6..."</span>
+}</div>
+        </section>
+
+        <!-- GET /logs/correlation/:id -->
+        <section class="section" id="correlation">
+            <div class="endpoint">
+                <span class="badge badge-get">GET</span>
+                <span class="endpoint-path">/logs/correlation/:correlationId</span>
+            </div>
+            <p class="section-text">Get all logs for a specific request/transaction.</p>
+        </section>
+
+        <!-- GET /stats -->
+        <section class="section" id="stats">
+            <div class="endpoint">
+                <span class="badge badge-get">GET</span>
+                <span class="endpoint-path">/stats</span>
+            </div>
+            <p class="section-text">Get log statistics for a date.</p>
+        </section>
+
+        <!-- GET /schema -->
+        <section class="section" id="schema">
+            <div class="endpoint">
+                <span class="badge badge-get">GET</span>
+                <span class="endpoint-path">/schema</span>
+            </div>
+            <p class="section-text">Get event schema for SIEM field mapping.</p>
+        </section>
+
+        <!-- Log Types -->
+        <section class="section" id="log-types">
+            <h2 class="section-title">Log Types</h2>
+            
+            <div class="card">
+                <div class="card-title">security</div>
+                <div>
+                    <span class="tag">LOGIN_SUCCESS</span>
+                    <span class="tag">LOGIN_FAILED</span>
+                    <span class="tag">LOGOUT</span>
+                    <span class="tag">ACCESS_DENIED</span>
+                    <span class="tag">FORENSIC_EXPORT</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">sessions</div>
+                <div>
+                    <span class="tag">SESSION_START</span>
+                    <span class="tag">PAGE_VIEW</span>
+                    <span class="tag">USER_ACTION</span>
+                    <span class="tag">SESSION_END</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">application</div>
+                <div>
+                    <span class="tag">DEBUG</span>
+                    <span class="tag">INFO</span>
+                    <span class="tag tag-yellow">WARN</span>
+                    <span class="tag tag-red">ERROR</span>
+                    <span class="tag tag-red">FATAL</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">pii-audit <small style="color:#6b7280">(7 year retention)</small></div>
+                <div>
+                    <span class="tag">VIEW</span>
+                    <span class="tag">EXPORT</span>
+                    <span class="tag">MODIFY</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Schema -->
+        <section class="section" id="event-schema">
+            <h2 class="section-title">Event Schema</h2>
+            <div class="code-block">{
+    <span class="s">"event_id"</span>: <span class="s">"evt_a1b2c3d4..."</span>,
+    <span class="s">"timestamp"</span>: <span class="s">"2025-02-06T10:30:00.123Z"</span>,
+    <span class="s">"correlation_id"</span>: <span class="s">"req_x9y8z7..."</span>,
+    <span class="s">"log_type"</span>: <span class="s">"security"</span>,
+    <span class="s">"action"</span>: <span class="s">"LOGIN_SUCCESS"</span>,
+    <span class="s">"severity"</span>: <span class="n">3</span>,
+    <span class="s">"source"</span>: {
+        <span class="s">"ip"</span>: <span class="s">"45.115.XXX.XXX"</span>,
+        <span class="s">"user_email_hash"</span>: <span class="s">"sha256:a1b2..."</span>,
+        <span class="s">"user_role"</span>: <span class="s">"Admin"</span>
+    },
+    <span class="s">"platform"</span>: {
+        <span class="s">"name"</span>: <span class="s">"AFL-Underwriting"</span>,
+        <span class="s">"version"</span>: <span class="s">"7.4.2"</span>
+    },
+    <span class="s">"cef"</span>: <span class="s">"CEF:0|ACC|AFL-Underwriting|..."</span>
+}</div>
+        </section>
+
+        <!-- Error Codes -->
+        <section class="section" id="errors">
+            <h2 class="section-title">Error Codes</h2>
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>HTTP</th><th>Error</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>401</td><td><code>invalid_api_key</code></td><td>API key invalid or missing</td></tr>
+                            <tr><td>401</td><td><code>timestamp_expired</code></td><td>Timestamp outside 5-min window</td></tr>
+                            <tr><td>401</td><td><code>invalid_signature</code></td><td>HMAC signature failed</td></tr>
+                            <tr><td>403</td><td><code>ip_not_allowed</code></td><td>IP not whitelisted</td></tr>
+                            <tr><td>429</td><td><code>rate_limited</code></td><td>100 req/min exceeded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="section" id="examples">
+            <h2 class="section-title">Code Examples</h2>
+            
+            <div class="card-title">Node.js</div>
+            <div class="code-block"><span class="k">const</span> crypto = <span class="k">require</span>(<span class="s">'crypto'</span>);
+<span class="k">const</span> axios = <span class="k">require</span>(<span class="s">'axios'</span>);
+
+<span class="k">async function</span> fetchLogs(start, types) {
+    <span class="k">const</span> timestamp = <span class="k">new</span> Date().toISOString();
+    <span class="k">const</span> path = <span class="s">'/api/siem/logs'</span>;
+    <span class="k">const</span> query = <span class="s">`?start=${start}&type=${types}`</span>;
+    
+    <span class="k">const</span> signature = crypto
+        .createHmac(<span class="s">'sha256'</span>, process.env.SIEM_API_SECRET)
+        .update(timestamp + <span class="s">'GET'</span> + path + query)
+        .digest(<span class="s">'hex'</span>);
+    
+    <span class="k">return</span> axios.get(<span class="s">'https://afl.acc.ltd'</span> + path + query, {
+        headers: {
+            <span class="s">'X-API-Key'</span>: process.env.SIEM_API_KEY,
+            <span class="s">'X-Timestamp'</span>: timestamp,
+            <span class="s">'X-Signature'</span>: signature
+        }
+    });
+}</div>
+
+            <div class="card-title">Python</div>
+            <div class="code-block"><span class="k">import</span> hmac, hashlib, requests
+<span class="k">from</span> datetime <span class="k">import</span> datetime
+
+<span class="k">def</span> fetch_logs(start, types):
+    timestamp = datetime.utcnow().strftime(<span class="s">'%Y-%m-%dT%H:%M:%SZ'</span>)
+    path = <span class="s">'/api/siem/logs'</span>
+    query = <span class="s">f'?start={start}&type={types}'</span>
+    
+    signature = hmac.new(
+        API_SECRET.encode(), 
+        <span class="s">f'{timestamp}GET{path}{query}'</span>.encode(),
+        hashlib.sha256
+    ).hexdigest()
+    
+    <span class="k">return</span> requests.get(<span class="s">'https://afl.acc.ltd'</span> + path + query, headers={
+        <span class="s">'X-API-Key'</span>: API_KEY,
+        <span class="s">'X-Timestamp'</span>: timestamp,
+        <span class="s">'X-Signature'</span>: signature
+    })</div>
+        </section>
+
+        <!-- Environment Variables -->
+        <section class="section" id="env-vars">
+            <h2 class="section-title">Environment Variables (Render)</h2>
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Variable</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>SIEM_API_KEY</code></td><td>API key for authentication</td></tr>
+                            <tr><td><code>SIEM_API_SECRET</code></td><td>Secret for HMAC signature</td></tr>
+                            <tr><td><code>SIEM_ALLOWED_IPS</code></td><td>Comma-separated IP whitelist (e.g., 10.0.0.5,10.0.0.6)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            AFL Underwriting Platform v7.4.2 • SIEM API Documentation<br>
+            © 2025 Applied Cloud Computing
+        </div>
+    </footer>
+</body>
+</html>

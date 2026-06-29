@@ -1,0 +1,116 @@
+{
+  "documents": [
+    {
+      "id": "balance_sheet_fy25",
+      "name": "Balance Sheet FY25",
+      "category": "Financial Statements",
+      "required": true,
+      "fields_source": ["balance_sheet.fy25"],
+      "description": "Audited Balance Sheet for FY 2024-25"
+    },
+    {
+      "id": "balance_sheet_fy24",
+      "name": "Balance Sheet FY24",
+      "category": "Financial Statements",
+      "required": true,
+      "fields_source": ["balance_sheet.fy24"],
+      "description": "Audited Balance Sheet for FY 2023-24"
+    },
+    {
+      "id": "balance_sheet_fy23",
+      "name": "Balance Sheet FY23",
+      "category": "Financial Statements",
+      "required": true,
+      "fields_source": ["balance_sheet.fy23"],
+      "description": "Audited Balance Sheet for FY 2022-23"
+    },
+    {
+      "id": "profit_loss_fy25",
+      "name": "Profit & Loss FY25",
+      "category": "Financial Statements",
+      "required": true,
+      "fields_source": ["profit_and_loss.fy25"],
+      "description": "Audited P&L Statement for FY 2024-25"
+    },
+    {
+      "id": "profit_loss_fy24",
+      "name": "Profit & Loss FY24",
+      "category": "Financial Statements",
+      "required": true,
+      "fields_source": ["profit_and_loss.fy24"],
+      "description": "Audited P&L Statement for FY 2023-24"
+    },
+    {
+      "id": "profit_loss_fy23",
+      "name": "Profit & Loss FY23",
+      "category": "Financial Statements",
+      "required": true,
+      "fields_source": ["profit_and_loss.fy23"],
+      "description": "Audited P&L Statement for FY 2022-23"
+    },
+    {
+      "id": "cash_flow_fy25",
+      "name": "Cash Flow Statement FY25",
+      "category": "Financial Statements",
+      "required": false,
+      "fields_source": ["cash_flow.fy25"],
+      "description": "Cash Flow Statement for FY 2024-25"
+    },
+    {
+      "id": "cash_flow_fy24",
+      "name": "Cash Flow Statement FY24",
+      "category": "Financial Statements",
+      "required": false,
+      "fields_source": ["cash_flow.fy24"],
+      "description": "Cash Flow Statement for FY 2023-24"
+    },
+    {
+      "id": "cash_flow_fy23",
+      "name": "Cash Flow Statement FY23",
+      "category": "Financial Statements",
+      "required": false,
+      "fields_source": ["cash_flow.fy23"],
+      "description": "Cash Flow Statement for FY 2022-23"
+    },
+    {
+      "id": "gst_returns",
+      "name": "GST Returns (Last 12 months)",
+      "category": "Tax Documents",
+      "required": false,
+      "fields_source": ["gst_data"],
+      "description": "GSTR-3B returns for the last 12 months"
+    },
+    {
+      "id": "banking_statement",
+      "name": "Banking Statement (Last 12 months)",
+      "category": "Banking Documents",
+      "required": false,
+      "fields_source": ["banking_info"],
+      "description": "Bank statements showing transactions"
+    },
+    {
+      "id": "incorporation_certificate",
+      "name": "Certificate of Incorporation",
+      "category": "Legal Documents",
+      "required": false,
+      "fields_source": ["company_info"],
+      "description": "Company registration certificate"
+    },
+    {
+      "id": "pan_card",
+      "name": "PAN Card",
+      "category": "Legal Documents",
+      "required": true,
+      "fields_source": ["company_info"],
+      "description": "Company PAN card"
+    },
+    {
+      "id": "gst_certificate",
+      "name": "GST Registration Certificate",
+      "category": "Legal Documents",
+      "required": true,
+      "fields_source": ["company_info"],
+      "description": "GSTIN registration certificate"
+    }
+  ]
+}

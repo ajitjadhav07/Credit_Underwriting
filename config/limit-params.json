@@ -1,0 +1,72 @@
+{
+  "_comment": "Limit calculation parameters - edit values here to change limit calculations",
+  "_version": "1.0",
+  "_lastUpdated": "2026-01-01",
+  
+  "limit_params": [
+    {
+      "param_code": "STOCK_MARGIN",
+      "param_name": "Eligible Stock Margin",
+      "param_value": 75,
+      "param_unit": "percentage",
+      "facility_type": "Working Capital",
+      "description": "Percentage of stock value considered eligible for drawing power"
+    },
+    {
+      "param_code": "DEBTOR_MARGIN",
+      "param_name": "Eligible Debtors Margin",
+      "param_value": 60,
+      "param_unit": "percentage",
+      "facility_type": "Working Capital",
+      "description": "Percentage of debtors (< 90 days) considered eligible for drawing power"
+    },
+    {
+      "param_code": "OD_TURNOVER_PCT",
+      "param_name": "Overdraft as % of Turnover",
+      "param_value": 10,
+      "param_unit": "percentage",
+      "facility_type": "Overdraft",
+      "description": "OD limit calculated as percentage of annual turnover"
+    },
+    {
+      "param_code": "TARGET_DSCR",
+      "param_name": "Target DSCR for Term Loan",
+      "param_value": 1.5,
+      "param_unit": "times",
+      "facility_type": "Term Loan",
+      "description": "Target DSCR for calculating term loan eligibility"
+    },
+    {
+      "param_code": "TL_TENURE",
+      "param_name": "Standard Term Loan Tenure",
+      "param_value": 60,
+      "param_unit": "months",
+      "facility_type": "Term Loan",
+      "description": "Standard term loan tenure for limit calculation"
+    },
+    {
+      "param_code": "PRINCIPAL_PCT",
+      "param_name": "Annual Principal Repayment %",
+      "param_value": 20,
+      "param_unit": "percentage",
+      "facility_type": "Term Loan",
+      "description": "Assumed annual principal repayment as % of total debt for DSCR calculation"
+    },
+    {
+      "param_code": "MIN_COLLATERAL_COVERAGE",
+      "param_name": "Minimum Collateral Coverage",
+      "param_value": 125,
+      "param_unit": "percentage",
+      "facility_type": "All",
+      "description": "Minimum collateral coverage required (125% = 1.25x loan amount)"
+    },
+    {
+      "param_code": "MAX_TNW_MULTIPLE",
+      "param_name": "Maximum Exposure to TNW Multiple",
+      "param_value": 3,
+      "param_unit": "times",
+      "facility_type": "All",
+      "description": "Total recommended exposure cannot exceed this multiple of Tangible Net Worth (TNW). Manufacturing: 3x, Trading: 4x."
+    }
+  ]
+}

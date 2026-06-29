@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Dashboard - AFL Underwriting</title>
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .compliance-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .score-card { background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); color: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .score-card.pass { background: linear-gradient(135deg, #065f46 0%, #047857 100%); }
+        .score-card.partial { background: linear-gradient(135deg, #92400e 0%, #b45309 100%); }
+        .score-card.fail { background: linear-gradient(135deg, #991b1b 0%, #b91c1c 100%); }
+        .score-value { font-size: 2rem; font-weight: bold; margin: 6px 0; }
+        .score-label { font-size: 0.8rem; opacity: 0.9; }
+        .framework-card { background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 16px; overflow: hidden; }
+        .framework-header { background: #f8fafc; padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .framework-header:hover { background: #f1f5f9; }
+        .framework-title { font-weight: 600; font-size: 1rem; color: #1e293b; }
+        .framework-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-pass { background: #dcfce7; color: #166534; }
+        .badge-partial { background: #fef3c7; color: #92400e; }
+        .badge-fail { background: #fee2e2; color: #991b1b; }
+        .framework-body { padding: 16px; display: none; }
+        .framework-body.active { display: block; }
+        .official-text { background: #f0f9ff; border-left: 4px solid #0284c7; padding: 14px; margin-bottom: 14px; border-radius: 0 8px 8px 0; }
+        .official-text-label { font-size: 0.7rem; font-weight: 600; color: #0369a1; text-transform: uppercase; margin-bottom: 6px; }
+        .official-text-content { color: #334155; font-style: italic; line-height: 1.5; font-size: 0.9rem; }
+        .official-text-source { font-size: 0.7rem; color: #64748b; margin-top: 6px; }
+        .control-item { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+        .control-header { padding: 10px 14px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .control-header:hover { background: #f1f5f9; }
+        .control-id { font-weight: 600; color: #475569; font-family: monospace; font-size: 0.85rem; }
+        .control-name { color: #1e293b; margin-left: 10px; font-size: 0.9rem; }
+        .control-status { display: flex; align-items: center; gap: 8px; }
+        .status-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .status-pass { background: #dcfce7; color: #166534; }
+        .status-partial { background: #fef3c7; color: #92400e; }
+        .status-fail { background: #fee2e2; color: #991b1b; }
+        .control-details { padding: 14px; background: white; display: none; border-top: 1px solid #e2e8f0; }
+        .control-details.active { display: block; }
+        .check-item { padding: 10px; background: #f8fafc; border-radius: 6px; margin-bottom: 8px; }
+        .check-item.pass { border-left: 3px solid #16a34a; }
+        .check-item.fail { border-left: 3px solid #dc2626; }
+        .check-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .check-name { font-weight: 500; font-size: 0.85rem; }
+        .check-status-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; }
+        .check-status-badge.pass { background: #dcfce7; color: #166534; }
+        .check-status-badge.fail { background: #fee2e2; color: #991b1b; }
+        .code-evidence { background: #1e293b; color: #e2e8f0; padding: 8px 12px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; margin-top: 6px; overflow-x: auto; }
+        .code-evidence .file { color: #94a3b8; }
+        .code-evidence .line { color: #fbbf24; }
+        .code-evidence .code { color: #a5f3fc; }
+        .evidence-list { list-style: none; padding: 0; margin: 8px 0 0 0; }
+        .evidence-item { padding: 4px 0; font-size: 0.8rem; color: #475569; }
+        .tab-container { display: flex; gap: 4px; background: #f1f5f9; padding: 4px; border-radius: 8px; margin-bottom: 16px; overflow-x: auto; }
+        .tab-btn { padding: 8px 16px; border: none; background: transparent; cursor: pointer; border-radius: 6px; font-weight: 500; color: #64748b; white-space: nowrap; transition: all 0.2s; font-size: 0.9rem; }
+        .tab-btn:hover { background: #e2e8f0; }
+        .tab-btn.active { background: white; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .findings-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.8rem; }
+        .findings-table th, .findings-table td { padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .findings-table th { background: #f8fafc; font-weight: 600; color: #475569; }
+        .severity-critical { color: #dc2626; font-weight: 600; }
+        .severity-high { color: #ea580c; font-weight: 600; }
+        .severity-medium { color: #ca8a04; }
+        .severity-low { color: #65a30d; }
+        .loading-spinner { display: flex; justify-content: center; align-items: center; padding: 60px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: none; transition: all 0.2s; font-size: 0.9rem; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #f1f5f9; color: #475569; }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .scan-info { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; color: #64748b; }
+        .excluded-note { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px 14px; margin-top: 14px; font-size: 0.85rem; }
+        .excluded-note-title { font-weight: 600; color: #92400e; margin-bottom: 4px; }
+        .checks-summary { font-size: 0.75rem; color: #64748b; margin-left: 8px; }
+        .rescan-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.85rem; color: #1e40af; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="/" class="text-gray-500 hover:text-gray-700 text-sm">← Back</a>
+                <h1 class="text-lg font-bold text-gray-800">🔒 Compliance Dashboard</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="downloadReport()" class="btn btn-secondary">📥 Download</button>
+                <button onclick="rescan()" class="btn btn-primary" id="rescanBtn">🔄 Rescan Code</button>
+            </div>
+        </div>
+    </header>
+    <main class="compliance-container">
+        <div id="loadingState" class="loading-spinner"><div class="spinner"></div></div>
+        <div id="errorState" style="display: none;" class="text-center py-12">
+            <div class="text-5xl mb-4">⚠️</div>
+            <h2 class="text-lg font-bold text-gray-700 mb-2">No Compliance Data</h2>
+            <p class="text-gray-500 mb-4 text-sm" id="errorMessage">Run compliance scan to generate results</p>
+            <button onclick="rescan()" class="btn btn-primary">🔄 Run Compliance Scan</button>
+        </div>
+        <div id="dashboardContent" style="display: none;">
+            <div class="rescan-note">
+                <strong>💡 Rescan:</strong> Click "Rescan Code" to run a fresh scan of the entire codebase against OWASP, NIST, and CSA frameworks. This scans all 33+ JavaScript files for security patterns.
+            </div>
+            <div class="scan-info mb-4">
+                <strong>Last Scan:</strong> <span id="scanTimestamp">-</span> | 
+                <strong>Version:</strong> <span id="scanVersion">-</span> | 
+                <strong>Files:</strong> <span id="filesScanned">-</span> |
+                <strong>Duration:</strong> <span id="scanDuration">-</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+                <div class="score-card" id="overallScoreCard"><div class="score-label">Overall</div><div class="score-value" id="overallScore">-</div><div class="score-label">/ 100</div></div>
+                <div class="score-card" id="sastScoreCard"><div class="score-label">SAST</div><div class="score-value" id="sastScore">-</div><div class="score-label" id="sastIssues">issues</div></div>
+                <div class="score-card" id="depsScoreCard"><div class="score-label">Dependencies</div><div class="score-value" id="depsScore">-</div><div class="score-label" id="depsVulns">vulns</div></div>
+                <div class="score-card" id="owaspScoreCard"><div class="score-label">OWASP</div><div class="score-value" id="owaspScore">-</div><div class="score-label" id="owaspStatus">controls</div></div>
+                <div class="score-card" id="nistScoreCard"><div class="score-label">NIST CSF</div><div class="score-value" id="nistScore">-</div><div class="score-label" id="nistStatus">categories</div></div>
+                <div class="score-card" id="csaScoreCard"><div class="score-label">CSA CCM</div><div class="score-value" id="csaScore">-</div><div class="score-label" id="csaStatus">domains</div></div>
+            </div>
+            <div class="tab-container">
+                <button class="tab-btn active" data-tab="sast">SAST</button>
+                <button class="tab-btn" data-tab="deps">Dependencies</button>
+                <button class="tab-btn" data-tab="secrets">Secrets</button>
+                <button class="tab-btn" data-tab="owasp">OWASP Top 10</button>
+                <button class="tab-btn" data-tab="nist">NIST CSF</button>
+                <button class="tab-btn" data-tab="csa">CSA CCM</button>
+            </div>
+            <div id="tab-sast" class="tab-content active"><div class="framework-card"><div class="framework-header"><div class="framework-title">📊 Static Application Security Testing</div></div><div class="framework-body active"><div class="official-text"><div class="official-text-label">About SAST</div><div class="official-text-content">Static Application Security Testing analyzes source code to find security vulnerabilities without executing the program. Issues include: eval() usage, unused variables, undefined references, and code quality problems.</div></div><div id="sastFindings"><p class="text-gray-500">Loading...</p></div></div></div></div>
+            <div id="tab-deps" class="tab-content"><div class="framework-card"><div class="framework-header"><div class="framework-title">📦 Dependency Vulnerability Scan</div></div><div class="framework-body active"><div class="official-text"><div class="official-text-label">About Dependency Scanning</div><div class="official-text-content">Identifies known vulnerabilities (CVEs) in npm packages. This aligns with OWASP A06:2021 - Vulnerable and Outdated Components.</div></div><div id="depsFindings"><p class="text-gray-500">Loading...</p></div></div></div></div>
+            <div id="tab-secrets" class="tab-content"><div class="framework-card"><div class="framework-header"><div class="framework-title">🔑 Secrets Detection</div></div><div class="framework-body active"><div class="official-text"><div class="official-text-label">About Secrets Detection</div><div class="official-text-content">Scans for hardcoded API keys, passwords, and sensitive credentials that should be in environment variables.</div></div><div id="secretsFindings"><p class="text-gray-500">Loading...</p></div></div></div></div>
+            <div id="tab-owasp" class="tab-content"><div id="owaspContent"><p class="text-gray-500">Loading OWASP Top 10...</p></div></div>
+            <div id="tab-nist" class="tab-content"><div id="nistContent"><p class="text-gray-500">Loading NIST CSF...</p></div></div>
+            <div id="tab-csa" class="tab-content"><div id="csaContent"><p class="text-gray-500">Loading CSA CCM...</p></div></div>
+        </div>
+    </main>
+    <script>
+        let complianceData = null;
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+        
+        async function loadComplianceData() {
+            try {
+                const response = await fetch('/api/compliance/latest');
+                if (!response.ok) throw new Error('No compliance data available');
+                complianceData = await response.json();
+                renderDashboard();
+            } catch (err) {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').textContent = err.message;
+            }
+        }
+        
+        function renderDashboard() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+            document.getElementById('scanTimestamp').textContent = new Date(complianceData.scan_info.timestamp).toLocaleString();
+            document.getElementById('scanVersion').textContent = complianceData.scan_info.version;
+            document.getElementById('filesScanned').textContent = complianceData.scan_info.files_scanned + ' JS files';
+            document.getElementById('scanDuration').textContent = (complianceData.scan_info.duration_ms / 1000).toFixed(1) + 's';
+            updateScoreCard('overall', complianceData.overall_score);
+            updateScoreCard('sast', complianceData.summary.sast.score, complianceData.summary.sast.issues + ' issues');
+            updateScoreCard('deps', complianceData.summary.dependencies.score, complianceData.summary.dependencies.vulnerabilities + ' vulns');
+            updateScoreCard('owasp', complianceData.summary.owasp.score, complianceData.summary.owasp.passed + '/' + complianceData.summary.owasp.total + ' passed');
+            updateScoreCard('nist', complianceData.summary.nist.score, complianceData.summary.nist.passed + '/' + complianceData.summary.nist.total + ' passed');
+            updateScoreCard('csa', complianceData.summary.csa.score, complianceData.summary.csa.passed + '/' + complianceData.summary.csa.total + ' passed');
+            renderSASTTab(); renderDepsTab(); renderSecretsTab(); renderOWASPTab(); renderNISTTab(); renderCSATab();
+        }
+        
+        function updateScoreCard(id, score, sublabel) {
+            const card = document.getElementById(id + 'ScoreCard');
+            document.getElementById(id + 'Score').textContent = score;
+            if (sublabel) { 
+                const el = document.getElementById(id + 'Issues') || document.getElementById(id + 'Vulns') || document.getElementById(id + 'Status'); 
+                if (el) el.textContent = sublabel; 
+            }
+            card.classList.remove('pass', 'partial', 'fail');
+            if (score >= 80) card.classList.add('pass'); 
+            else if (score >= 50) card.classList.add('partial'); 
+            else card.classList.add('fail');
+        }
+        
+        function renderSASTTab() {
+            const findings = complianceData.sast.findings || [];
+            document.getElementById('sastFindings').innerHTML = findings.length === 0 
+                ? '<div class="check-item pass"><div class="check-header"><span class="check-name">✅ No security issues found in code</span></div></div>'
+                : '<table class="findings-table"><thead><tr><th>Severity</th><th>Rule</th><th>File</th><th>Line</th><th>Message</th></tr></thead><tbody>' + 
+                  findings.map(f => '<tr><td class="severity-' + f.severity + '">' + f.severity.toUpperCase() + '</td><td><code>' + f.rule + '</code></td><td>' + f.file + '</td><td>' + f.line + '</td><td>' + escapeHtml(f.message) + '</td></tr>').join('') + 
+                  '</tbody></table>';
+        }
+        
+        function renderDepsTab() {
+            const vulns = complianceData.dependencies.vulnerabilities || [];
+            document.getElementById('depsFindings').innerHTML = vulns.length === 0
+                ? '<div class="check-item pass"><div class="check-header"><span class="check-name">✅ No known vulnerabilities in dependencies</span></div></div>'
+                : '<table class="findings-table"><thead><tr><th>Severity</th><th>Package</th><th>Issue</th><th>Fix</th></tr></thead><tbody>' + 
+                  vulns.map(v => '<tr><td class="severity-' + v.severity + '">' + v.severity.toUpperCase() + '</td><td><code>' + v.package + '</code></td><td>' + escapeHtml(v.title) + '</td><td>' + (v.fixAvailable ? '✅' : '❌') + '</td></tr>').join('') + 
+                  '</tbody></table>';
+        }
+        
+        function renderSecretsTab() {
+            const findings = complianceData.secrets.findings || [];
+            document.getElementById('secretsFindings').innerHTML = findings.length === 0
+                ? '<div class="check-item pass"><div class="check-header"><span class="check-name">✅ No hardcoded secrets detected</span></div></div>'
+                : '<table class="findings-table"><thead><tr><th>Severity</th><th>Type</th><th>File</th><th>Line</th></tr></thead><tbody>' + 
+                  findings.map(f => '<tr><td class="severity-' + f.severity + '">' + f.severity.toUpperCase() + '</td><td>' + f.type + '</td><td>' + f.file + '</td><td>' + f.line + '</td></tr>').join('') + 
+                  '</tbody></table>';
+        }
+        
+        function renderOWASPTab() {
+            const owasp = complianceData.owasp;
+            let html = '<div class="official-text mb-4"><div class="official-text-label">📖 ' + owasp.framework + ' (' + owasp.version + ')</div><div class="official-text-content">The OWASP Top 10 is a standard awareness document for web application security risks. Each control below shows the specific code patterns found (or missing) in your codebase.</div><div class="official-text-source">Source: ' + owasp.source + '</div></div>';
+            
+            for (const ctrl of owasp.controls) {
+                const st = ctrl.status === 'pass' ? 'pass' : ctrl.status === 'partial' ? 'partial' : 'fail';
+                const icon = ctrl.status === 'pass' ? '✓' : ctrl.status === 'partial' ? '◐' : '✗';
+                const checksInfo = ctrl.checks_passed !== undefined ? ' (' + ctrl.checks_passed + '/' + ctrl.checks_total + ' checks)' : '';
+                
+                html += '<div class="control-item"><div class="control-header" onclick="toggleControl(this)">' +
+                    '<div><span class="control-id">' + ctrl.id + '</span><span class="control-name">' + ctrl.name + '</span><span class="checks-summary">' + checksInfo + '</span></div>' +
+                    '<div class="control-status"><span class="framework-badge badge-' + st + '">' + ctrl.score + '%</span><span class="status-icon status-' + st + '">' + icon + '</span></div>' +
+                    '</div><div class="control-details">' +
+                    '<div class="official-text"><div class="official-text-label">Framework Requirement</div><div class="official-text-content">"' + ctrl.official_text + '"</div><div class="official-text-source">— ' + ctrl.source_reference + '</div></div>' +
+                    '<h4 class="font-semibold mt-3 mb-2 text-sm">Security Checks:</h4>';
+                
+                // Show each check with its evidence
+                for (const check of ctrl.checks) {
+                    const checkSt = check.status === 'pass' ? 'pass' : 'fail';
+                    html += '<div class="check-item ' + checkSt + '">' +
+                        '<div class="check-header"><span class="check-name">' + check.description + '</span><span class="check-status-badge ' + checkSt + '">' + (check.status === 'pass' ? 'PASS' : 'FAIL') + '</span></div>';
+                    
+                    // Show code evidence if available
+                    if (check.code_snippets && check.code_snippets.length > 0) {
+                        html += '<div class="code-evidence">';
+                        for (const snippet of check.code_snippets) {
+                            html += '<div><span class="file">' + snippet.file + '</span>:<span class="line">' + snippet.line + '</span> → <span class="code">' + escapeHtml(snippet.code) + '</span></div>';
+                        }
+                        html += '</div>';
+                    } else if (check.evidence && check.evidence.length > 0) {
+                        html += '<ul class="evidence-list">';
+                        for (const ev of check.evidence) {
+                            html += '<li class="evidence-item">' + escapeHtml(ev) + '</li>';
+                        }
+                        html += '</ul>';
+                    }
+                    html += '</div>';
+                }
+                
+                html += '</div></div>';
+            }
+            
+            document.getElementById('owaspContent').innerHTML = html;
+        }
+        
+        function renderNISTTab() {
+            const nist = complianceData.nist;
+            let html = '<div class="official-text mb-4"><div class="official-text-label">📖 ' + nist.framework + ' (' + nist.version + ')</div><div class="official-text-content">' + nist.note + '</div><div class="official-text-source">Source: ' + nist.source + '</div></div>';
+            
+            for (const func of nist.functions) {
+                html += '<div class="framework-card mb-3"><div class="framework-header" onclick="toggleFramework(this)"><div class="framework-title">' + func.id + ': ' + func.name + '</div><span class="framework-badge badge-' + (func.score >= 80 ? 'pass' : func.score >= 50 ? 'partial' : 'fail') + '">' + func.score + '%</span></div><div class="framework-body"><p class="text-gray-600 mb-3 text-sm">' + func.description + '</p>';
+                
+                for (const cat of func.categories) {
+                    const st = cat.status === 'pass' ? 'pass' : cat.status === 'partial' ? 'partial' : 'fail';
+                    html += '<div class="control-item"><div class="control-header" onclick="toggleControl(this)"><div><span class="control-id">' + cat.id + '</span><span class="control-name">' + cat.name + '</span></div><div class="control-status"><span class="framework-badge badge-' + st + '">' + cat.score + '%</span></div></div><div class="control-details"><div class="official-text"><div class="official-text-label">Framework Requirement</div><div class="official-text-content">"' + cat.official_text + '"</div><div class="official-text-source">— ' + cat.source_reference + '</div></div><h4 class="font-semibold mt-3 mb-2 text-sm">Checks:</h4>';
+                    
+                    for (const c of cat.controls) {
+                        const cSt = c.status === 'pass' ? 'pass' : 'fail';
+                        html += '<div class="check-item ' + cSt + '"><div class="check-header"><span class="check-name">' + c.subcategory + ': ' + c.description + '</span><span class="check-status-badge ' + cSt + '">' + (c.status === 'pass' ? 'PASS' : 'FAIL') + '</span></div>';
+                        if (c.evidence && c.evidence.length > 0) {
+                            html += '<ul class="evidence-list">';
+                            for (const ev of c.evidence) { html += '<li class="evidence-item">' + escapeHtml(ev) + '</li>'; }
+                            html += '</ul>';
+                        }
+                        html += '</div>';
+                    }
+                    html += '</div></div>';
+                }
+                html += '</div></div>';
+            }
+            
+            if (nist.excluded && nist.excluded.length > 0) {
+                html += '<div class="excluded-note"><div class="excluded-note-title">ℹ️ Excluded from Code Scan (Requires Manual Assessment)</div><div class="excluded-note-content">' + nist.excluded.map(e => '<br>• <strong>' + e.id + ' (' + e.name + ')</strong>: ' + e.reason).join('') + '</div></div>';
+            }
+            document.getElementById('nistContent').innerHTML = html;
+        }
+        
+        function renderCSATab() {
+            const csa = complianceData.csa;
+            let html = '<div class="official-text mb-4"><div class="official-text-label">📖 ' + csa.framework + ' (' + csa.version + ')</div><div class="official-text-content">' + csa.note + '</div><div class="official-text-source">Source: ' + csa.source + '</div></div>';
+            
+            for (const domain of csa.domains) {
+                html += '<div class="framework-card mb-3"><div class="framework-header" onclick="toggleFramework(this)"><div class="framework-title">' + domain.id + ': ' + domain.name + '</div><span class="framework-badge badge-' + (domain.score >= 80 ? 'pass' : domain.score >= 50 ? 'partial' : 'fail') + '">' + domain.score + '%</span></div><div class="framework-body"><p class="text-gray-600 mb-3 text-sm">' + domain.description + '</p>';
+                
+                for (const ctrl of domain.controls) {
+                    const st = ctrl.status === 'pass' ? 'pass' : ctrl.status === 'partial' ? 'partial' : 'fail';
+                    html += '<div class="control-item"><div class="control-header" onclick="toggleControl(this)"><div><span class="control-id">' + ctrl.id + '</span><span class="control-name">' + ctrl.name + '</span></div><div class="control-status"><span class="framework-badge badge-' + st + '">' + ctrl.score + '%</span></div></div><div class="control-details"><div class="official-text"><div class="official-text-label">Framework Requirement</div><div class="official-text-content">"' + ctrl.official_text + '"</div><div class="official-text-source">— ' + ctrl.source_reference + '</div></div><h4 class="font-semibold mt-3 mb-2 text-sm">Checks:</h4>';
+                    
+                    for (const c of ctrl.checks) {
+                        const cSt = c.status === 'pass' ? 'pass' : 'fail';
+                        html += '<div class="check-item ' + cSt + '"><div class="check-header"><span class="check-name">' + c.description + '</span><span class="check-status-badge ' + cSt + '">' + (c.status === 'pass' ? 'PASS' : 'FAIL') + '</span></div>';
+                        if (c.evidence && c.evidence.length > 0) {
+                            html += '<ul class="evidence-list">';
+                            for (const ev of c.evidence) { html += '<li class="evidence-item">' + escapeHtml(ev) + '</li>'; }
+                            html += '</ul>';
+                        }
+                        html += '</div>';
+                    }
+                    html += '</div></div>';
+                }
+                html += '</div></div>';
+            }
+            
+            if (csa.excluded && csa.excluded.length > 0) {
+                html += '<div class="excluded-note"><div class="excluded-note-title">ℹ️ Excluded from Code Scan (Requires Manual Assessment)</div><div class="excluded-note-content">' + csa.excluded.map(e => '<br>• <strong>' + e.id + ' (' + e.name + ')</strong>: ' + e.reason).join('') + '</div></div>';
+            }
+            document.getElementById('csaContent').innerHTML = html;
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        
+        function toggleControl(header) { header.nextElementSibling.classList.toggle('active'); }
+        function toggleFramework(header) { header.nextElementSibling.classList.toggle('active'); }
+        
+        async function rescan() {
+            const btn = document.getElementById('rescanBtn');
+            btn.disabled = true; 
+            btn.innerHTML = '⏳ Scanning all files...';
+            
+            try {
+                const response = await fetch('/api/compliance/rescan', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) { 
+                    complianceData = result.results; 
+                    renderDashboard(); 
+                    alert('✅ Compliance scan completed!\n\nScanned ' + result.results.scan_info.files_scanned + ' files in ' + (result.results.scan_info.duration_ms/1000).toFixed(1) + ' seconds.\n\nOverall Score: ' + result.results.overall_score + '/100');
+                } else {
+                    alert('❌ Scan failed: ' + (result.error || 'Unknown error'));
+                }
+            } catch (err) { 
+                alert('❌ Scan failed: ' + err.message); 
+            } finally { 
+                btn.disabled = false; 
+                btn.innerHTML = '🔄 Rescan Code'; 
+            }
+        }
+        
+        function downloadReport() { window.location.href = '/api/compliance/report'; }
+        
+        loadComplianceData();
+    </script>
+</body>
+</html>

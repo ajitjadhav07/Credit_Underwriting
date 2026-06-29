@@ -1,0 +1,442 @@
+{
+  "schema_version": "1.0",
+  "masters": {
+    "products": {
+      "name": "Product Master",
+      "description": "Loan products offered by the bank",
+      "category": "Lending Policy",
+      "fields": [
+        {"name": "product_code", "label": "Product Code", "type": "text", "required": true, "unique": true},
+        {"name": "product_name", "label": "Product Name", "type": "text", "required": true},
+        {"name": "description", "label": "Description", "type": "textarea", "required": false},
+        {"name": "min_amount_lakhs", "label": "Min Amount (Lakhs)", "type": "number", "required": true},
+        {"name": "max_amount_lakhs", "label": "Max Amount (Lakhs)", "type": "number", "required": true},
+        {"name": "min_tenure_months", "label": "Min Tenure (Months)", "type": "number", "required": true},
+        {"name": "max_tenure_months", "label": "Max Tenure (Months)", "type": "number", "required": true},
+        {"name": "interest_rate_min", "label": "Interest Rate Min (%)", "type": "number", "required": true},
+        {"name": "interest_rate_max", "label": "Interest Rate Max (%)", "type": "number", "required": true},
+        {"name": "processing_fee_percent", "label": "Processing Fee (%)", "type": "number", "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "policy_rules": {
+      "name": "Policy Rules Master",
+      "description": "Lending policy rules and thresholds",
+      "category": "Lending Policy",
+      "fields": [
+        {"name": "rule_code", "label": "Rule Code", "type": "text", "required": true, "unique": true},
+        {"name": "rule_name", "label": "Rule Name", "type": "text", "required": true},
+        {"name": "parameter", "label": "Parameter", "type": "text", "required": true},
+        {"name": "operator", "label": "Operator", "type": "select", "options": [">=", "<=", ">", "<", "=", "!="], "required": true},
+        {"name": "threshold_value", "label": "Threshold Value", "type": "number", "required": true},
+        {"name": "applicable_product", "label": "Applicable Product", "type": "text", "required": false},
+        {"name": "severity", "label": "Severity", "type": "select", "options": ["Critical", "Warning", "Info"], "required": true},
+        {"name": "description", "label": "Description", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "interest_rates": {
+      "name": "Interest Rate Matrix",
+      "description": "Interest rates by product and risk grade",
+      "category": "Lending Policy",
+      "fields": [
+        {"name": "product_code", "label": "Product Code", "type": "text", "required": true},
+        {"name": "risk_grade", "label": "Risk Grade", "type": "select", "options": ["A+", "A", "B+", "B", "C", "D"], "required": true},
+        {"name": "interest_rate", "label": "Interest Rate (%)", "type": "number", "required": true},
+        {"name": "processing_fee", "label": "Processing Fee (%)", "type": "number", "required": true},
+        {"name": "effective_from", "label": "Effective From", "type": "date", "required": true},
+        {"name": "effective_to", "label": "Effective To", "type": "date", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "industries": {
+      "name": "Industry Master",
+      "description": "Industries with risk profiles",
+      "category": "Classification",
+      "fields": [
+        {"name": "industry_code", "label": "Industry Code", "type": "text", "required": true, "unique": true},
+        {"name": "industry_name", "label": "Industry Name", "type": "text", "required": true},
+        {"name": "sector", "label": "Sector", "type": "select", "options": ["Manufacturing", "Services", "Trading", "Agriculture"], "required": true},
+        {"name": "risk_category", "label": "Risk Category", "type": "select", "options": ["Low", "Medium", "High", "Very High"], "required": true},
+        {"name": "default_rate", "label": "Historical Default Rate (%)", "type": "number", "required": false},
+        {"name": "special_considerations", "label": "Special Considerations", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "constitution_types": {
+      "name": "Constitution Type Master",
+      "description": "Legal entity types and requirements",
+      "category": "Classification",
+      "fields": [
+        {"name": "constitution_code", "label": "Constitution Code", "type": "text", "required": true, "unique": true},
+        {"name": "constitution_name", "label": "Constitution Name", "type": "text", "required": true},
+        {"name": "document_requirements", "label": "Document Requirements", "type": "textarea", "required": false},
+        {"name": "kyc_requirements", "label": "KYC Requirements", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "turnover_slabs": {
+      "name": "Turnover Slab Master",
+      "description": "Business size classification by turnover",
+      "category": "Classification",
+      "fields": [
+        {"name": "slab_code", "label": "Slab Code", "type": "text", "required": true, "unique": true},
+        {"name": "slab_name", "label": "Slab Name", "type": "text", "required": true},
+        {"name": "min_turnover_lakhs", "label": "Min Turnover (Lakhs)", "type": "number", "required": true},
+        {"name": "max_turnover_lakhs", "label": "Max Turnover (Lakhs)", "type": "number", "required": true},
+        {"name": "category", "label": "Category", "type": "select", "options": ["Micro", "Small", "Medium", "Large"], "required": true},
+        {"name": "special_benefits", "label": "Special Benefits", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "branches": {
+      "name": "Branch Master",
+      "description": "Bank branch information",
+      "category": "Operational",
+      "fields": [
+        {"name": "branch_code", "label": "Branch Code", "type": "text", "required": true, "unique": true},
+        {"name": "branch_name", "label": "Branch Name", "type": "text", "required": true},
+        {"name": "region", "label": "Region", "type": "text", "required": true},
+        {"name": "state", "label": "State", "type": "text", "required": true},
+        {"name": "city", "label": "City", "type": "text", "required": true},
+        {"name": "address", "label": "Address", "type": "textarea", "required": true},
+        {"name": "manager_name", "label": "Branch Manager", "type": "text", "required": false},
+        {"name": "contact_number", "label": "Contact Number", "type": "text", "required": true},
+        {"name": "email", "label": "Email", "type": "email", "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "documents": {
+      "name": "Document Master",
+      "description": "Expected documents configuration",
+      "category": "Operational",
+      "fields": [
+        {"name": "document_code", "label": "Document Code", "type": "text", "required": true, "unique": true},
+        {"name": "document_name", "label": "Document Name", "type": "text", "required": true},
+        {"name": "category", "label": "Category", "type": "select", "options": ["Financial", "Statutory", "Tax", "Banking", "KYC", "Credit Bureau", "Property", "Business"], "required": true},
+        {"name": "is_required", "label": "Required", "type": "boolean", "required": true, "default": true},
+        {"name": "applicable_constitutions", "label": "Applicable Constitutions", "type": "text", "required": false},
+        {"name": "applicable_products", "label": "Applicable Products", "type": "text", "required": false},
+        {"name": "validity_days", "label": "Validity (Days)", "type": "number", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "rejection_reasons": {
+      "name": "Rejection Reasons Master",
+      "description": "Standard rejection reasons",
+      "category": "Operational",
+      "fields": [
+        {"name": "reason_code", "label": "Reason Code", "type": "text", "required": true, "unique": true},
+        {"name": "reason_description", "label": "Reason Description", "type": "textarea", "required": true},
+        {"name": "category", "label": "Category", "type": "select", "options": ["Financial", "Credit", "KYC", "Policy", "Documentation", "Other"], "required": true},
+        {"name": "auto_trigger_condition", "label": "Auto-trigger Condition", "type": "text", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "credit_score_ranges": {
+      "name": "Credit Score Ranges Master",
+      "description": "Score to grade mapping",
+      "category": "Risk & Scoring",
+      "fields": [
+        {"name": "min_score", "label": "Min Score", "type": "number", "required": true},
+        {"name": "max_score", "label": "Max Score", "type": "number", "required": true},
+        {"name": "grade", "label": "Grade", "type": "select", "options": ["A+", "A", "B+", "B", "C", "D"], "required": true},
+        {"name": "description", "label": "Description", "type": "text", "required": true},
+        {"name": "recommendation", "label": "Decision Recommendation", "type": "select", "options": ["Approve", "Approve with Conditions", "Refer to Committee", "Reject"], "required": true},
+        {"name": "color_code", "label": "Color Code", "type": "text", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "ratio_thresholds": {
+      "name": "Ratio Thresholds Master",
+      "description": "Acceptable ranges for financial ratios",
+      "category": "Risk & Scoring",
+      "fields": [
+        {"name": "ratio_name", "label": "Ratio Name", "type": "text", "required": true},
+        {"name": "good_min", "label": "Good Range Min", "type": "number", "required": false},
+        {"name": "good_max", "label": "Good Range Max", "type": "number", "required": false},
+        {"name": "acceptable_min", "label": "Acceptable Range Min", "type": "number", "required": false},
+        {"name": "acceptable_max", "label": "Acceptable Range Max", "type": "number", "required": false},
+        {"name": "poor_min", "label": "Poor Range Min", "type": "number", "required": false},
+        {"name": "poor_max", "label": "Poor Range Max", "type": "number", "required": false},
+        {"name": "weightage", "label": "Weightage in Scoring", "type": "number", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "fees_charges": {
+      "name": "Fees & Charges Master",
+      "description": "All fees and charges",
+      "category": "Financial",
+      "fields": [
+        {"name": "fee_code", "label": "Fee Code", "type": "text", "required": true, "unique": true},
+        {"name": "fee_name", "label": "Fee Name", "type": "text", "required": true},
+        {"name": "calculation_method", "label": "Calculation Method", "type": "select", "options": ["Fixed", "Percentage"], "required": true},
+        {"name": "value", "label": "Value", "type": "number", "required": true},
+        {"name": "min_amount", "label": "Min Amount", "type": "number", "required": false},
+        {"name": "max_amount", "label": "Max Amount", "type": "number", "required": false},
+        {"name": "applicable_products", "label": "Applicable Products", "type": "text", "required": false},
+        {"name": "gst_applicable", "label": "GST Applicable", "type": "boolean", "required": true, "default": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "role_permissions": {
+      "name": "Role Permissions Master",
+      "description": "Access control by role",
+      "category": "System",
+      "fields": [
+        {"name": "role_name", "label": "Role Name", "type": "select", "options": ["Admin", "Manager", "User", "Read-Only"], "required": true},
+        {"name": "module_name", "label": "Module Name", "type": "text", "required": true},
+        {"name": "can_view", "label": "Can View", "type": "boolean", "required": true, "default": true},
+        {"name": "can_create", "label": "Can Create", "type": "boolean", "required": true, "default": false},
+        {"name": "can_edit", "label": "Can Edit", "type": "boolean", "required": true, "default": false},
+        {"name": "can_delete", "label": "Can Delete", "type": "boolean", "required": true, "default": false},
+        {"name": "can_approve", "label": "Can Approve", "type": "boolean", "required": true, "default": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "email_templates": {
+      "name": "Email Templates Master",
+      "description": "Email notification templates",
+      "category": "System",
+      "fields": [
+        {"name": "template_code", "label": "Template Code", "type": "text", "required": true, "unique": true},
+        {"name": "template_name", "label": "Template Name", "type": "text", "required": true},
+        {"name": "subject", "label": "Subject", "type": "text", "required": true},
+        {"name": "body", "label": "Body", "type": "textarea", "required": true},
+        {"name": "trigger_event", "label": "Trigger Event", "type": "select", "options": ["Assessment Created", "Assessment Approved", "Assessment Rejected", "Document Requested", "Assessment Complete"], "required": true},
+        {"name": "variables", "label": "Available Variables", "type": "text", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "system_parameters": {
+      "name": "System Parameters Master",
+      "description": "System configuration settings",
+      "category": "System",
+      "fields": [
+        {"name": "parameter_name", "label": "Parameter Name", "type": "text", "required": true, "unique": true},
+        {"name": "parameter_value", "label": "Parameter Value", "type": "text", "required": true},
+        {"name": "data_type", "label": "Data Type", "type": "select", "options": ["String", "Number", "Boolean", "Date"], "required": true},
+        {"name": "description", "label": "Description", "type": "textarea", "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "aml_screening_lists": {
+      "name": "AML Screening Lists Master",
+      "description": "Configure screening lists for AML checks",
+      "category": "AML & Compliance",
+      "fields": [
+        {"name": "list_code", "label": "List Code", "type": "text", "required": true, "unique": true},
+        {"name": "list_name", "label": "List Name", "type": "text", "required": true},
+        {"name": "list_type", "label": "List Type", "type": "select", "options": ["International Sanctions", "India Specific", "PEP", "Internal"], "required": true},
+        {"name": "list_category", "label": "Category", "type": "select", "options": ["Sanctions", "Wilful Defaulters", "Disqualified Directors", "PEP", "Fraud", "Other"], "required": true},
+        {"name": "source_url", "label": "Source URL", "type": "text", "required": false},
+        {"name": "auto_screen", "label": "Auto Screen", "type": "boolean", "required": true, "default": true},
+        {"name": "match_threshold_auto_reject", "label": "Auto-Reject Threshold (%)", "type": "number", "required": true, "default": 90},
+        {"name": "match_threshold_review", "label": "Manual Review Threshold (%)", "type": "number", "required": true, "default": 70},
+        {"name": "last_updated", "label": "Last Updated", "type": "date", "required": false},
+        {"name": "update_frequency", "label": "Update Frequency", "type": "select", "options": ["Daily", "Weekly", "Monthly", "Quarterly", "On-Demand"], "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "aml_watchlist_entities": {
+      "name": "AML Watchlist Entities",
+      "description": "Entities on AML watchlists",
+      "category": "AML & Compliance",
+      "fields": [
+        {"name": "entity_name", "label": "Entity Name", "type": "text", "required": true},
+        {"name": "entity_type", "label": "Entity Type", "type": "select", "options": ["Individual", "Company", "Organization"], "required": true},
+        {"name": "screening_lists", "label": "Screening Lists", "type": "text", "required": true},
+        {"name": "aliases", "label": "Aliases/Other Names", "type": "textarea", "required": false},
+        {"name": "identifier_type", "label": "Identifier Type", "type": "select", "options": ["PAN", "Passport", "National ID", "CIN", "Other"], "required": false},
+        {"name": "identifier_value", "label": "Identifier Value", "type": "text", "required": false},
+        {"name": "addresses", "label": "Known Addresses", "type": "textarea", "required": false},
+        {"name": "date_of_birth", "label": "Date of Birth", "type": "date", "required": false},
+        {"name": "nationality", "label": "Nationality", "type": "text", "required": false},
+        {"name": "reason_for_listing", "label": "Reason for Listing", "type": "textarea", "required": true},
+        {"name": "listed_date", "label": "Listed Date", "type": "date", "required": true},
+        {"name": "source", "label": "Source", "type": "text", "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "aml_screening_rules": {
+      "name": "AML Screening Rules",
+      "description": "Rules for automated AML screening actions",
+      "category": "AML & Compliance",
+      "fields": [
+        {"name": "rule_code", "label": "Rule Code", "type": "text", "required": true, "unique": true},
+        {"name": "rule_name", "label": "Rule Name", "type": "text", "required": true},
+        {"name": "rule_description", "label": "Description", "type": "textarea", "required": true},
+        {"name": "match_score_min", "label": "Min Match Score (%)", "type": "number", "required": true},
+        {"name": "match_score_max", "label": "Max Match Score (%)", "type": "number", "required": true},
+        {"name": "applicable_lists", "label": "Applicable Lists", "type": "text", "required": false},
+        {"name": "action", "label": "Action", "type": "select", "options": ["Auto Reject", "Manual Review", "Alert Only", "No Action"], "required": true},
+        {"name": "create_investigation", "label": "Create Investigation Case", "type": "boolean", "required": true, "default": false},
+        {"name": "alert_emails", "label": "Alert Email Addresses", "type": "text", "required": false},
+        {"name": "priority", "label": "Priority", "type": "select", "options": ["Critical", "High", "Medium", "Low"], "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "aml_whitelist": {
+      "name": "AML Whitelist (False Positives)",
+      "description": "Whitelisted entities to avoid false positive matches",
+      "category": "AML & Compliance",
+      "fields": [
+        {"name": "entity_identifier", "label": "Entity Identifier (PAN/CIN)", "type": "text", "required": true, "unique": true},
+        {"name": "entity_name", "label": "Entity Name", "type": "text", "required": true},
+        {"name": "entity_type", "label": "Entity Type", "type": "select", "options": ["Company", "Individual"], "required": true},
+        {"name": "matched_list", "label": "Matched List", "type": "text", "required": true},
+        {"name": "matched_name", "label": "Matched Name", "type": "text", "required": true},
+        {"name": "whitelist_reason", "label": "Whitelist Reason", "type": "textarea", "required": true},
+        {"name": "verified_by", "label": "Verified By", "type": "text", "required": true},
+        {"name": "verified_date", "label": "Verified Date", "type": "date", "required": true},
+        {"name": "whitelisted_by", "label": "Whitelisted By", "type": "text", "required": true},
+        {"name": "whitelisted_date", "label": "Whitelisted Date", "type": "date", "required": true},
+        {"name": "review_due_date", "label": "Next Review Date", "type": "date", "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "scoring_weights": {
+      "name": "Credit Scoring Weights",
+      "description": "Category weights for credit scoring model",
+      "category": "Credit Scoring",
+      "fields": [
+        {"name": "category_code", "label": "Category Code", "type": "text", "required": true, "unique": true},
+        {"name": "category_name", "label": "Category Name", "type": "text", "required": true},
+        {"name": "max_score", "label": "Max Score", "type": "number", "required": true},
+        {"name": "display_order", "label": "Display Order", "type": "number", "required": true},
+        {"name": "description", "label": "Description", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "scoring_metrics": {
+      "name": "Credit Scoring Metrics",
+      "description": "Individual metrics and their scoring thresholds",
+      "category": "Credit Scoring",
+      "fields": [
+        {"name": "metric_code", "label": "Metric Code", "type": "text", "required": true, "unique": true},
+        {"name": "metric_name", "label": "Metric Name", "type": "text", "required": true},
+        {"name": "category_code", "label": "Category Code", "type": "text", "required": true},
+        {"name": "max_score", "label": "Max Score", "type": "number", "required": true},
+        {"name": "threshold_1", "label": "Threshold 1 (Best)", "type": "number", "required": true},
+        {"name": "score_1", "label": "Score if >= Threshold 1", "type": "number", "required": true},
+        {"name": "threshold_2", "label": "Threshold 2", "type": "number", "required": true},
+        {"name": "score_2", "label": "Score if >= Threshold 2", "type": "number", "required": true},
+        {"name": "threshold_3", "label": "Threshold 3", "type": "number", "required": true},
+        {"name": "score_3", "label": "Score if >= Threshold 3", "type": "number", "required": true},
+        {"name": "default_score", "label": "Default Score (Below All)", "type": "number", "required": true},
+        {"name": "comparison_type", "label": "Comparison Type", "type": "select", "options": ["higher_better", "lower_better"], "required": true},
+        {"name": "display_format", "label": "Display Format", "type": "select", "options": ["number", "percentage", "currency", "times"], "required": true},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "scoring_grades": {
+      "name": "Credit Score Grades",
+      "description": "Grade boundaries and decision mapping",
+      "category": "Credit Scoring",
+      "fields": [
+        {"name": "grade", "label": "Grade", "type": "text", "required": true, "unique": true},
+        {"name": "min_score", "label": "Min Score", "type": "number", "required": true},
+        {"name": "max_score", "label": "Max Score", "type": "number", "required": true},
+        {"name": "decision", "label": "Decision", "type": "select", "options": ["Approve", "Refer to Credit Committee", "Decline"], "required": true},
+        {"name": "interest_rate_markup", "label": "Interest Rate Markup (%)", "type": "number", "required": false},
+        {"name": "color_code", "label": "Color Code", "type": "text", "required": false},
+        {"name": "description", "label": "Description", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "limit_params": {
+      "name": "Limit Calculation Parameters",
+      "description": "Parameters for calculating facility limits",
+      "category": "Limit Calculation",
+      "fields": [
+        {"name": "param_code", "label": "Parameter Code", "type": "text", "required": true, "unique": true},
+        {"name": "param_name", "label": "Parameter Name", "type": "text", "required": true},
+        {"name": "param_value", "label": "Value", "type": "number", "required": true},
+        {"name": "param_unit", "label": "Unit", "type": "select", "options": ["percentage", "times", "months", "years", "number"], "required": true},
+        {"name": "facility_type", "label": "Applicable Facility", "type": "select", "options": ["Working Capital", "Term Loan", "Overdraft", "All"], "required": true},
+        {"name": "description", "label": "Description", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "state_legal_rules": {
+      "name": "State Legal Rules",
+      "description": "State-specific property and land laws for mortgage assessment",
+      "category": "Legal & Collateral",
+      "fields": [
+        {"name": "state_code", "label": "State Code", "type": "text", "required": true, "unique": true},
+        {"name": "state_name", "label": "State Name", "type": "text", "required": true},
+        {"name": "agricultural_land_mortgageable", "label": "Agricultural Land Mortgageable", "type": "boolean", "required": true, "default": false},
+        {"name": "na_conversion_required", "label": "NA Conversion Required for Agri", "type": "boolean", "required": true, "default": true},
+        {"name": "max_mortgage_period_years", "label": "Max Mortgage Period (Years)", "type": "number", "required": false},
+        {"name": "stamp_duty_rate", "label": "Stamp Duty Rate (%)", "type": "number", "required": true},
+        {"name": "registration_fee_rate", "label": "Registration Fee (%)", "type": "number", "required": true},
+        {"name": "tenancy_law_applicable", "label": "Rent Control/Tenancy Law", "type": "boolean", "required": true, "default": false},
+        {"name": "ceiling_act_applicable", "label": "Land Ceiling Act Applicable", "type": "boolean", "required": true, "default": true},
+        {"name": "ulc_exemption_required", "label": "ULC Exemption Required", "type": "boolean", "required": true, "default": false},
+        {"name": "sarfaesi_restrictions", "label": "SARFAESI Restrictions/Notes", "type": "textarea", "required": false},
+        {"name": "special_zones", "label": "Special Zone Rules (SEZ/Industrial)", "type": "textarea", "required": false},
+        {"name": "mutation_authority", "label": "Mutation Authority", "type": "text", "required": false},
+        {"name": "ec_issuing_authority", "label": "EC Issuing Authority", "type": "text", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "legal_risk_rules": {
+      "name": "Legal Risk Assessment Rules",
+      "description": "Rules for classifying legal risks and determining enforceability",
+      "category": "Legal & Collateral",
+      "fields": [
+        {"name": "rule_code", "label": "Rule Code", "type": "text", "required": true, "unique": true},
+        {"name": "rule_name", "label": "Rule Name", "type": "text", "required": true},
+        {"name": "risk_category", "label": "Risk Category", "type": "select", "options": ["Ownership", "Encumbrance", "Litigation", "Land Use", "Revenue", "Stamp/Registration", "Mortgage Perfection", "Advocate Remarks"], "required": true},
+        {"name": "condition_description", "label": "Condition/Trigger", "type": "textarea", "required": true},
+        {"name": "condition_field", "label": "Field to Check", "type": "text", "required": false},
+        {"name": "condition_operator", "label": "Operator", "type": "select", "options": ["equals", "not_equals", "contains", "is_true", "is_false", "greater_than", "less_than"], "required": false},
+        {"name": "condition_value", "label": "Expected Value", "type": "text", "required": false},
+        {"name": "risk_rating", "label": "Risk Rating if Triggered", "type": "select", "options": ["High", "Medium", "Low"], "required": true},
+        {"name": "enforceability_impact", "label": "Enforceability Impact", "type": "select", "options": ["Not Enforceable", "Enforceable with Conditions", "Enforceable"], "required": true},
+        {"name": "recommended_action", "label": "Recommended Action", "type": "textarea", "required": true},
+        {"name": "is_blocking", "label": "Blocking Issue", "type": "boolean", "required": true, "default": false},
+        {"name": "priority", "label": "Priority (1=Highest)", "type": "number", "required": true, "default": 5},
+        {"name": "applicable_property_types", "label": "Applicable Property Types", "type": "text", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "property_types": {
+      "name": "Property Types Master",
+      "description": "Types of properties with risk profiles and eligibility",
+      "category": "Legal & Collateral",
+      "fields": [
+        {"name": "property_type_code", "label": "Type Code", "type": "text", "required": true, "unique": true},
+        {"name": "property_type_name", "label": "Type Name", "type": "text", "required": true},
+        {"name": "category", "label": "Category", "type": "select", "options": ["Residential", "Commercial", "Industrial", "Agricultural", "Mixed Use", "Land Only"], "required": true},
+        {"name": "sub_category", "label": "Sub-Category", "type": "text", "required": false},
+        {"name": "default_risk_rating", "label": "Default Risk Rating", "type": "select", "options": ["Low", "Medium", "High"], "required": true},
+        {"name": "mortgage_eligibility", "label": "Mortgage Eligibility", "type": "select", "options": ["Eligible", "Conditional", "Not Eligible"], "required": true},
+        {"name": "ltv_cap_percent", "label": "LTV Cap (%)", "type": "number", "required": false},
+        {"name": "valuation_frequency_months", "label": "Valuation Frequency (Months)", "type": "number", "required": false},
+        {"name": "special_requirements", "label": "Special Requirements", "type": "textarea", "required": false},
+        {"name": "documents_required", "label": "Documents Required", "type": "textarea", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    },
+    "encumbrance_types": {
+      "name": "Encumbrance Types Master",
+      "description": "Types of encumbrances and their risk impact on mortgage",
+      "category": "Legal & Collateral",
+      "fields": [
+        {"name": "encumbrance_code", "label": "Encumbrance Code", "type": "text", "required": true, "unique": true},
+        {"name": "encumbrance_name", "label": "Encumbrance Name", "type": "text", "required": true},
+        {"name": "encumbrance_category", "label": "Category", "type": "select", "options": ["Mortgage", "Charge", "Lien", "Lease", "Attachment", "Court Order", "Revenue Recovery", "Other"], "required": true},
+        {"name": "risk_impact", "label": "Risk Impact", "type": "select", "options": ["High", "Medium", "Low"], "required": true},
+        {"name": "blocks_mortgage", "label": "Blocks New Mortgage", "type": "boolean", "required": true, "default": true},
+        {"name": "prior_noc_required", "label": "Prior NOC Required", "type": "boolean", "required": true, "default": true},
+        {"name": "can_be_released", "label": "Can Be Released", "type": "boolean", "required": true, "default": true},
+        {"name": "release_mechanism", "label": "Release Mechanism", "type": "textarea", "required": false},
+        {"name": "priority_ranking", "label": "Priority Ranking (1=First Charge)", "type": "number", "required": false},
+        {"name": "sarfaesi_applicable", "label": "SARFAESI Applicable", "type": "boolean", "required": true, "default": true},
+        {"name": "typical_resolution_days", "label": "Typical Resolution (Days)", "type": "number", "required": false},
+        {"name": "is_active", "label": "Active", "type": "boolean", "required": true, "default": true}
+      ]
+    }
+  }
+}
