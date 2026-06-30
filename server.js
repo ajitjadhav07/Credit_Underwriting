@@ -766,7 +766,10 @@ function sendProgress(assessmentId, data) {
 }
 
 // CORS headers - restrict to allowed origins
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://afl.acc.ltd,https://acc.ltd').split(',');
+// Always set explicitly via ALLOWED_ORIGINS env var in real deployments
+// (CloudFormation injects this); fallback here is just a safety net for
+// local/dev runs without that env var set.
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://aflcuwuat.axisb.com,https://aflcuwprod.axisb.com').split(',');
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (ALLOWED_ORIGINS.includes(origin) || process.env.NODE_ENV !== 'production') {
