@@ -57,6 +57,12 @@ const JobQueue = require('./lib/job-queue');
 const socketManager = require('./lib/socket-manager');
 const bullQueue = require('./lib/bull-queue');
 const claudeProcessor = require('./lib/claude-processor');
+let externalApisManager = null;
+try { externalApisManager = require('./lib/external-apis-manager'); } catch (e) { console.log('[SERVER] external-apis-manager not available:', e.message); }
+let pennantClient = null;
+try { pennantClient = require('./lib/pennant-client'); } catch (e) { console.log('[SERVER] pennant-client not available:', e.message); }
+let cibilSoapClient = null;
+try { cibilSoapClient = require('./lib/cibil-soap-client'); } catch (e) { console.log('[SERVER] cibil-soap-client not available:', e.message); }
 
 // NEW: PII-safe logging modules
 const { maskPII, maskObject, maskIP, detectPII, createSafeLogEntry } = require('./lib/pii-handler');
@@ -3367,6 +3373,105 @@ app.get('/api/assessment/:id/export-pdf', ensureAuthenticated, async (req, res) 
 
 /**
  * GET /api/assessment/:id/export-docx
+/**
+ * ============================================================
+ * External Integration APIs — manual/human-interactive steps
+ * ============================================================
+ * These cannot run unattended in the background pipeline (bull-queue.js)
+ * because they require a human in the loop (OTP entry) or async polling
+ * (Novel's autofetch/download). The automatable subset (Pennant by
+ * finReference, Karza ITR, CIBIL Commercial, Novel upload) already runs
+ * automatically during assessment processing — see bull-queue.js.
+ *
+ * ⚠️ Response field mappings for CIBIL Commercial/Individual and Novel's
+ * download step are NOT YET VERIFIED against real UAT responses (the
+ * provided API specs only included sample requests for these). Raw
+ * responses are always saved to S3 regardless of normalization accuracy.
+ */
+
+// Manual Pennant lookup (e.g. once finReference is captured at intake,
+// or for ad-hoc lookup by an underwriter)
+app.post('/api/external/pennant', ensureAuthenticated, async (req, res) => {
+    if (!pennantClient) return res.status(503).json({ error: 'Pennant client not available' });
+    const { finReference, assessmentId } = req.body || {};
+    try {
+        const result = await pennantClient.getLoanDetails({ finReference, assessmentId });
+        res.json({ success: result.success, result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// EPFO UAN lookup — step 1: send OTP to borrower's mobile
+app.post('/api/external/epfo/send-otp', ensureAuthenticated, async (req, res) => {
+    if (!externalApisManager) return res.status(503).json({ error: 'External APIs manager not available' });
+    const { mobile, assessmentId } = req.body || {};
+    try {
+        const result = await externalApisManager.epfoLookupOTP({ mobile, assessmentId });
+        res.json({ success: result.success, result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// EPFO UAN lookup — step 2: authenticate with the OTP the borrower received
+app.post('/api/external/epfo/authenticate', ensureAuthenticated, async (req, res) => {
+    if (!externalApisManager) return res.status(503).json({ error: 'External APIs manager not available' });
+    const { requestId, otp, assessmentId } = req.body || {};
+    try {
+        const result = await externalApisManager.epfoAuthenticate({ requestId, otp, assessmentId });
+        res.json({ success: result.success, result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Individual CIBIL (SOAP) — step 1: submit request, get bureauOneRefNo
+app.post('/api/external/cibil-individual/submit', ensureAuthenticated, async (req, res) => {
+    if (!cibilSoapClient) return res.status(503).json({ error: 'CIBIL SOAP client not available' });
+    try {
+        const result = await cibilSoapClient.processIndividualRequest({ ...req.body });
+        res.json({ success: result.success, result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Individual CIBIL (SOAP) — step 2: download report by reference number
+app.post('/api/external/cibil-individual/download', ensureAuthenticated, async (req, res) => {
+    if (!cibilSoapClient) return res.status(503).json({ error: 'CIBIL SOAP client not available' });
+    const { bureauOneRefNo, assessmentId } = req.body || {};
+    try {
+        const result = await cibilSoapClient.downloadByRefNo({ bureauOneRefNo, assessmentId });
+        res.json({ success: result.success, result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Novel — generate auto-fetch URL (borrower net-banking flow)
+app.post('/api/external/novel/autofetch', ensureAuthenticated, async (req, res) => {
+    if (!externalApisManager) return res.status(503).json({ error: 'External APIs manager not available' });
+    try {
+        const result = await externalApisManager.novelGenerateAutoFetchURL({ ...req.body });
+        res.json({ success: result.success, result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Novel — download processed bank statement analysis by document ID
+app.post('/api/external/novel/download', ensureAuthenticated, async (req, res) => {
+    if (!externalApisManager) return res.status(503).json({ error: 'External APIs manager not available' });
+    const { docId, assessmentId } = req.body || {};
+    try {
+        const result = await externalApisManager.novelDownloadBankStatement({ docId, assessmentId });
+        res.json({ success: result.success, result });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 /**
  * ============================================================
  * CAM (Credit Assessment Model) Eligibility API
