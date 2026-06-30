@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.500.0",
     "@aws-sdk/client-s3": "^3.500.0",
     "@aws-sdk/client-textract": "^3.500.0",
     "@aws-sdk/lib-storage": "^3.500.0",

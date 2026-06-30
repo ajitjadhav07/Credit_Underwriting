@@ -1,0 +1,964 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Axis Finance MSME Underwriting Agent — UAT
+  ECS on EC2 - 2 dedicated EC2s
+  FrontendEC2 -> pulls & runs ONLY frontend image (Nginx, static + reverse proxy)
+  BackendEC2  -> pulls & runs ONLY backend image (Node.js API + Bull worker)
+  Separated via ECS placement constraints.
+  AI extraction via Amazon Bedrock (Claude, IAM-role auth, no API key, no
+  internet egress required) — same pattern used in the Legal Audit Fargate
+  stack, adapted here for EC2 launch type.
+  UAT: Pre-existing VPC/Subnets/KMS.
+
+# ══════════════════════════════════════════════════════════════
+#  CHANGES FROM PREVIOUS UAT TEMPLATE
+#
+#  1.  AI engine:        Direct Anthropic API → Amazon Bedrock (Claude)
+#                         IAM-role auth, no ANTHROPIC_API_KEY secret needed.
+#  2.  VPC Endpoints:    REMOVED entirely (ECR/S3/Secrets/Logs/ECS/KMS/SSM).
+#                         ASSUMPTION: the pre-existing UAT VPC route tables
+#                         already provide egress to AWS APIs (NAT Gateway or
+#                         equivalent) exactly as the prod account does for
+#                         this same application family. If that assumption
+#                         is wrong, EC2s will fail to pull images / write
+#                         logs / read secrets at startup — confirm with the
+#                         network team before deploying.
+#  3.  Instance type:    t3.small → c6a.large (2 vCPU / 4GB RAM, AMD EPYC).
+#                         x86_64 — no image rebuild needed, same ECS-optimized
+#                         AMI parameter as before.
+#  4.  Middleware env:   MIDDLEWARE_URL/MIDDLEWARE_API_KEY → renamed to
+#                         MIDDLEWARE_BASE_URL/MIDDLEWARE_CLIENT_KEY to match
+#                         what lib/external-apis-manager.js actually reads.
+#  5.  Frontend proxy:   APP_SERVER_URL (pointed at the ALB — would have
+#                         caused a request loop on "/") → BACKEND_UPSTREAM,
+#                         pointed directly at BackendEC2's private IP on a
+#                         fixed host port. Nginx never round-trips through
+#                         the ALB.
+#  6.  Frontend env:     Removed REDIS_URL (the frontend image is Nginx —
+#                         it never touches Redis; that was a leftover from
+#                         an earlier Node-on-both-tiers design).
+#  7.  Redis:            Added AUTH token (password) generated at stack
+#                         create time via a small Lambda custom resource,
+#                         consistent with the Legal Audit prod template.
+#                         Previously: TLS only, no password.
+#  8.  Backend sizing:   Memory hard limit raised to use the extra headroom
+#                         c6a.large provides over the previous t3.small.
+# ══════════════════════════════════════════════════════════════
+
+Parameters:
+
+  EnvironmentName:
+    Type: String
+    Default: uat
+
+  # ── Pre-existing UAT VPC & Subnets ──────────────────────────
+  VPCId:
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-02bf3c80b08206bf2
+    Description: Pre-existing UAT VPC ID
+
+  # LB Subnets (for ALB)
+  LBSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-01eb9ebd121d396b9
+    Description: LB subnet ap-south-1a (10.213.4.32/27)
+
+  LBSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-07cf230f69244a401
+    Description: LB subnet ap-south-1b (10.213.4.64/27)
+
+  # Web Subnets (declared for future use / reference)
+  WebSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-023f1f9c2abd92707
+    Description: Web subnet ap-south-1a (10.213.4.240/28)
+
+  WebSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-02c6477171df8d611
+    Description: Web subnet ap-south-1b (10.213.4.128/27)
+
+  # App Subnets (EC2s and Redis live here — private, no NAT)
+  AppSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-07d92e779bf582f16
+    Description: App subnet ap-south-1a (10.213.5.0/25)
+
+  AppSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-0b1a50ebfa41cbde7
+    Description: App subnet ap-south-1b (10.213.5.128/25)
+
+  # ── Pre-existing UAT KMS Key ─────────────────────────────────
+  KMSKeyArn:
+    Type: String
+    Default: "arn:aws:kms:ap-south-1:905418477842:key/80c6cbda-2ddc-4110-9e4d-5c4421bc863e"
+    Description: Pre-existing UAT KMS Key ARN
+
+  # ── Images ───────────────────────────────────────────────────
+  FrontendImageURI:
+    Type: String
+    Default: "975050184307.dkr.ecr.ap-south-1.amazonaws.com/credit-underwriting-frontend:latest"
+    AllowedPattern: ".*credit-underwriting-frontend.*"
+    ConstraintDescription: Must be the credit-underwriting-frontend ECR repository
+
+  BackendImageURI:
+    Type: String
+    Default: "975050184307.dkr.ecr.ap-south-1.amazonaws.com/credit-underwriting-backend:latest"
+    AllowedPattern: ".*credit-underwriting-backend.*"
+    ConstraintDescription: Must be the credit-underwriting-backend ECR repository
+
+  FrontendContainerPort:
+    Type: Number
+    Default: 8080
+
+  BackendContainerPort:
+    Type: Number
+    Default: 3000
+
+  InstanceType:
+    Type: String
+    Default: c6a.large
+    Description: "x86_64 (AMD EPYC) — compatible as-is with existing Docker images, no rebuild needed"
+
+  # ── Amazon Bedrock — Claude model / inference profile ────────
+  # IMPORTANT: verify the exact ID available in your account/region before
+  # deploying. Many Claude models require a cross-region inference profile
+  # in ap-south-1 rather than a direct on-demand model ID. Check via:
+  #   aws bedrock list-inference-profiles --region ap-south-1
+  #   aws bedrock list-foundation-models --region ap-south-1
+  BedrockModelId:
+    Type: String
+    Default: "apac.anthropic.claude-sonnet-4-20250514-v1:0"
+    Description: "Bedrock model ID or inference profile ARN for Claude — VERIFY before deploy"
+
+  ECSOptimizedAMI:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2023/recommended/image_id
+
+  # Leave blank until ACM cert is issued for UAT domain
+  ACMCertificateARN:
+    Type: String
+    Default: ""
+    Description: "ACM cert ARN for UAT domain. Leave blank until cert is issued."
+
+  RedisNodeType:
+    Type: String
+    Default: cache.t3.small
+
+  # ── UAT Domain — update after DNS is ready ───────────────────
+  UATDomain:
+    Type: String
+    Default: "uat-underwriting.PLACEHOLDER.in"
+    Description: "UAT domain — update once DNS/cert is ready"
+
+Conditions:
+  HasACMCert: !Not [!Equals [!Ref ACMCertificateARN, ""]]
+
+Resources:
+
+  # ── SECURITY GROUPS ──────────────────────────────────────────
+  ALBSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALB - UAT
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+        - {IpProtocol: tcp, FromPort: 80,  ToPort: 80,  CidrIp: 10.213.4.0/24}
+        - {IpProtocol: tcp, FromPort: 443, ToPort: 443, CidrIp: 10.213.4.0/24}
+        - {IpProtocol: tcp, FromPort: 80,  ToPort: 80,  CidrIp: 10.213.5.0/24}
+        - {IpProtocol: tcp, FromPort: 443, ToPort: 443, CidrIp: 10.213.5.0/24}
+      SecurityGroupEgress:
+        - {IpProtocol: -1, CidrIp: 0.0.0.0/0}
+      Tags:
+        - {Key: Name, Value: !Sub '${EnvironmentName}-alb-sg'}
+        - {Key: StackName, Value: !Ref AWS::StackName}
+
+  EC2SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ECS EC2 instances - UAT
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          SourceSecurityGroupId: !Ref ALBSG
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 10.213.4.0/24
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 10.213.5.0/24
+      SecurityGroupEgress:
+        - {IpProtocol: -1, CidrIp: 0.0.0.0/0}
+      Tags:
+        - {Key: Name, Value: !Sub '${EnvironmentName}-ec2-sg'}
+        - {Key: StackName, Value: !Ref AWS::StackName}
+
+  RedisSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Redis from EC2 only - UAT
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+        - {IpProtocol: tcp, FromPort: 6379, ToPort: 6379, SourceSecurityGroupId: !Ref EC2SG}
+      Tags:
+        - {Key: Name, Value: !Sub '${EnvironmentName}-redis-sg'}
+        - {Key: StackName, Value: !Ref AWS::StackName}
+
+  # ── IAM ──────────────────────────────────────────────────────
+  ECSInstanceRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Delete
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-ecs-instance-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ec2.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: ECRLogsSignal
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:CreateLogGroup
+                  - cloudformation:SignalResource
+                Resource: '*'
+
+  ECSInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    DeletionPolicy: Delete
+    Properties:
+      InstanceProfileName: !Sub '${EnvironmentName}-ecs-instance-profile'
+      Roles: [!Ref ECSInstanceRole]
+
+  TaskExecutionRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Delete
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-ecs-task-execution-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ecs-tasks.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: SecretsKMSECR
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [secretsmanager:GetSecretValue, secretsmanager:DescribeSecret]
+                Resource: 'arn:aws:secretsmanager:ap-south-1:975050184307:secret:/underwriting/*'
+              - Effect: Allow
+                Action: [kms:Decrypt, kms:DescribeKey, kms:GenerateDataKey]
+                Resource: !Ref KMSKeyArn
+              - Effect: Allow
+                Action: [ecr:GetAuthorizationToken, ecr:BatchCheckLayerAvailability, ecr:GetDownloadUrlForLayer, ecr:BatchGetImage]
+                Resource: '*'
+
+  BackendTaskRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Delete
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-backend-task-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ecs-tasks.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: BackendAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:PutObject, s3:GetObject, s3:DeleteObject, s3:ListBucket]
+                Resource:
+                  - arn:aws:s3:::uat-underwriting-docs-975050184307-ap-south-1
+                  - arn:aws:s3:::uat-underwriting-docs-975050184307-ap-south-1/*
+              - Effect: Allow
+                Action: [secretsmanager:GetSecretValue]
+                Resource: 'arn:aws:secretsmanager:ap-south-1:975050184307:secret:/underwriting/*'
+              - Effect: Allow
+                Action: [kms:Decrypt, kms:DescribeKey, kms:GenerateDataKey]
+                Resource: !Ref KMSKeyArn
+              # Amazon Bedrock — Claude model invocation (replaces direct
+              # Anthropic API; auth is via this IAM role, no API key needed)
+              - Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                  - bedrock:InvokeModelWithResponseStream
+                Resource: '*'
+
+  FrontendTaskRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Delete
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-frontend-task-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ecs-tasks.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: FrontendLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [logs:CreateLogStream, logs:PutLogEvents]
+                Resource: '*'
+
+  # ── S3 ───────────────────────────────────────────────────────
+  DocumentsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: uat-underwriting-docs-975050184307-ap-south-1
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !Ref KMSKeyArn
+            BucketKeyEnabled: true
+
+  # ── REDIS ────────────────────────────────────────────────────
+  RedisNoEvictionParamGroup:
+    Type: AWS::ElastiCache::ParameterGroup
+    Properties:
+      CacheParameterGroupFamily: redis7
+      Description: noeviction policy for BullMQ queues - UAT
+      Properties:
+        maxmemory-policy: noeviction
+
+  RedisSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Redis subnet group - UAT
+      SubnetIds: [!Ref AppSubnet1Id, !Ref AppSubnet2Id]
+
+  # Lambda to generate a random Redis AUTH token at stack create time
+  # (same pattern as the Legal Audit prod stack — Redis now requires a
+  # password in addition to TLS, instead of TLS-only as before)
+  RedisAuthTokenGeneratorRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Delete
+    Properties:
+      RoleName: !Sub '${EnvironmentName}-redis-token-gen-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: lambda.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  RedisAuthTokenGeneratorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${EnvironmentName}-redis-token-gen'
+      Runtime: python3.12
+      Handler: index.handler
+      Role: !GetAtt RedisAuthTokenGeneratorRole.Arn
+      Timeout: 30
+      Code:
+        ZipFile: |
+          import secrets
+          import string
+          import cfnresponse
+
+          ALLOWED = string.ascii_letters + string.digits
+
+          def handler(event, context):
+              if event["RequestType"] in ("Create", "Update"):
+                  token = "".join(secrets.choice(ALLOWED) for _ in range(32))
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS,
+                                   {"Token": token}, "RedisAuthToken")
+              else:
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {}, "RedisAuthToken")
+
+  RedisAuthTokenResource:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt RedisAuthTokenGeneratorFunction.Arn
+
+  RedisCluster:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      ReplicationGroupDescription: Underwriting Redis - UAT
+      AutomaticFailoverEnabled: false
+      NumCacheClusters: 1
+      CacheNodeType: !Ref RedisNodeType
+      Engine: redis
+      EngineVersion: '7.1'
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      CacheParameterGroupName: !Ref RedisNoEvictionParamGroup
+      SecurityGroupIds: [!Ref RedisSG]
+      AtRestEncryptionEnabled: true
+      TransitEncryptionEnabled: true
+      AuthToken: !GetAtt RedisAuthTokenResource.Token
+
+  # ── SECRETS ──────────────────────────────────────────────────
+  SessionSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    Properties:
+      Name: /underwriting/session-secret
+      KmsKeyId: !Ref KMSKeyArn
+      SecretString: '{"session_secret":"REPLACE_WITH_UAT_SESSION_SECRET"}'
+
+  # Redis connection secret — REDIS_URL includes the AUTH token, so it must
+  # come from Secrets Manager rather than a plaintext task-def Environment
+  # entry. Format matches what lib/bull-queue.js's parseRedisUrl() expects:
+  # rediss://:<token>@<host>:<port> (password parsed from the URL itself).
+  RedisSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    Properties:
+      Name: !Sub '/underwriting/redis-${EnvironmentName}'
+      KmsKeyId: !Ref KMSKeyArn
+      SecretString: !Sub
+        - '{"url":"rediss://:${AuthToken}@${RedisHost}:6379"}'
+        - RedisHost: !GetAtt RedisCluster.PrimaryEndPoint.Address
+          AuthToken: !GetAtt RedisAuthTokenResource.Token
+
+  # NOTE: name kept as 'middleware-credentials' to avoid churning the
+  # Secrets Manager path the Middleware/Infra team already knows about —
+  # only the JSON *keys* inside changed to match what
+  # lib/external-apis-manager.js actually reads (MIDDLEWARE_BASE_URL /
+  # MIDDLEWARE_CLIENT_KEY, not MIDDLEWARE_URL / MIDDLEWARE_API_KEY).
+  MiddlewareSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    Properties:
+      Name: /underwriting/middleware-credentials
+      KmsKeyId: !Ref KMSKeyArn
+      SecretString: '{"base_url":"REPLACE_WITH_UAT_MIDDLEWARE_URL","client_key":"REPLACE_WITH_UAT_API_KEY"}'
+
+  AzureSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    Properties:
+      Name: /underwriting/azure-credentials
+      KmsKeyId: !Ref KMSKeyArn
+      SecretString: !Sub '{"MICROSOFT_CLIENT_ID":"REPLACE_WITH_UAT_CLIENT_ID","MICROSOFT_CLIENT_SECRET":"REPLACE_WITH_UAT_CLIENT_SECRET","MICROSOFT_TENANT_ID":"REPLACE_WITH_UAT_TENANT_ID","REDIRECT_URI":"https://${UATDomain}/auth/callback"}'
+
+  # ── CLOUDWATCH LOGS ──────────────────────────────────────────
+  FrontendLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/ecs/${EnvironmentName}/underwriting-frontend'
+      RetentionInDays: 30
+
+  BackendLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/ecs/${EnvironmentName}/underwriting-backend'
+      RetentionInDays: 90
+
+  # ── ALB ──────────────────────────────────────────────────────
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub '${EnvironmentName}-underwriting-alb'
+      Scheme: internet-facing
+      Type: application
+      Subnets: [!Ref LBSubnet1Id, !Ref LBSubnet2Id]
+      SecurityGroups: [!Ref ALBSG]
+      Tags:
+        - {Key: StackName, Value: !Ref AWS::StackName}
+
+  FrontendTG:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${EnvironmentName}-frontend-tg'
+      Port: !Ref FrontendContainerPort
+      Protocol: HTTP
+      VpcId: !Ref VPCId
+      TargetType: instance
+      HealthCheckPath: /healthz
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      Matcher: {HttpCode: 200-399}
+      TargetGroupAttributes:
+        - {Key: deregistration_delay.timeout_seconds, Value: '30'}
+        - {Key: stickiness.enabled, Value: 'true'}
+        - {Key: stickiness.type, Value: lb_cookie}
+
+  BackendTG:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${EnvironmentName}-backend-tg'
+      Port: !Ref BackendContainerPort
+      Protocol: HTTP
+      VpcId: !Ref VPCId
+      TargetType: instance
+      HealthCheckPath: /health
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      Matcher: {HttpCode: 200-399}
+      TargetGroupAttributes:
+        - {Key: deregistration_delay.timeout_seconds, Value: '30'}
+
+  HTTPListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - !If
+          - HasACMCert
+          - Type: redirect
+            RedirectConfig: {Protocol: HTTPS, Port: '443', StatusCode: HTTP_301}
+          - Type: forward
+            TargetGroupArn: !Ref FrontendTG
+
+  APIRuleHTTP:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref HTTPListener
+      Priority: 10
+      Conditions: [{Field: path-pattern, Values: [/api/*]}]
+      Actions: [{Type: forward, TargetGroupArn: !Ref BackendTG}]
+
+  AuthRuleHTTP:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref HTTPListener
+      Priority: 20
+      Conditions: [{Field: path-pattern, Values: [/auth/*]}]
+      Actions: [{Type: forward, TargetGroupArn: !Ref BackendTG}]
+
+  SocketRuleHTTP:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref HTTPListener
+      Priority: 30
+      Conditions: [{Field: path-pattern, Values: [/socket.io/*]}]
+      Actions: [{Type: forward, TargetGroupArn: !Ref BackendTG}]
+
+  HTTPSListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: HasACMCert
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Port: 443
+      Protocol: HTTPS
+      Certificates: [{CertificateArn: !Ref ACMCertificateARN}]
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      DefaultActions: [{Type: forward, TargetGroupArn: !Ref FrontendTG}]
+
+  APIRuleHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Condition: HasACMCert
+    Properties:
+      ListenerArn: !Ref HTTPSListener
+      Priority: 10
+      Conditions: [{Field: path-pattern, Values: [/api/*]}]
+      Actions: [{Type: forward, TargetGroupArn: !Ref BackendTG}]
+
+  AuthRuleHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Condition: HasACMCert
+    Properties:
+      ListenerArn: !Ref HTTPSListener
+      Priority: 20
+      Conditions: [{Field: path-pattern, Values: [/auth/*]}]
+      Actions: [{Type: forward, TargetGroupArn: !Ref BackendTG}]
+
+  SocketRuleHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Condition: HasACMCert
+    Properties:
+      ListenerArn: !Ref HTTPSListener
+      Priority: 30
+      Conditions: [{Field: path-pattern, Values: [/socket.io/*]}]
+      Actions: [{Type: forward, TargetGroupArn: !Ref BackendTG}]
+
+  # ── ECS CLUSTER ──────────────────────────────────────────────
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub '${EnvironmentName}-underwriting-cluster'
+      ClusterSettings:
+        - {Name: containerInsights, Value: enabled}
+
+  # ── FRONTEND EC2 ─────────────────────────────────────────────
+  # App subnet 1a — reaches AWS via VPC endpoints, no NAT needed
+  FrontendEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref ECSOptimizedAMI
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref ECSInstanceProfile
+      SubnetId: !Ref AppSubnet1Id
+      SecurityGroupIds: [!Ref EC2SG]
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 30
+            VolumeType: gp3
+            DeleteOnTermination: true
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          exec > /var/log/ecs-userdata.log 2>&1
+
+          # ── 1. Write ECS config ──────────────────────────────
+          mkdir -p /etc/ecs
+          cat > /etc/ecs/ecs.config << ECSEOF
+          ECS_CLUSTER=${ECSCluster}
+          ECS_ENABLE_TASK_IAM_ROLE=true
+          ECS_ENABLE_TASK_IAM_ROLE_NETWORK_HOST=true
+          ECS_LOGLEVEL=info
+          ECS_ENABLE_AWSLOGS_EXECUTIONROLE_OVERRIDE=true
+          ECS_INSTANCE_ATTRIBUTES={"role":"frontend"}
+          ECSEOF
+          sed -i 's/^[[:space:]]*//' /etc/ecs/ecs.config
+          echo "[DONE] ECS config:"
+          cat /etc/ecs/ecs.config
+
+          # ── 2. Start Docker ──────────────────────────────────
+          systemctl enable docker
+          systemctl start docker
+          echo "[WAIT] Docker starting..."
+          until docker info > /dev/null 2>&1; do sleep 2; done
+          echo "[DONE] Docker ready"
+
+          # ── 3. Clear stale ECS cache ─────────────────────────
+          systemctl stop ecs 2>/dev/null || true
+          rm -rf /var/cache/ecs/
+          mkdir -p /var/cache/ecs
+          echo "[DONE] ECS cache cleared"
+
+          # ── 4. Start ECS agent ───────────────────────────────
+          systemctl enable ecs
+          systemctl start ecs
+          echo "[WAIT] ECS agent starting..."
+          sleep 30
+          if ! systemctl is-active --quiet ecs; then
+            echo "[RETRY] ECS not active, retrying..."
+            systemctl restart ecs
+            sleep 20
+          fi
+          systemctl status ecs --no-pager
+          echo "[DONE] ECS agent running"
+          echo "[DONE] UserData complete."
+      Tags:
+        - {Key: Name, Value: !Sub '${EnvironmentName}-frontend-ec2'}
+        - {Key: Role, Value: frontend}
+        - {Key: StackName, Value: !Ref AWS::StackName}
+
+  # ── BACKEND EC2 ──────────────────────────────────────────────
+  # App subnet 1b — reaches AWS via VPC endpoints, no NAT needed
+  BackendEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref ECSOptimizedAMI
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref ECSInstanceProfile
+      SubnetId: !Ref AppSubnet2Id
+      SecurityGroupIds: [!Ref EC2SG]
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 30
+            VolumeType: gp3
+            DeleteOnTermination: true
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          exec > /var/log/ecs-userdata.log 2>&1
+
+          # ── 1. Write ECS config ──────────────────────────────
+          mkdir -p /etc/ecs
+          cat > /etc/ecs/ecs.config << ECSEOF
+          ECS_CLUSTER=${ECSCluster}
+          ECS_ENABLE_TASK_IAM_ROLE=true
+          ECS_ENABLE_TASK_IAM_ROLE_NETWORK_HOST=true
+          ECS_LOGLEVEL=info
+          ECS_ENABLE_AWSLOGS_EXECUTIONROLE_OVERRIDE=true
+          ECS_INSTANCE_ATTRIBUTES={"role":"backend"}
+          ECSEOF
+          sed -i 's/^[[:space:]]*//' /etc/ecs/ecs.config
+          echo "[DONE] ECS config:"
+          cat /etc/ecs/ecs.config
+
+          # ── 2. Start Docker ──────────────────────────────────
+          systemctl enable docker
+          systemctl start docker
+          echo "[WAIT] Docker starting..."
+          until docker info > /dev/null 2>&1; do sleep 2; done
+          echo "[DONE] Docker ready"
+
+          # ── 3. Clear stale ECS cache ─────────────────────────
+          systemctl stop ecs 2>/dev/null || true
+          rm -rf /var/cache/ecs/
+          mkdir -p /var/cache/ecs
+          echo "[DONE] ECS cache cleared"
+
+          # ── 4. Start ECS agent ───────────────────────────────
+          systemctl enable ecs
+          systemctl start ecs
+          echo "[WAIT] ECS agent starting..."
+          sleep 30
+          if ! systemctl is-active --quiet ecs; then
+            echo "[RETRY] ECS not active, retrying..."
+            systemctl restart ecs
+            sleep 20
+          fi
+          systemctl status ecs --no-pager
+          echo "[DONE] ECS agent running"
+          echo "[DONE] UserData complete."
+      Tags:
+        - {Key: Name, Value: !Sub '${EnvironmentName}-backend-ec2'}
+        - {Key: Role, Value: backend}
+        - {Key: StackName, Value: !Ref AWS::StackName}
+
+  # ── ECS TASK DEFINITIONS ─────────────────────────────────────
+
+  FrontendTaskDef:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub '${EnvironmentName}-underwriting-frontend'
+      NetworkMode: bridge
+      RequiresCompatibilities: [EC2]
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt FrontendTaskRole.Arn
+      ContainerDefinitions:
+        - Name: frontend
+          Image: !Ref FrontendImageURI
+          Essential: true
+          # Nginx only — static assets + reverse proxy. No Redis, no Node
+          # runtime in this container, so it needs far less than the
+          # backend task.
+          Cpu: 256
+          Memory: 512
+          MemoryReservation: 256
+          DockerLabels:
+            service: frontend
+            stack: !Ref AWS::StackName
+            repo: credit-underwriting-frontend
+            role: frontend
+          PortMappings:
+            - ContainerPort: !Ref FrontendContainerPort
+              Protocol: tcp
+          Environment:
+            - {Name: NODE_ENV, Value: !Ref EnvironmentName}
+            # Nginx proxies every dynamic route (/, /login, /auth/*, /api/*,
+            # /socket.io/*) directly to the backend container's fixed host
+            # port on BackendEC2 — NOT through the ALB. Proxying back
+            # through the ALB would loop, since the ALB's own default
+            # listener action sends unmatched paths to this same Frontend
+            # Target Group.
+            - {Name: BACKEND_UPSTREAM, Value: !Sub '${BackendEC2.PrivateIp}:${BackendContainerPort}'}
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref FrontendLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: frontend
+              awslogs-create-group: 'true'
+
+  BackendTaskDef:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub '${EnvironmentName}-underwriting-backend'
+      NetworkMode: bridge
+      RequiresCompatibilities: [EC2]
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt BackendTaskRole.Arn
+      ContainerDefinitions:
+        - Name: backend
+          Image: !Ref BackendImageURI
+          Essential: true
+          # c6a.large = 2 vCPU / 4096MB. Backend is pinned 1:1 to its own
+          # dedicated EC2 via placement constraint, so it's safe to claim
+          # most of the box - leaving ~800MB headroom for the ECS agent + OS.
+          Cpu: 1536
+          Memory: 3200
+          MemoryReservation: 1536
+          DockerLabels:
+            service: backend
+            stack: !Ref AWS::StackName
+            repo: credit-underwriting-backend
+            role: backend
+          PortMappings:
+            # Fixed host port (not dynamic) — required so the Frontend
+            # container's Nginx config can reach this box at a known,
+            # stable address (BackendEC2 private IP : this port). Safe
+            # because only one backend task ever runs on this EC2.
+            - ContainerPort: !Ref BackendContainerPort
+              HostPort: !Ref BackendContainerPort
+              Protocol: tcp
+          Environment:
+            - {Name: NODE_ENV, Value: !Ref EnvironmentName}
+            - {Name: PORT, Value: !Sub '${BackendContainerPort}'}
+            - {Name: AWS_REGION, Value: !Ref AWS::Region}
+            - {Name: S3_BUCKET_NAME, Value: uat-underwriting-docs-975050184307-ap-south-1}
+            - {Name: REDIRECT_URI, Value: !Sub 'https://${UATDomain}/auth/callback'}
+            - {Name: ALLOWED_ORIGINS, Value: !Sub 'https://${UATDomain}'}
+            - {Name: KMS_KEY_ID, Value: !Sub 'alias/${EnvironmentName}-underwriting'}
+            - {Name: SUPER_ADMIN_EMAIL, Value: nilesh@acc.ltd}
+            - {Name: ALB_DNS, Value: !GetAtt ALB.DNSName}
+            # Amazon Bedrock — Claude extraction. Auth via BackendTaskRole's
+            # IAM permissions (bedrock:InvokeModel*) — no API key needed.
+            - {Name: BEDROCK_MODEL_ID, Value: !Ref BedrockModelId}
+          Secrets:
+            - Name: SESSION_SECRET
+              ValueFrom: !Sub '${SessionSecret}:session_secret::'
+            # REDIS_URL includes the AUTH token — must come from Secrets
+            # Manager, not a plaintext Environment entry.
+            - Name: REDIS_URL
+              ValueFrom: !Sub '${RedisSecret}:url::'
+            # Renamed to match lib/external-apis-manager.js exactly
+            # (MIDDLEWARE_BASE_URL / MIDDLEWARE_CLIENT_KEY).
+            - Name: MIDDLEWARE_BASE_URL
+              ValueFrom: !Sub '${MiddlewareSecret}:base_url::'
+            - Name: MIDDLEWARE_CLIENT_KEY
+              ValueFrom: !Sub '${MiddlewareSecret}:client_key::'
+            - Name: MICROSOFT_CLIENT_ID
+              ValueFrom: !Sub '${AzureSecret}:MICROSOFT_CLIENT_ID::'
+            - Name: MICROSOFT_CLIENT_SECRET
+              ValueFrom: !Sub '${AzureSecret}:MICROSOFT_CLIENT_SECRET::'
+            - Name: MICROSOFT_TENANT_ID
+              ValueFrom: !Sub '${AzureSecret}:MICROSOFT_TENANT_ID::'
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref BackendLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: backend
+              awslogs-create-group: 'true'
+
+  # ── ECS SERVICES ─────────────────────────────────────────────
+
+  FrontendService:
+    Type: AWS::ECS::Service
+    DependsOn: [HTTPListener]
+    Properties:
+      ServiceName: !Sub '${EnvironmentName}-frontend-service'
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref FrontendTaskDef
+      DesiredCount: 1
+      LaunchType: EC2
+      PlacementConstraints:
+        - Type: memberOf
+          Expression: "attribute:role == frontend"
+      LoadBalancers:
+        - ContainerName: frontend
+          ContainerPort: !Ref FrontendContainerPort
+          TargetGroupArn: !Ref FrontendTG
+      HealthCheckGracePeriodSeconds: 300
+      DeploymentConfiguration:
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
+        DeploymentCircuitBreaker:
+          Enable: false
+          Rollback: false
+
+  BackendService:
+    Type: AWS::ECS::Service
+    DependsOn: [HTTPListener]
+    Properties:
+      ServiceName: !Sub '${EnvironmentName}-backend-service'
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref BackendTaskDef
+      DesiredCount: 1
+      LaunchType: EC2
+      PlacementConstraints:
+        - Type: memberOf
+          Expression: "attribute:role == backend"
+      LoadBalancers:
+        - ContainerName: backend
+          ContainerPort: !Ref BackendContainerPort
+          TargetGroupArn: !Ref BackendTG
+      HealthCheckGracePeriodSeconds: 300
+      DeploymentConfiguration:
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
+        DeploymentCircuitBreaker:
+          Enable: false
+          Rollback: false
+
+Outputs:
+
+  ALBDNSName:
+    Description: "CNAME your UAT domain -> this value"
+    Value: !GetAtt ALB.DNSName
+    Export:
+      Name: !Sub '${EnvironmentName}-alb-dns'
+
+  AppURL:
+    Description: "UAT App URL (update UATDomain parameter when DNS is ready)"
+    Value: !Sub 'https://${UATDomain}'
+
+  VPCId:
+    Description: Pre-existing UAT VPC used
+    Value: !Ref VPCId
+
+  ECSCluster:
+    Value: !Ref ECSCluster
+
+  FrontendEC2:
+    Description: Runs ONLY frontend container (AppSubnet1 / ap-south-1a)
+    Value: !Ref FrontendEC2
+
+  BackendEC2:
+    Description: Runs ONLY backend container (AppSubnet2 / ap-south-1b)
+    Value: !Ref BackendEC2
+
+  RedisEndpoint:
+    Value: !Sub '${RedisCluster.PrimaryEndPoint.Address}:${RedisCluster.PrimaryEndPoint.Port}'
+
+  DocumentsBucket:
+    Value: !Ref DocumentsBucket
+
+  WebSubnet1Id:
+    Description: "Web subnet 1a (available for future web-tier resources)"
+    Value: !Ref WebSubnet1Id
+
+  WebSubnet2Id:
+    Description: "Web subnet 1b (available for future web-tier resources)"
+    Value: !Ref WebSubnet2Id
+
+  BedrockModelId:
+    Description: "Bedrock model ID in use — verify this is enabled/available in this account+region before go-live"
+    Value: !Ref BedrockModelId
+
+  SecretsToFill:
+    Description: "Update these in Secrets Manager while stack is creating (Redis URL and Anthropic key are no longer needed here — Redis AUTH token is auto-generated, AI extraction uses Bedrock via IAM role)"
+    Value: "session-secret | middleware-credentials (base_url, client_key) | azure-credentials"

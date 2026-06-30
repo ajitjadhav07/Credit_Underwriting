@@ -21,11 +21,14 @@ services:
       - PORT=3000
       - REDIS_URL=redis://redis:6379
       - SESSION_SECRET=${SESSION_SECRET:-local-dev-secret-change-me}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      # Bedrock (preferred) — requires AWS credentials with bedrock:InvokeModel.
+      # Falls back to ANTHROPIC_API_KEY direct-API mode if AWS_REGION is unset.
       - AWS_REGION=${AWS_REGION:-ap-south-1}
-      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-}
+      - BEDROCK_MODEL_ID=${BEDROCK_MODEL_ID:-apac.anthropic.claude-sonnet-4-20250514-v1:0}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-}
       - MIDDLEWARE_BASE_URL=${MIDDLEWARE_BASE_URL:-}
       - MIDDLEWARE_CLIENT_KEY=${MIDDLEWARE_CLIENT_KEY:-}
       - ENTRA_CLIENT_ID=${ENTRA_CLIENT_ID:-}

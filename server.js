@@ -2055,12 +2055,16 @@ app.get('/api/processing/status', ensureAuthenticated, async (req, res) => {
             )
             : Promise.resolve({ working: bullQueue.isReady(), configured: !!process.env.REDIS_URL, details: bullQueue.isReady() ? 'Connected' : 'Not connected' }),
         
-        // Claude API health check - SKIP actual API call, just check if initialized
-        // The actual API test is expensive and slow, rely on initialization status
+        // Claude (via Bedrock) health check - SKIP actual API call, just check if initialized
+        // The actual API test is expensive and slow, rely on initialization status.
+        // Bedrock is "configured" if AWS_REGION is set (IAM role provides auth);
+        // ANTHROPIC_API_KEY is checked too for legacy direct-API deployments.
         Promise.resolve({
             working: claudeProcessor.isReady(),
-            configured: !!process.env.ANTHROPIC_API_KEY,
-            details: claudeProcessor.isReady() ? 'Claude API initialized' : (process.env.ANTHROPIC_API_KEY ? 'Not initialized' : 'API key not set')
+            configured: !!process.env.AWS_REGION || !!process.env.ANTHROPIC_API_KEY,
+            details: claudeProcessor.isReady()
+                ? 'Claude (Bedrock) initialized'
+                : (process.env.AWS_REGION ? 'Bedrock region set but not initialized' : 'AWS_REGION / ANTHROPIC_API_KEY not set')
         }),
         
         // WebSocket health check (sync - fast)
@@ -3914,11 +3918,14 @@ app.post('/api/extract-financials', ensureAuthenticated, ensureNotReadOnly, asyn
         const documentTimings = [];
         let apiCallCount = 0;
         
-        // Check if Claude API is configured
-        if (!process.env.ANTHROPIC_API_KEY) {
-            return res.status(400).json({ 
+        // Check if Claude (via Amazon Bedrock) is configured.
+        // Bedrock auth comes from the task/instance IAM role + AWS_REGION,
+        // not an API key — ANTHROPIC_API_KEY is kept only as a legacy
+        // fallback indicator for non-Bedrock deployments.
+        if (!process.env.AWS_REGION && !process.env.ANTHROPIC_API_KEY) {
+            return res.status(400).json({
                 error: 'Claude API not configured',
-                message: 'Please add ANTHROPIC_API_KEY to environment variables'
+                message: 'Please set AWS_REGION (Bedrock) or ANTHROPIC_API_KEY (legacy direct API) in environment variables'
             });
         }
         
@@ -4617,10 +4624,10 @@ app.post('/api/extract-category', ensureAuthenticated, ensureNotReadOnly, async 
             return res.status(404).json({ error: 'Assessment not found' });
         }
         
-        if (!process.env.ANTHROPIC_API_KEY) {
-            return res.status(400).json({ 
+        if (!process.env.AWS_REGION && !process.env.ANTHROPIC_API_KEY) {
+            return res.status(400).json({
                 error: 'Claude API not configured',
-                message: 'Please add ANTHROPIC_API_KEY to environment variables'
+                message: 'Please set AWS_REGION (Bedrock) or ANTHROPIC_API_KEY (legacy direct API) in environment variables'
             });
         }
         
