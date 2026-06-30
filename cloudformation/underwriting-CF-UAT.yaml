@@ -123,15 +123,20 @@ Parameters:
     Description: "x86_64 (AMD EPYC) — compatible as-is with existing Docker images, no rebuild needed"
 
   # ── Amazon Bedrock — Claude model / inference profile ────────
-  # IMPORTANT: verify the exact ID available in your account/region before
-  # deploying. Many Claude models require a cross-region inference profile
-  # in ap-south-1 rather than a direct on-demand model ID. Check via:
+  # Using Claude Sonnet 4.6.
+  # IMPORTANT: I can't confirm the exact catalog ID/inference profile
+  # string AWS has assigned to Sonnet 4.6 in ap-south-1 — Bedrock's exact
+  # ID format (and whether a cross-region inference profile prefix like
+  # "apac." is required) can only be confirmed against your account.
+  # Before deploying, run:
+  #   aws bedrock list-foundation-models --region ap-south-1 --by-provider anthropic
   #   aws bedrock list-inference-profiles --region ap-south-1
-  #   aws bedrock list-foundation-models --region ap-south-1
+  # and set the exact returned ID as this parameter's value at deploy time
+  # (--parameter-overrides BedrockModelId=<exact-id-from-above>).
   BedrockModelId:
     Type: String
-    Default: "apac.anthropic.claude-sonnet-4-20250514-v1:0"
-    Description: "Bedrock model ID or inference profile ARN for Claude — VERIFY before deploy"
+    Default: "apac.anthropic.claude-sonnet-4-6-v1:0"
+    Description: "Claude Sonnet 4.6 Bedrock model ID — PLACEHOLDER FORMAT, confirm exact ID via AWS CLI before deploy"
 
   ECSOptimizedAMI:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
@@ -956,7 +961,7 @@ Outputs:
     Value: !Ref WebSubnet2Id
 
   BedrockModelId:
-    Description: "Bedrock model ID in use — verify this is enabled/available in this account+region before go-live"
+    Description: "Bedrock model ID in use (Claude Sonnet 4.6) — confirm this is the exact enabled ID/inference profile in this account+region before go-live"
     Value: !Ref BedrockModelId
 
   SecretsToFill:
