@@ -3795,7 +3795,7 @@ function renderActualProcessingTab(fa) {
     // Claude API - actual
     html += '<div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">';
     html += '<div><div class="font-medium text-green-800 text-sm">Claude AI Extraction</div>';
-    html += '<div class="text-xs text-green-600 font-mono">api.anthropic.com/v1/messages</div></div>';
+    html += '<div class="text-xs text-green-600 font-mono">Amazon Bedrock — Claude Sonnet 4.6</div></div>';
     html += '<div class="text-right"><span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">✓ Complete</span></div></div>';
     
     // S3 Storage - actual
@@ -4182,7 +4182,7 @@ function renderApis(){
     var isActual = state.viewMode === 'actual' && fa;
     
     if(isActual) {
-        return '<div class="bg-gray-50 rounded-lg overflow-hidden"><table class="data-table"><thead><tr><th>API</th><th>Endpoint</th><th>Method</th><th>Status</th></tr></thead><tbody><tr><td class="font-medium">Claude AI Extraction</td><td class="font-mono text-xs text-gray-500">api.anthropic.com/v1/messages</td><td><span class="px-2 py-0.5 bg-axis-bg text-axis-primary text-xs rounded">POST</span></td><td><span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">200 OK</span></td></tr></tbody></table></div><div class="mt-4 p-4 bg-yellow-50 rounded-lg text-sm text-yellow-800"><strong>Note:</strong> External APIs (CIBIL, GST Portal, MCA, etc.) are simulated in this demo. In production, these would be live integrations.</div>';
+        return '<div class="bg-gray-50 rounded-lg overflow-hidden"><table class="data-table"><thead><tr><th>API</th><th>Endpoint</th><th>Method</th><th>Status</th></tr></thead><tbody><tr><td class="font-medium">Claude AI Extraction</td><td class="font-mono text-xs text-gray-500">Amazon Bedrock (Claude Sonnet 4.6)</td><td><span class="px-2 py-0.5 bg-axis-bg text-axis-primary text-xs rounded">InvokeModel</span></td><td><span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">200 OK</span></td></tr></tbody></table></div><div class="mt-4 p-4 bg-yellow-50 rounded-lg text-sm text-yellow-800"><strong>Note:</strong> External APIs (CIBIL, GST Portal, MCA, etc.) are simulated in this demo. In production, these would be live integrations.</div>';
     }
     
     return '<div class="bg-gray-50 rounded-lg overflow-hidden"><table class="data-table"><thead><tr><th>API</th><th>Endpoint</th><th>Method</th><th>Latency</th><th>Size</th><th>Status</th></tr></thead><tbody>'+apiCallsList.map(function(a){return '<tr><td class="font-medium">'+a.name+'</td><td class="font-mono text-xs text-gray-500">'+a.endpoint+'</td><td><span class="px-2 py-0.5 bg-axis-bg text-axis-primary text-xs rounded">'+a.method+'</span></td><td>'+a.latency+'</td><td>'+a.dataSize+'</td><td><span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">'+a.status+' OK</span></td></tr>'}).join('')+'</tbody></table></div>';

@@ -88,7 +88,6 @@ app.use(helmet({
                 "'self'", 
                 "wss:", 
                 "ws:",  // WebSocket for Socket.io
-                "https://api.anthropic.com", 
                 "https://*.amazonaws.com"
             ],
             frameSrc: ["'none'"],
@@ -2062,8 +2061,9 @@ app.get('/api/processing/status', ensureAuthenticated, async (req, res) => {
         Promise.resolve({
             working: claudeProcessor.isReady(),
             configured: !!process.env.AWS_REGION || !!process.env.ANTHROPIC_API_KEY,
+            mode: claudeProcessor.mode, // 'bedrock' | 'direct' | null — verifiable proof of which path is live
             details: claudeProcessor.isReady()
-                ? 'Claude (Bedrock) initialized'
+                ? `Claude (${claudeProcessor.mode === 'bedrock' ? 'Amazon Bedrock' : 'direct Anthropic API'}) initialized`
                 : (process.env.AWS_REGION ? 'Bedrock region set but not initialized' : 'AWS_REGION / ANTHROPIC_API_KEY not set')
         }),
         
@@ -2176,7 +2176,7 @@ app.post('/api/assessment/:id/process-server', ensureAuthenticated, ensureNotRea
     if (!claudeProcessor.isReady()) {
         return res.status(503).json({
             error: 'Claude API not available',
-            message: 'ANTHROPIC_API_KEY not configured on server.',
+            message: 'Neither AWS_REGION (Bedrock) nor ANTHROPIC_API_KEY (legacy) is configured on server.',
             fallback: 'client'
         });
     }
@@ -5216,7 +5216,8 @@ app.get('/api/extracted-data/:assessmentId', ensureAuthenticated, async (req, re
  */
 app.get('/api/config/status', (req, res) => {
     res.json({
-        claudeApi: !!process.env.ANTHROPIC_API_KEY,
+        claudeApi: !!process.env.AWS_REGION || !!process.env.ANTHROPIC_API_KEY,
+        claudeMode: process.env.AWS_REGION ? 'bedrock' : (process.env.ANTHROPIC_API_KEY ? 'direct' : null),
         s3Configured: s3Client.isConfigured(),
         s3Bucket: process.env.S3_BUCKET_NAME || null,
         awsRegion: process.env.AWS_REGION || 'ap-south-1'
@@ -5239,9 +5240,9 @@ async function initializeServerProcessing() {
     // 2. Initialize Claude Processor
     const claudeReady = claudeProcessor.initialize();
     if (claudeReady) {
-        console.log('   ✅ Claude Processor ready');
+        console.log(`   ✅ Claude Processor ready (mode: ${claudeProcessor.mode})`);
     } else {
-        console.log('   ⚠️ Claude Processor not available (missing ANTHROPIC_API_KEY)');
+        console.log('   ⚠️ Claude Processor not available (missing AWS_REGION/Bedrock and ANTHROPIC_API_KEY)');
     }
     
     // 3. Initialize BullMQ (if Redis is configured)
@@ -5277,7 +5278,7 @@ async function startServer() {
         console.log(`   Redirect URI: ${process.env.REDIRECT_URI || 'Not set'}`);
         console.log(`   Session Secret: ${process.env.SESSION_SECRET ? '✅ Configured' : '❌ Not configured'}`);
         console.log(`\n📋 Configuration Status:`);
-        console.log(`   Claude API: ${process.env.ANTHROPIC_API_KEY ? '✅ Configured' : '❌ Not configured'}`);
+        console.log(`   Claude API: ${claudeProcessor.isReady() ? `✅ Configured (${claudeProcessor.mode})` : '❌ Not configured'}`);
         console.log(`   AWS S3: ${s3Client.isConfigured() ? '✅ Configured' : '❌ Not configured'}`);
         console.log(`   S3 Bucket: ${process.env.S3_BUCKET_NAME || 'Not set'}`);
         console.log(`   Redis/BullMQ: ${bullQueue.isReady() ? '✅ Connected' : '⚠️ Not configured (client-side mode)'}`);
