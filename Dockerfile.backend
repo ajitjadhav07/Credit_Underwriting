@@ -1,6 +1,11 @@
 # ============================================================
-# Axis Underwriting Agent — App Server (App EC2)
-# API + Socket.io + OAuth handshake + all business logic
+# Axis Underwriting Agent — App Tier Image (App Subnet)
+# Full Node.js app: Express API, Socket.io, Entra ID SSO session
+# handling, Bull/Redis worker (Textract -> Claude -> external
+# verification APIs via Middleware -> calculation engine -> DOCX),
+# and all business logic. This is the single stateful process that
+# owns sessions — the frontend (Nginx) image proxies everything
+# dynamic here so authentication keeps working correctly.
 # ============================================================
 
 # ---- deps stage: install only production deps ----

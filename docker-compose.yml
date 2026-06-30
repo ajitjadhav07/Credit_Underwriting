@@ -1,0 +1,48 @@
+# Local development / integration testing only.
+# In AWS, frontend and backend run as separate EC2 instances (Web
+# Subnet / App Subnet) behind an Internal ALB — this compose file is
+# not used in production, it just lets you run both images together
+# on a laptop to verify the Nginx -> Node proxy wiring before deploy.
+
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - SESSION_SECRET=${SESSION_SECRET:-local-dev-secret-change-me}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - AWS_REGION=${AWS_REGION:-ap-south-1}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - MIDDLEWARE_BASE_URL=${MIDDLEWARE_BASE_URL:-}
+      - MIDDLEWARE_CLIENT_KEY=${MIDDLEWARE_CLIENT_KEY:-}
+      - ENTRA_CLIENT_ID=${ENTRA_CLIENT_ID:-}
+      - ENTRA_CLIENT_SECRET=${ENTRA_CLIENT_SECRET:-}
+      - ENTRA_TENANT_ID=${ENTRA_TENANT_ID:-}
+    depends_on:
+      - redis
+    ports:
+      - "3000:3000"   # exposed directly too, for debugging without the proxy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      - BACKEND_UPSTREAM=backend:3000
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"

@@ -1,0 +1,92 @@
+# ============================================================
+# Axis Underwriting Agent — Web Tier (Nginx)
+# ============================================================
+# This config is processed by the official nginx:alpine image's
+# built-in envsubst-on-startup feature: any file placed at
+# /etc/nginx/templates/*.template has ${VARS} substituted from the
+# container environment and written to /etc/nginx/conf.d/*.conf
+# before nginx starts. No custom entrypoint script needed.
+#
+# Why Nginx in front of Node here (and not a second Express process):
+#   - server.js carries Express in-memory sessions for the Microsoft
+#     Entra ID SSO flow (express-session, no Redis-backed store).
+#     A second Node process would NOT share that session state, which
+#     would break login. Nginx is a transparent reverse proxy, not a
+#     second stateful app instance, so authentication still works
+#     exactly as it does today — only the static-asset path changes.
+#   - Nginx serves /public assets (CSS/JS/images) directly and cheaply,
+#     and forwards everything dynamic (/, /login, /auth/*, /api/*,
+#     /socket.io/*) straight through to the single App-tier backend.
+#
+# Required env var at container start:
+#   BACKEND_UPSTREAM   e.g. "app-ec2.internal:3000" or "backend:3000"
+# ============================================================
+
+upstream underwriting_backend {
+    server ${BACKEND_UPSTREAM};
+    keepalive 32;
+}
+
+server {
+    listen 8080;
+    server_name _;
+
+    # Internal ALB sits in front of this — no TLS termination here.
+    client_max_body_size 50m;
+
+    # ---- Health check (Nginx tier itself, used by the ALB target group) ----
+    location = /healthz {
+        access_log off;
+        return 200 "ok\n";
+        add_header Content-Type text/plain;
+    }
+
+    # ---- Static assets served directly by Nginx ----
+    location /styles.css {
+        root /usr/share/nginx/html;
+        access_log off;
+        expires 1h;
+        add_header Cache-Control "public, max-age=3600";
+    }
+
+    location /logo.png {
+        root /usr/share/nginx/html;
+        access_log off;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
+    }
+
+    location /test-data/ {
+        root /usr/share/nginx/html;
+        access_log off;
+    }
+
+    # ---- Socket.io — needs HTTP/1.1 + Upgrade headers for WebSocket ----
+    location /socket.io/ {
+        proxy_pass http://underwriting_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+    }
+
+    # ---- Everything dynamic: UI shell, SSO auth, API, health ----
+    # Includes "/", "/login", "/auth/*", "/api/*", "/health" — all
+    # handled by the single backend Node process so session state for
+    # the Entra ID OAuth flow stays consistent.
+    location / {
+        proxy_pass http://underwriting_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        proxy_read_timeout 120s;
+        proxy_send_timeout 120s;
+    }
+}

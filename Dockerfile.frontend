@@ -1,0 +1,43 @@
+# ============================================================
+# Axis Underwriting Agent — Web Tier Image (Web EC2 / Web Subnet)
+# Static assets via Nginx + reverse proxy to the backend (App tier)
+# for everything dynamic (UI shell, SSO auth, API, WebSocket).
+# ============================================================
+
+# ---- builder stage: compile Tailwind CSS ----
+FROM node:20-alpine AS builder
+WORKDIR /usr/src/app
+
+COPY package.json ./
+# Needs devDependencies (tailwindcss, postcss, autoprefixer)
+RUN npm install
+
+COPY tailwind.config.js ./
+COPY src ./src
+COPY public ./public
+
+RUN npm run build:css
+
+# ---- runtime stage: Nginx only, no Node/V8 in this image ----
+FROM nginx:1.27-alpine AS runtime
+
+# Static assets (HTML/CSS/JS/images) — Nginx serves these directly;
+# everything else this server.js renders dynamically (logged-in
+# screens, results, masters tables) is the SPA shell fetched once
+# and then driven by /api/* calls proxied through to the backend.
+COPY --from=builder /usr/src/app/public /usr/share/nginx/html
+
+# Reverse-proxy config template (envsubst'd at container start by the
+# official nginx image entrypoint — requires BACKEND_UPSTREAM env var)
+COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+
+# Default upstream — override at deploy time, e.g.:
+#   docker run -e BACKEND_UPSTREAM=app-ec2.internal:3000 ...
+ENV BACKEND_UPSTREAM=backend:3000
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -q -O- http://127.0.0.1:8080/healthz || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]
