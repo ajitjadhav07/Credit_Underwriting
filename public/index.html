@@ -6570,35 +6570,41 @@ function renderUploadModal(){
     
     html += '<div class="upload-body" id="uploadBody" style="flex:1;overflow-y:auto;padding:20px">';
     
-    // Company info section with Industry dropdown
-    html += '<div class="grid grid-cols-3 gap-4 mb-6">';
-    html += '<div><label class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-500">*</span></label><input type="text" id="uploadCompanyName" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:border-axis-primary focus:ring-1 focus:ring-axis-primary outline-none" value="'+(state.uploadData.companyName||'')+'" placeholder="Enter company name" onchange="updateUploadField(\'companyName\',this.value)"></div>';
-    html += '<div><label class="block text-sm font-medium text-gray-700 mb-1">Industry Type <span class="text-red-500">*</span></label>';
-    html += '<select id="uploadIndustryType" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:border-axis-primary focus:ring-1 focus:ring-axis-primary outline-none" onchange="updateUploadField(\'industryType\',this.value)">';
-    html += '<option value="">-- Select Industry --</option>';
-    var industryOptions = [
-        {value: 'service_it', label: 'Service - IT/Software'},
-        {value: 'service_consulting', label: 'Service - Consulting'},
-        {value: 'service_other', label: 'Service - Other'},
-        {value: 'manufacturing', label: 'Manufacturing'},
-        {value: 'trading', label: 'Trading'},
-        {value: 'infrastructure', label: 'Infrastructure/Construction'},
-        {value: 'nbfc', label: 'NBFC/Financial Services'},
-        {value: 'healthcare', label: 'Healthcare'},
-        {value: 'education', label: 'Education'},
-        {value: 'hospitality', label: 'Hospitality'},
-        {value: 'real_estate', label: 'Real Estate'},
-        {value: 'agriculture', label: 'Agriculture'},
-        {value: 'other', label: 'Other'}
-    ];
-    industryOptions.forEach(function(opt) {
-        var selected = (state.uploadData.industryType === opt.value) ? ' selected' : '';
-        html += '<option value="'+opt.value+'"'+selected+'>'+opt.label+'</option>';
-    });
-    html += '</select></div>';
-    html += '<div><label class="block text-sm font-medium text-gray-700 mb-1">Loan Amount (₹ Lakhs) <span class="text-red-500">*</span></label><input type="number" id="uploadLoanAmount" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:border-axis-primary focus:ring-1 focus:ring-axis-primary outline-none" value="'+(state.uploadData.loanAmount||'')+'" placeholder="e.g., 300" onchange="updateUploadField(\'loanAmount\',this.value)"></div>';
+    // Pennant LOS lookup — single source of truth for applicant details.
+    // Manual Company Name / Industry Type / Loan Amount entry has been
+    // removed; those values now come from AFL's Pennant LOS via finReference
+    // (the Loan Account Number) instead of free-text entry.
+    var pennantFetched = !!state.uploadData.pennantFetched;
+    var pennantLoading = !!state.uploadData.pennantLoading;
+    var pennantData = state.uploadData.pennantData || null;
+
+    html += '<div class="mb-6">';
+    html += '<label class="block text-sm font-medium text-gray-700 mb-1">Loan Account Number (LOS) <span class="text-red-500">*</span></label>';
+    html += '<div class="flex gap-2">';
+    html += '<input type="text" id="uploadLAN" class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-mono focus:border-axis-primary focus:ring-1 focus:ring-axis-primary outline-none" value="'+(state.uploadData.loanAccountNumber||'')+'" placeholder="e.g., SPCO0000001" '+(pennantLoading?'disabled':'')+' onkeydown="if(event.key===\'Enter\'){event.preventDefault();fetchPennantDetails();}">';
+    html += '<button type="button" onclick="fetchPennantDetails()" class="px-4 py-2 btn-primary rounded-md text-sm font-medium whitespace-nowrap" '+(pennantLoading?'disabled':'')+'>'+(pennantLoading?'Fetching...':(pennantFetched?'Re-fetch':'Submit'))+'</button>';
     html += '</div>';
-    
+    html += '<p class="text-xs text-gray-500 mt-1">Enter the LAN issued in Pennant LOS. Applicant, industry, and loan details are pulled automatically — no manual entry needed.</p>';
+
+    if (state.uploadData.pennantError) {
+        html += '<div class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">'+escapeHtml(state.uploadData.pennantError)+'</div>';
+    }
+
+    if (pennantFetched && pennantData) {
+        var cust = pennantData.customer || {};
+        var loan = pennantData.loanDetail || {};
+        html += '<div class="mt-3 p-4 bg-axis-bg border border-pink-200 rounded-lg">';
+        html += '<div class="grid grid-cols-3 gap-3 text-sm">';
+        html += '<div><div class="text-xs text-gray-500">Company Name</div><div class="font-semibold">'+escapeHtml(cust.name||'—')+'</div></div>';
+        html += '<div><div class="text-xs text-gray-500">Industry</div><div class="font-semibold">'+escapeHtml(cust.industry||'—')+'</div></div>';
+        html += '<div><div class="text-xs text-gray-500">Loan Amount</div><div class="font-semibold">'+(state.uploadData.loanAmount?('₹ '+state.uploadData.loanAmount+' Lakhs'):'—')+'</div></div>';
+        html += '<div><div class="text-xs text-gray-500">PAN</div><div class="font-mono font-semibold">'+escapeHtml(cust.pan||'—')+'</div></div>';
+        html += '<div><div class="text-xs text-gray-500">Product</div><div class="font-semibold">'+escapeHtml(loan.product||'—')+'</div></div>';
+        html += '<div><div class="text-xs text-gray-500">MSME Classification</div><div class="font-semibold">'+escapeHtml(cust.msmeSubType||cust.msmeFlag||'—')+'</div></div>';
+        html += '</div></div>';
+    }
+    html += '</div>';
+
     if (uploadMode === 'bulk') {
         // Bulk upload mode
         html += renderBulkUploadContent();
@@ -6721,16 +6727,17 @@ window.toggleDocSectionDirect=function(sectionId, event){
 };
 
 window.submitAllAndProcess=async function(){
-    var companyName = document.getElementById('uploadCompanyName')?.value?.trim();
-    var loanAmount = document.getElementById('uploadLoanAmount')?.value;
-    var industryType = document.getElementById('uploadIndustryType')?.value;
-    if(!companyName){alert('Please enter company name');return;}
-    if(!industryType){alert('Please select industry type');return;}
-    if(!loanAmount){alert('Please enter loan amount');return;}
-    state.uploadData.companyName = companyName;
-    state.uploadData.loanAmount = loanAmount;
-    state.uploadData.industryType = industryType;
-    
+    // Applicant details now come from Pennant LOS (fetched via the Loan
+    // Account Number), not manual entry. Require a successful fetch first.
+    if(!state.uploadData.pennantFetched){
+        alert('Please enter the Loan Account Number (LOS) and click Submit to fetch applicant details from Pennant before proceeding.');
+        return;
+    }
+    var companyName = state.uploadData.companyName;
+    var loanAmount = state.uploadData.loanAmount;
+    var industryType = state.uploadData.industryType;
+    if(!companyName){alert('Pennant did not return a company name for this LAN. Please verify the Loan Account Number and re-fetch.');return;}
+
     var files = state.uploadData.files;
     var fileCount = Object.keys(files).filter(function(k){return files[k]}).length;
     if(fileCount === 0){
@@ -6770,7 +6777,8 @@ window.submitAllAndProcess=async function(){
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 companyName: companyName,
-                documentCount: fileCount
+                documentCount: fileCount,
+                loanAccountNumber: state.uploadData.loanAccountNumber || null
             })
         });
         console.log('Assessment marked as Processing on server');
@@ -6794,6 +6802,86 @@ window.submitAllAndProcess=async function(){
 
 window.updateUploadField=function(field,value){
     state.uploadData[field]=value;
+};
+
+// Best-effort mapping from Pennant's free-text industry description
+// (e.g. "Growing of Cereals") to the internal industry buckets the
+// scoring/masters logic expects. Falls back to 'other' — downstream
+// code (detectCompanyTypeFromData, calculation-engine) also re-derives
+// industry from extracted financial documents, so this is a hint, not
+// the sole source of truth.
+function mapPennantIndustryToInternal(desc){
+    if(!desc) return 'other';
+    var d = desc.toLowerCase();
+    if(d.indexOf('software')>-1 || d.indexOf('it service')>-1 || d.indexOf('information technology')>-1) return 'service_it';
+    if(d.indexOf('consult')>-1) return 'service_consulting';
+    if(d.indexOf('manufactur')>-1 || d.indexOf('production')>-1 || d.indexOf('cereal')>-1 || d.indexOf('mill')>-1) return 'manufacturing';
+    if(d.indexOf('trad')>-1 || d.indexOf('wholesale')>-1 || d.indexOf('retail')>-1) return 'trading';
+    if(d.indexOf('construction')>-1 || d.indexOf('infrastructure')>-1) return 'infrastructure';
+    if(d.indexOf('nbfc')>-1 || d.indexOf('financ')>-1) return 'nbfc';
+    if(d.indexOf('health')>-1 || d.indexOf('hospital')>-1 || d.indexOf('medic')>-1) return 'healthcare';
+    if(d.indexOf('educat')>-1 || d.indexOf('school')>-1) return 'education';
+    if(d.indexOf('hospitality')>-1 || d.indexOf('hotel')>-1 || d.indexOf('restaurant')>-1) return 'hospitality';
+    if(d.indexOf('real estate')>-1 || d.indexOf('realty')>-1) return 'real_estate';
+    if(d.indexOf('agri')>-1 || d.indexOf('farm')>-1 || d.indexOf('crop')>-1 || d.indexOf('grow')>-1) return 'agriculture';
+    if(d.indexOf('service')>-1) return 'service_other';
+    return 'other';
+}
+
+// Fetch applicant/loan details from Pennant LOS by Loan Account Number
+// (finReference), replacing the old manual Company Name / Industry Type /
+// Loan Amount entry fields in the upload modal.
+window.fetchPennantDetails=async function(){
+    var lan = document.getElementById('uploadLAN')?.value?.trim();
+    if(!lan){
+        state.uploadData.pennantError = 'Please enter a Loan Account Number (LOS).';
+        render();
+        return;
+    }
+    state.uploadData.loanAccountNumber = lan;
+    state.uploadData.pennantLoading = true;
+    state.uploadData.pennantError = null;
+    render();
+
+    try {
+        var resp = await fetch('/api/external/pennant', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ finReference: lan, assessmentId: state.assessmentId || null })
+        });
+        var data = await resp.json();
+        var result = data.result || {};
+
+        if(!resp.ok || !data.success || !result.success){
+            state.uploadData.pennantFetched = false;
+            state.uploadData.pennantError = result.error || data.error || 'Could not find this Loan Account Number in Pennant. Please verify and try again.';
+            state.uploadData.pennantLoading = false;
+            render();
+            return;
+        }
+
+        var cust = result.customer || {};
+        var loan = result.loanDetail || {};
+        // financeAmount from Pennant is in rupees; internal fields elsewhere use ₹ Lakhs
+        var loanAmountLakhs = loan.financeAmount ? (parseFloat(loan.financeAmount) / 100000) : '';
+
+        state.uploadData.pennantFetched = true;
+        state.uploadData.pennantLoading = false;
+        state.uploadData.pennantError = null;
+        state.uploadData.pennantData = result;
+        state.uploadData.companyName = cust.name || '';
+        state.uploadData.industryType = mapPennantIndustryToInternal(cust.industry);
+        state.uploadData.loanAmount = loanAmountLakhs ? loanAmountLakhs.toFixed(2) : '';
+        state.uploadData.finReference = lan;
+
+        render();
+    } catch(err) {
+        console.error('Pennant fetch failed:', err);
+        state.uploadData.pennantFetched = false;
+        state.uploadData.pennantLoading = false;
+        state.uploadData.pennantError = 'Network error while contacting Pennant. Please try again.';
+        render();
+    }
 };
 
 // ============================================
@@ -7293,13 +7381,14 @@ window.downloadSampleFileNames = function(event) {
 window.submitBulkUploadAndProcess = async function() {
     console.log('=== submitBulkUploadAndProcess called ===');
     
-    var companyName = document.getElementById('uploadCompanyName')?.value?.trim();
-    var loanAmount = document.getElementById('uploadLoanAmount')?.value;
-    var industryType = document.getElementById('uploadIndustryType')?.value;
-    
-    if (!companyName) { alert('Please enter company name'); return; }
-    if (!industryType) { alert('Please select industry type'); return; }
-    if (!loanAmount) { alert('Please enter loan amount'); return; }
+    if(!state.uploadData.pennantFetched){
+        alert('Please enter the Loan Account Number (LOS) and click Submit to fetch applicant details from Pennant before proceeding.');
+        return;
+    }
+    var companyName = state.uploadData.companyName;
+    var loanAmount = state.uploadData.loanAmount;
+    var industryType = state.uploadData.industryType;
+    if (!companyName) { alert('Pennant did not return a company name for this LAN. Please verify the Loan Account Number and re-fetch.'); return; }
     
     if (!state.bulkMappingResults) {
         alert('No mapping results found. Please upload files first.');
@@ -7775,59 +7864,10 @@ function getDocCategories() {
 }
 
 window.startActualDataProcessing=async function(){
-    var companyName=document.getElementById('uploadCompanyName').value.trim();
-    var loanAmount=document.getElementById('uploadLoanAmount').value;
-    state.uploadData.companyName=companyName;
-    state.uploadData.loanAmount=loanAmount;
-    if(!companyName){alert('Please enter company name');return;}
-    if(!loanAmount){alert('Please enter loan amount');return;}
-    var files=state.uploadData.files;
-    var fileCount = Object.keys(files).length;
-    if(fileCount === 0){
-        alert('Please upload at least one document');return;
-    }
-    
-    state.showUploadModal=false;
-    // Switch to animated processing screen
-    state.screen='actualProcessing';
-    // CRITICAL: Reset progress state for fresh assessment
-    state.currentProgress = 0;
-    state.currentCommentary = '';
-    state.elapsed = 0;
-    state.metrics = {d:0,a:0,v:0,p:0};
-    // Count documents being uploaded
-    var uploadedDocCount = Object.keys(files).filter(function(k){return files[k]}).length;
-    state.actualProcessingState = {
-        agents: buildActualAgents(files),
-        currentAgent: 0,
-        currentTask: 0,
-        startTime: Date.now(),
-        phase: 'uploading',
-        error: null,
-        extractedData: null,
-        apiStats: { calls: 0, tokensSent: 0, tokensReceived: 0 },
-        apiLogs: [],
-        rateLimits: { requests: { used: 0, limit: 50 }, tokens: { used: 0, limit: 30000 } },
-        docProgress: 0,
-        docCount: uploadedDocCount,
-        currentSection: null,
-        currentDocName: null,
-        currentDocNum: 0,
-        activeTab: 'visual'
-    };
-    
-    // Start a timer to update elapsed time every second
-    state.actualProcessingState.timerInterval = setInterval(function() {
-        if(state.actualProcessingState && state.screen === 'actualProcessing') {
-            state.elapsed = Math.floor((Date.now() - state.actualProcessingState.startTime) / 1000);
-            render();
-        }
-    }, 1000);
-    
-    render();
-    
-    // Start processing
-    await runActualDataProcessing();
+    // Legacy entry point — superseded by submitAllAndProcess(), which now
+    // sources applicant details from Pennant LOS via the Loan Account
+    // Number instead of manual Company Name / Loan Amount fields.
+    return window.submitAllAndProcess();
 };
 
 function buildActualAgents(files) {
@@ -8241,7 +8281,13 @@ async function runActualDataProcessing(){
                     var createResp = await fetchWithTimeout('/api/assessment/create', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({companyName: companyName, loanAmount: loanAmount, industryType: industryType})
+                        body: JSON.stringify({
+                            companyName: companyName,
+                            loanAmount: loanAmount,
+                            industryType: industryType,
+                            loanAccountNumber: state.uploadData.loanAccountNumber || null,
+                            pennantData: state.uploadData.pennantData || null
+                        })
                     }, 30000); // 30 second timeout
                     if(!createResp.ok) throw new Error('Server error: ' + createResp.status);
                     var createData = await createResp.json();
@@ -12309,7 +12355,7 @@ function renderMappingInfoSection(title, section){
 function attachEvents(){
     // Demo buttons now handled via dropdown menu (startQuickDemo/startProductDemo functions)
     var actualDataBtn=document.getElementById('actualDataBtn');
-    if(actualDataBtn)actualDataBtn.addEventListener('click',function(){state.showUploadModal=true;state.uploadData={companyName:'',loanAmount:'',files:{},_duplicateMap:{}};render();});
+    if(actualDataBtn)actualDataBtn.addEventListener('click',function(){state.showUploadModal=true;state.uploadData={companyName:'',loanAmount:'',industryType:'',loanAccountNumber:'',pennantFetched:false,pennantLoading:false,pennantError:null,pennantData:null,files:{},_duplicateMap:{}};render();});
     var backBtn=document.getElementById('backToDashboard');
     if(backBtn)backBtn.addEventListener('click',function(){state.screen='dashboard';state.chat=[];state.isActualData=false;render();});
     var submitBtn=document.getElementById('submitBtn');

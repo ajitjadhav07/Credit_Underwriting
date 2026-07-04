@@ -3712,7 +3712,7 @@ app.get('/api/assessment/:id/forensic-export', ensureAuthenticated, requireRole(
  */
 app.post('/api/assessment/create', ensureAuthenticated, ensureNotReadOnly, (req, res) => {
     try {
-        const { companyName, loanAmount, industryType } = req.body;
+        const { companyName, loanAmount, industryType, loanAccountNumber, pennantData } = req.body;
         
         if (!companyName) {
             return res.status(400).json({ error: 'Company name is required' });
@@ -3725,6 +3725,8 @@ app.post('/api/assessment/create', ensureAuthenticated, ensureNotReadOnly, (req,
             company_name: companyName,
             loan_amount_lakhs: parseFloat(loanAmount) || 0,
             industry_type: industryType || null,
+            loan_account_number: loanAccountNumber || null, // Pennant LOS finReference — sourced applicant details from here, not manual entry
+            pennant_data: pennantData || null,
             type: 'actual',
             created_by: req.user.email,  // Email for identification
             created_by_name: req.user.displayName || req.user.name || req.user.email, // Full name for display
