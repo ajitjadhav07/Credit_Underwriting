@@ -228,7 +228,7 @@ if (siemConfigured) {
 console.log('✓ Centralized logging initialized (S3: logs/ folder)');
 
 // CRITICAL: Body parsers MUST come first (before session and passport)
-// Microsoft POSTs authentication data to /auth/callback - we need to parse it!
+// ADFS POSTs the SAML assertion to /auth/saml/callback - we need to parse it!
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -422,28 +422,24 @@ app.get('/login', ensureNotAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Initiate Office 365 login
-app.get('/auth/signin', 
-    passport.authenticate('azuread-openidconnect', { failureRedirect: '/login' })
+// Initiate ADFS login (SAML AuthnRequest -> redirect to adfsuat.axisb.com)
+app.get('/auth/saml/login',
+    passport.authenticate('adfs-saml', { failureRedirect: '/login' })
 );
 
-// OAuth callback from Microsoft
-app.post('/auth/callback',
+// SAML assertion callback from ADFS (HTTP-POST binding, per Federation Metadata)
+app.post('/auth/saml/callback',
     function(req, res, next) {
-        console.log('📨 Received callback from Microsoft');
+        console.log('📨 Received SAML assertion from ADFS');
         console.log('   Body present:', !!req.body);
-        console.log('   Code present:', !!req.body?.code);
-        console.log('   ID token present:', !!req.body?.id_token);
-        console.log('   State present:', !!req.body?.state);
-        console.log('   State value:', req.body?.state);
-        console.log('   Session state:', req.session);
+        console.log('   SAMLResponse present:', !!req.body?.SAMLResponse);
         next();
     },
     function(req, res, next) {
         // Custom callback to catch authentication errors
-        passport.authenticate('azuread-openidconnect', function(err, user, info) {
+        passport.authenticate('adfs-saml', function(err, user, info) {
             if (err) {
-                console.error('❌ Passport authentication error:', err.message);
+                console.error('❌ Passport SAML authentication error:', err.message);
                 console.error('   Error details:', err);
                 return res.redirect('/login?error=auth_error');
             }
@@ -477,7 +473,7 @@ app.post('/auth/callback',
                     id: user.id || user.email,
                     email: user.email,
                     role: user.role,
-                    auth_method: 'office365_sso'
+                    auth_method: 'adfs_saml'
                 }, req);
                 centralizedLogger.security('LOGIN_SUCCESS', {
                     success: true,
@@ -5397,8 +5393,8 @@ async function startServer() {
         console.log(`\n🔗 Endpoints:`);
         console.log(`   GET  /                          - Main application (🔒 Protected)`);
         console.log(`   GET  /login                     - Login page`);
-        console.log(`   GET  /auth/signin               - Microsoft login`);
-        console.log(`   POST /auth/callback             - OAuth callback`);
+        console.log(`   GET  /auth/saml/login           - ADFS SAML login`);
+        console.log(`   POST /auth/saml/callback        - SAML assertion callback`);
         console.log(`   GET  /auth/logout               - Logout`);
         console.log(`   GET  /health                    - Health check`);
         console.log(`   GET  /api/assessments           - List all assessments (🔒 Protected)`);
