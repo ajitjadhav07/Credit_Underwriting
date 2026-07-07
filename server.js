@@ -5380,8 +5380,8 @@ async function startServer() {
         console.log(`   Version: 7.1.0 (with Server-Side Processing)`);
         console.log(`   Server running on port ${PORT}`);
         console.log(`\n🔐 Authentication Status:`);
-        console.log(`   Office 365 SSO: ${process.env.MICROSOFT_CLIENT_ID ? '✅ Enabled' : '❌ Not configured'}`);
-        console.log(`   Redirect URI: ${process.env.REDIRECT_URI || 'Not set'}`);
+        console.log(`   ADFS SAML SSO: ${process.env.ADFS_SIGNING_CERT ? '✅ Enabled' : '❌ Not configured'}`);
+        console.log(`   ADFS Callback URL: ${process.env.ADFS_CALLBACK_URL || 'Not set'}`);
         console.log(`   Session Secret: ${process.env.SESSION_SECRET ? '✅ Configured' : '❌ Not configured'}`);
         console.log(`\n📋 Configuration Status:`);
         console.log(`   Claude API: ${claudeProcessor.isReady() ? `✅ Configured (${claudeProcessor.mode})` : '❌ Not configured'}`);
