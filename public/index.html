@@ -10559,7 +10559,7 @@ function renderUserManagementModal(){
                '<div class="mb-6">' +
                '<h3 class="text-sm font-medium text-gray-700 mb-3">Add New User</h3>' +
                '<div class="flex gap-3">' +
-               '<input type="email" id="newUserEmail" placeholder="email@acc.ltd" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-axis-primary focus:border-transparent" />' +
+               '<input type="text" id="newUserEmail" placeholder="EmpID (e.g. AFL2349) or email@axisfinance.in" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-axis-primary focus:border-transparent" />' +
                '<select id="newUserRole" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-axis-primary">' +
                '<option value="">Select Role</option>' +
                roleOptions +
@@ -10997,8 +10997,12 @@ function addNewUser(){
         return;
     }
     
-    if(!email.endsWith('@acc.ltd')){
-        alert('Email must be from @acc.ltd domain');
+    // Accept either an AFL empId (e.g. AFL2349) or an email on an allowed domain
+    const isEmpId = /^afl\d{3,}$/i.test(email);
+    const isAllowedEmail = email.includes('@') && 
+        (['@axisfinance.in','@acc.ltd'].some(d => email.toLowerCase().endsWith(d)));
+    if (!isEmpId && !isAllowedEmail) {
+        alert('Enter a valid EmpID (e.g. AFL2349) or an email from @axisfinance.in / @acc.ltd');
         return;
     }
     
