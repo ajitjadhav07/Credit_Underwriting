@@ -11000,9 +11000,9 @@ function addNewUser(){
     // Accept either an AFL empId (e.g. AFL2349) or an email on an allowed domain
     const isEmpId = /^afl\d{3,}$/i.test(email);
     const isAllowedEmail = email.includes('@') && 
-        (['@axisfinance.in','@acc.ltd'].some(d => email.toLowerCase().endsWith(d)));
+        (['@axisfinance.in'].some(d => email.toLowerCase().endsWith(d)));
     if (!isEmpId && !isAllowedEmail) {
-        alert('Enter a valid EmpID (e.g. AFL2349) or an email from @axisfinance.in / @acc.ltd');
+        alert('Enter a valid EmpID (e.g. AFL2349) or an email from @axisfinance.in');
         return;
     }
     
