@@ -13826,8 +13826,16 @@ function renderMasterFormModal(masterType, schema, existingRecord, mode) {
     document.body.insertAdjacentHTML('beforeend', html);
 }
 
-// Add master record
+// Add master record — handles two call signatures:
+//   addMasterRecord(masterType) — from the main all-masters table (+ Add button)
+//   addMasterRecord()           — from the per-master detail view
 window.addMasterRecord = function(masterType) {
+    // If no argument, we're in the detail view — use mastersState.currentMaster
+    if (!masterType) {
+        showMasterModal(null);
+        return;
+    }
+    // From main masters table — show the schema-driven form
     mastersModalState = { masterType: masterType, recordId: null, mode: 'add' };
     fetch('/api/masters/' + masterType + '/schema')
         .then(function(r) { return r.json(); })
@@ -13839,17 +13847,25 @@ window.addMasterRecord = function(masterType) {
         });
 };
 
-// Edit master record — fetch schema and existing record in parallel
-window.editMasterRecord = function(masterType, recordId) {
-    mastersModalState = { masterType: masterType, recordId: recordId, mode: 'edit' };
+// Edit master record — handles two call signatures:
+//   editMasterRecord(masterType, recordId) — from the main all-masters table
+//   editMasterRecord(recordId)             — from the per-master detail view
+window.editMasterRecord = function(masterTypeOrId, recordId) {
+    // If only one argument, we're in the detail view — use mastersState.currentMaster
+    if (recordId === undefined) {
+        var id = masterTypeOrId;
+        var record = mastersState.records.find(function(r) { return r.id === id; });
+        showMasterModal(record);
+        return;
+    }
+    // Two arguments — from the main masters table
+    mastersModalState = { masterType: masterTypeOrId, recordId: recordId, mode: 'edit' };
     Promise.all([
-        fetch('/api/masters/' + masterType + '/schema').then(function(r) { return r.json(); }),
-        fetch('/api/masters/' + masterType + '/' + recordId).then(function(r) { return r.json(); })
+        fetch('/api/masters/' + masterTypeOrId + '/schema').then(function(r) { return r.json(); }),
+        fetch('/api/masters/' + masterTypeOrId + '/' + recordId).then(function(r) { return r.json(); })
     ])
     .then(function(results) {
-        var schema = results[0];
-        var record = results[1];
-        renderMasterFormModal(masterType, schema, record, 'edit');
+        renderMasterFormModal(masterTypeOrId, results[0], results[1], 'edit');
     })
     .catch(function(err) {
         alert('Could not load record for editing: ' + err.message);
@@ -14132,14 +14148,8 @@ function renderMasterGrid(){
     document.getElementById('app').innerHTML = html;
 }
 
-function addMasterRecord(){
-    showMasterModal(null);
-}
-
-function editMasterRecord(id){
-    var record = mastersState.records.find(r => r.id === id);
-    showMasterModal(record);
-}
+// addMasterRecord and editMasterRecord are defined earlier (unified, handles
+// both the all-masters table view and this per-master detail view).
 
 function showMasterModal(record){
     var html = '<div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="closeMasterModal(event)">';
