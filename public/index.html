@@ -13685,25 +13685,30 @@ function renderMastersTables() {
                     content += '</div>';
                     
                     if (records.length > 0) {
-                        content += '<div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-gray-50"><tr>';
+                        // Sticky Actions column — always visible even for wide tables like Policy Rules (13+ cols)
+                        content += '<div class="overflow-x-auto"><table class="w-full text-sm border-collapse"><thead class="bg-gray-50"><tr>';
                         var keys = Object.keys(records[0]).filter(function(k) { return k !== 'id' && k !== 'created_at' && k !== 'updated_at' && k !== 'created_by'; });
                         keys.forEach(function(k) {
                             var label = k.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
-                            content += '<th class="px-3 py-2 text-left font-semibold text-gray-700 border-b">' + label + '</th>';
+                            content += '<th class="px-3 py-2 text-left font-semibold text-gray-700 border-b whitespace-nowrap">' + label + '</th>';
                         });
-                        content += '<th class="px-3 py-2 text-left font-semibold text-gray-700 border-b">Actions</th>';
+                        content += '<th class="px-3 py-2 text-left font-semibold text-gray-700 border-b bg-gray-50 sticky right-0 shadow-[-4px_0_6px_-1px_rgba(0,0,0,0.1)]">Actions</th>';
                         content += '</tr></thead><tbody>';
                         records.forEach(function(rec, i) {
-                            content += '<tr class="' + (i % 2 === 0 ? 'bg-white' : 'bg-gray-50') + ' hover:bg-blue-50">';
+                            var rowBg = i % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                            content += '<tr class="' + rowBg + ' hover:bg-blue-50">';
                             keys.forEach(function(k) {
                                 var v = rec[k];
-                                if (v === true) v = '<span class="text-green-600">✓</span>';
+                                if (v === true) v = '<span class="text-green-600 font-semibold">✓</span>';
                                 else if (v === false) v = '<span class="text-red-600">✗</span>';
                                 else if (v === null || v === undefined) v = '<span class="text-gray-400">-</span>';
-                                else v = escapeHtml(v);
-                                content += '<td class="px-3 py-2 border-b">' + v + '</td>';
+                                else {
+                                    v = escapeHtml(String(v));
+                                    if (v.length > 80) v = '<span class="cursor-help" title="' + v + '">' + v.slice(0, 77) + '\u2026</span>';
+                                }
+                                content += '<td class="px-3 py-2 border-b align-top">' + v + '</td>';
                             });
-                            content += '<td class="px-3 py-2 border-b">';
+                            content += '<td class="px-3 py-2 border-b align-middle sticky right-0 ' + rowBg + ' shadow-[-4px_0_6px_-1px_rgba(0,0,0,0.08)] whitespace-nowrap">';
                             content += '<button onclick="editMasterRecord(\'' + escapeJsString(def.key) + '\', \'' + escapeJsString(rec.id) + '\')" class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">';
                             content += '<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>';
                             content += '</button>';
