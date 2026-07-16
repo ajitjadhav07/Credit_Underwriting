@@ -13730,17 +13730,183 @@ function renderMastersTables() {
     return html;
 }
 
+// ── Masters Add / Edit Modal ──────────────────────────────────────────────────
+// Both Add and Edit use the same modal. The schema for each master type is
+// fetched from /api/masters/:masterType/schema which returns the field
+// definitions (name, label, type, required, options) from masters-schema.json.
+// The form renders every field dynamically so we never need to hard-code a
+// per-master form — works for all 27 master types.
+
+var mastersModalState = { masterType: null, recordId: null, mode: null };
+
+function closeMasterFormModal() {
+    var el = document.getElementById('masterFormModal');
+    if (el) el.remove();
+}
+
+function renderMasterFormModal(masterType, schema, existingRecord, mode) {
+    var isEdit = mode === 'edit';
+    var title  = (isEdit ? 'Edit' : 'Add') + ' record in ' + (schema.display_name || masterType);
+    var fields = schema.fields || [];
+
+    var formRows = fields.map(function(field) {
+        var current = existingRecord ? (existingRecord[field.name] != null ? existingRecord[field.name] : '') : '';
+        var required = field.required ? 'required' : '';
+        var reqMark  = field.required ? '<span class="text-red-500 ml-1">*</span>' : '';
+        var inputId  = 'mf_' + field.name;
+        var input;
+
+        if (field.type === 'textarea') {
+            input = '<textarea id="' + inputId + '" name="' + field.name + '" rows="2" ' + required + ' ' +
+                    'class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-axis-primary focus:border-transparent">' +
+                    escapeHtml(String(current)) + '</textarea>';
+
+        } else if (field.type === 'boolean') {
+            var checked = current === true || current === 'true' || current === 1 ? 'checked' : '';
+            input = '<label class="flex items-center gap-2 mt-1">' +
+                    '<input type="checkbox" id="' + inputId + '" name="' + field.name + '" ' + checked + ' ' +
+                    'class="h-4 w-4 text-axis-primary border-gray-300 rounded">' +
+                    '<span class="text-sm text-gray-600">' + escapeHtml(field.label) + '</span></label>';
+
+        } else if (field.type === 'select' && field.options && field.options.length) {
+            var opts = field.options.map(function(o) {
+                var sel = String(current) === String(o) ? 'selected' : '';
+                return '<option value="' + escapeHtml(o) + '" ' + sel + '>' + escapeHtml(o) + '</option>';
+            }).join('');
+            input = '<select id="' + inputId + '" name="' + field.name + '" ' + required + ' ' +
+                    'class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-axis-primary">' +
+                    '<option value="">-- Select --</option>' + opts + '</select>';
+
+        } else {
+            var inputType = field.type === 'number' ? 'number' :
+                            field.type === 'date'   ? 'date'   :
+                            field.type === 'email'  ? 'email'  : 'text';
+            var step = field.type === 'number' ? ' step="any"' : '';
+            var readOnly = isEdit && field.unique ? 'readonly class="w-full border border-gray-200 bg-gray-100 rounded px-3 py-2 text-sm text-gray-500 cursor-not-allowed"' :
+                                                    'class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-axis-primary"';
+            input = '<input type="' + inputType + '" id="' + inputId + '" name="' + field.name + '" ' +
+                    'value="' + escapeHtml(String(current)) + '" ' + required + step + ' ' + readOnly + '>';
+        }
+
+        // For boolean, label is inside the input itself
+        if (field.type === 'boolean') {
+            return '<div class="mb-3">' + input + '</div>';
+        }
+        return '<div class="mb-3">' +
+               '<label class="block text-xs font-semibold text-gray-700 mb-1">' + escapeHtml(field.label) + reqMark + '</label>' +
+               input + '</div>';
+    }).join('');
+
+    var html =
+        '<div id="masterFormModal" class="fixed inset-0 z-50 overflow-y-auto bg-gray-500 bg-opacity-75">' +
+        '<div class="min-h-screen flex items-center justify-center px-4">' +
+        '<div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">' +
+
+        // Header
+        '<div class="bg-axis-primary px-6 py-4 rounded-t-xl flex items-center justify-between">' +
+        '<h3 class="text-lg font-bold text-white">' + escapeHtml(title) + '</h3>' +
+        '<button onclick="closeMasterFormModal()" class="text-white hover:text-gray-200 text-2xl leading-none">&times;</button>' +
+        '</div>' +
+
+        // Form body
+        '<form id="masterRecordForm" onsubmit="submitMasterForm(event)" class="px-6 py-5 max-h-[70vh] overflow-y-auto">' +
+        formRows +
+        '<div id="masterFormError" class="hidden mb-3 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700"></div>' +
+        '</form>' +
+
+        // Footer
+        '<div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 rounded-b-xl">' +
+        '<button onclick="closeMasterFormModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50">Cancel</button>' +
+        '<button onclick="document.getElementById(\'masterRecordForm\').requestSubmit()" ' +
+        'class="px-5 py-2 bg-axis-primary text-white rounded-lg text-sm font-semibold hover:opacity-90">' +
+        (isEdit ? 'Save Changes' : 'Add Record') +
+        '</button></div>' +
+        '</div></div></div>';
+
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
 // Add master record
 window.addMasterRecord = function(masterType) {
-    alert('Add record to ' + masterType + '\n\nFeature coming in next update: Form to add new records');
-    // TODO: Implement add form modal
+    mastersModalState = { masterType: masterType, recordId: null, mode: 'add' };
+    fetch('/api/masters/' + masterType + '/schema')
+        .then(function(r) { return r.json(); })
+        .then(function(schema) {
+            renderMasterFormModal(masterType, schema, null, 'add');
+        })
+        .catch(function(err) {
+            alert('Could not load schema for ' + masterType + ': ' + err.message);
+        });
 };
 
-// Edit master record
+// Edit master record — fetch schema and existing record in parallel
 window.editMasterRecord = function(masterType, recordId) {
-    alert('Edit record: ' + recordId + ' in ' + masterType + '\n\nFeature coming in next update: Form to edit records');
-    // TODO: Implement edit form modal
+    mastersModalState = { masterType: masterType, recordId: recordId, mode: 'edit' };
+    Promise.all([
+        fetch('/api/masters/' + masterType + '/schema').then(function(r) { return r.json(); }),
+        fetch('/api/masters/' + masterType + '/' + recordId).then(function(r) { return r.json(); })
+    ])
+    .then(function(results) {
+        var schema = results[0];
+        var record = results[1];
+        renderMasterFormModal(masterType, schema, record, 'edit');
+    })
+    .catch(function(err) {
+        alert('Could not load record for editing: ' + err.message);
+    });
 };
+
+// Form submission handler (shared by Add and Edit)
+window.submitMasterForm = function(e) {
+    e.preventDefault();
+    var form = document.getElementById('masterRecordForm');
+    var errDiv = document.getElementById('masterFormError');
+    var s = mastersModalState;
+
+    // Collect field values from the form
+    var payload = {};
+    form.querySelectorAll('input, select, textarea').forEach(function(el) {
+        if (!el.name) return;
+        if (el.type === 'checkbox') {
+            payload[el.name] = el.checked;
+        } else if (el.type === 'number') {
+            payload[el.name] = el.value !== '' ? parseFloat(el.value) : null;
+        } else {
+            payload[el.name] = el.value;
+        }
+    });
+
+    var url    = s.mode === 'edit'
+                    ? '/api/masters/' + s.masterType + '/' + s.recordId
+                    : '/api/masters/' + s.masterType;
+    var method = s.mode === 'edit' ? 'PUT' : 'POST';
+
+    // Disable the submit button while saving
+    var submitBtn = form.closest('.bg-white').querySelector('button[onclick*="requestSubmit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving…'; }
+    errDiv.classList.add('hidden');
+
+    fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            closeMasterFormModal();
+            openMasters(); // Reload the full masters table
+        } else {
+            throw new Error(data.error || 'Unknown error from server');
+        }
+    })
+    .catch(function(err) {
+        errDiv.textContent = 'Error: ' + err.message;
+        errDiv.classList.remove('hidden');
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = s.mode === 'edit' ? 'Save Changes' : 'Add Record'; }
+    });
+};
+// ── End Masters Add / Edit Modal ──────────────────────────────────────────────
 
 // Delete master record
 window.deleteMasterRecord = function(masterType, recordId) {
