@@ -1687,7 +1687,7 @@ app.post('/api/assessment/:id/stop-processing', ensureAuthenticated, async (req,
  * Reprocess assessment with edited extracted data (Human in Loop)
  * Admin only - recalculates all metrics and generates new decision
  */
-app.post('/api/assessment/:id/reprocess', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), async (req, res) => {
+app.post('/api/assessment/:id/reprocess', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), async (req, res) => {
     const assessmentId = req.params.id;
     const { extracted_data, audit_trail, edited_by } = req.body;
     
@@ -1890,7 +1890,7 @@ app.post('/api/assessment/:id/reprocess', ensureAuthenticated, requireRole('Supe
  * Save individual field edit with audit trail (Human in Loop)
  * Immediately persists the change without full reprocessing
  */
-app.post('/api/assessment/:id/save-edit', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), async (req, res) => {
+app.post('/api/assessment/:id/save-edit', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), async (req, res) => {
     const assessmentId = req.params.id;
     const { field_key, category, year, field, old_value, new_value, reason, edited_by } = req.body;
     
@@ -2366,7 +2366,7 @@ app.get('/api/queue/stats', ensureAuthenticated, async (req, res) => {
  * GET /api/masters/types
  * Get all master types with record counts
  */
-app.get('/api/masters/types', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/masters/types', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         console.log(`✅ Masters access granted for user: ${req.user.email}, role: "${req.user.role}"`);
         const types = mastersManager.getMasterTypes();
@@ -2381,7 +2381,7 @@ app.get('/api/masters/types', ensureAuthenticated, requireRole('Super Admin', 'A
  * POST /api/masters/force-reseed
  * Force reseed all masters (clears existing data and reseeds)
  */
-app.post('/api/masters/force-reseed', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), async (req, res) => {
+app.post('/api/masters/force-reseed', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), async (req, res) => {
     try {
         console.log(`⚠️  Force reseed requested by user: ${req.user.email}`);
         
@@ -2409,7 +2409,7 @@ app.post('/api/masters/force-reseed', ensureAuthenticated, requireRole('Super Ad
  * POST /api/masters/reseed-policy-rules
  * Reseed ONLY policy rules from the policy schema (preserves other masters)
  */
-app.post('/api/masters/reseed-policy-rules', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), async (req, res) => {
+app.post('/api/masters/reseed-policy-rules', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), async (req, res) => {
     try {
         console.log(`🔄 Reseed policy rules requested by: ${req.user.email}`);
         
@@ -2455,7 +2455,7 @@ app.get('/api/parameters-schema', ensureAuthenticated, (req, res) => {
  * GET /api/masters/all
  * Get all masters data in one call
  */
-app.get('/api/masters/all', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/masters/all', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const types = mastersManager.getMasterTypes();
         const allData = {};
@@ -2475,7 +2475,7 @@ app.get('/api/masters/all', ensureAuthenticated, requireRole('Super Admin', 'Adm
  * GET /api/masters/:masterType/schema
  * Get schema definition for a master type
  */
-app.get('/api/masters/:masterType/schema', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/masters/:masterType/schema', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const schema = mastersManager.getMasterSchema(req.params.masterType);
     if (!schema) {
         return res.status(404).json({ error: 'Master type not found' });
@@ -2487,7 +2487,7 @@ app.get('/api/masters/:masterType/schema', ensureAuthenticated, requireRole('Sup
  * GET /api/masters/:masterType
  * Get all records for a master type
  */
-app.get('/api/masters/:masterType', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/masters/:masterType', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const records = mastersManager.getMasterRecords(req.params.masterType);
     res.json({ records });
 });
@@ -2496,7 +2496,7 @@ app.get('/api/masters/:masterType', ensureAuthenticated, requireRole('Super Admi
  * GET /api/masters/:masterType/:id
  * Get single master record by ID
  */
-app.get('/api/masters/:masterType/:id', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/masters/:masterType/:id', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const record = mastersManager.getMasterRecord(req.params.masterType, req.params.id);
     if (!record) {
         return res.status(404).json({ error: 'Record not found' });
@@ -2508,7 +2508,7 @@ app.get('/api/masters/:masterType/:id', ensureAuthenticated, requireRole('Super 
  * POST /api/masters/:masterType
  * Create new master record
  */
-app.post('/api/masters/:masterType', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.post('/api/masters/:masterType', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const record = mastersManager.addMasterRecord(
             req.params.masterType,
@@ -2525,7 +2525,7 @@ app.post('/api/masters/:masterType', ensureAuthenticated, requireRole('Super Adm
  * PUT /api/masters/:masterType/:id
  * Update existing master record
  */
-app.put('/api/masters/:masterType/:id', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.put('/api/masters/:masterType/:id', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const record = mastersManager.updateMasterRecord(
             req.params.masterType,
@@ -2543,7 +2543,7 @@ app.put('/api/masters/:masterType/:id', ensureAuthenticated, requireRole('Super 
  * DELETE /api/masters/:masterType/:id
  * Delete master record
  */
-app.delete('/api/masters/:masterType/:id', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.delete('/api/masters/:masterType/:id', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         mastersManager.deleteMasterRecord(
             req.params.masterType,
@@ -2560,7 +2560,7 @@ app.delete('/api/masters/:masterType/:id', ensureAuthenticated, requireRole('Sup
  * GET /api/masters/audit/log
  * Get audit trail log with optional filters
  */
-app.get('/api/masters/audit/log', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/masters/audit/log', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const filters = {
         masterType: req.query.masterType,
         recordId: req.query.recordId,
@@ -2601,7 +2601,7 @@ app.get('/api/policy/rules', ensureAuthenticated, (req, res) => {
  * PUT /api/policy/rules/:ruleId
  * Update a policy rule with audit trail
  */
-app.put('/api/policy/rules/:ruleId', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.put('/api/policy/rules/:ruleId', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const { ruleId } = req.params;
         const { newValue, reason } = req.body;
@@ -2626,7 +2626,7 @@ app.put('/api/policy/rules/:ruleId', ensureAuthenticated, requireRole('Super Adm
  * GET /api/policy/audit
  * Get policy change audit log
  */
-app.get('/api/policy/audit', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/policy/audit', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const logs = mastersManager.getPolicyAuditLog();
         res.json({ logs });
@@ -2639,7 +2639,7 @@ app.get('/api/policy/audit', ensureAuthenticated, requireRole('Super Admin', 'Ad
  * POST /api/policy/import
  * Import policy rules from uploaded document
  */
-app.post('/api/policy/import', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.post('/api/policy/import', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const { extractedRules, sourcePolicyName } = req.body;
         const importedBy = req.user?.displayName || req.user?.email || 'Unknown';
@@ -2725,7 +2725,7 @@ app.get('/api/config/all', ensureAuthenticated, (req, res) => {
  * POST /api/config/flush
  * Flush and reload configuration cache
  */
-app.post('/api/config/flush', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), async (req, res) => {
+app.post('/api/config/flush', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), async (req, res) => {
     try {
         const newCache = await flushConfigCache();
         const user = req.user?.displayName || req.user?.email || 'Unknown';
@@ -2931,7 +2931,7 @@ app.post('/api/admin/reset-stuck-assessments', ensureAuthenticated, requireRole(
  * POST /api/aml/screen/:assessmentId
  * Trigger AML screening for an assessment
  */
-app.post('/api/aml/screen/:assessmentId', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), async (req, res) => {
+app.post('/api/aml/screen/:assessmentId', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), async (req, res) => {
     try {
         const assessmentId = req.params.assessmentId;
         const assessment = await getAssessmentById(assessmentId);
@@ -2979,7 +2979,7 @@ app.get('/api/aml/screening/:assessmentId', ensureAuthenticated, (req, res) => {
  * POST /api/aml/screening/:screeningId/override
  * Manual override of AML screening result
  */
-app.post('/api/aml/screening/:screeningId/override', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.post('/api/aml/screening/:screeningId/override', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const { decision, reason } = req.body;
         const screening = amlScreening.overrideScreening(
@@ -3002,7 +3002,7 @@ app.post('/api/aml/screening/:screeningId/override', ensureAuthenticated, requir
  * GET /api/investigation/list
  * Get all investigation cases
  */
-app.get('/api/investigation/list', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/investigation/list', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const filters = {
         status: req.query.status,
         type: req.query.type,
@@ -3017,7 +3017,7 @@ app.get('/api/investigation/list', ensureAuthenticated, requireRole('Super Admin
  * GET /api/investigation/:investigationId
  * Get single investigation case
  */
-app.get('/api/investigation/:investigationId', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/investigation/:investigationId', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const investigation = investigationManager.getInvestigation(req.params.investigationId);
     if (!investigation) {
         return res.status(404).json({ error: 'Investigation not found' });
@@ -3029,7 +3029,7 @@ app.get('/api/investigation/:investigationId', ensureAuthenticated, requireRole(
  * POST /api/investigation/create
  * Create investigation case manually
  */
-app.post('/api/investigation/create', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), async (req, res) => {
+app.post('/api/investigation/create', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), async (req, res) => {
     try {
         const { assessmentId, rejectionReason } = req.body;
         const assessment = await getAssessmentById(assessmentId);
@@ -3058,7 +3058,7 @@ app.post('/api/investigation/create', ensureAuthenticated, requireRole('Super Ad
  * PUT /api/investigation/:investigationId/update
  * Update investigation case
  */
-app.put('/api/investigation/:investigationId/update', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.put('/api/investigation/:investigationId/update', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const investigation = investigationManager.updateInvestigation(
             req.params.investigationId,
@@ -3075,7 +3075,7 @@ app.put('/api/investigation/:investigationId/update', ensureAuthenticated, requi
  * POST /api/investigation/:investigationId/indicator
  * Add fraud indicator to investigation
  */
-app.post('/api/investigation/:investigationId/indicator', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.post('/api/investigation/:investigationId/indicator', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const indicator = investigationManager.addFraudIndicator(
             req.params.investigationId,
@@ -3092,7 +3092,7 @@ app.post('/api/investigation/:investigationId/indicator', ensureAuthenticated, r
  * POST /api/investigation/:investigationId/close
  * Close investigation case
  */
-app.post('/api/investigation/:investigationId/close', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.post('/api/investigation/:investigationId/close', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     try {
         const { decision, rationale } = req.body;
         const investigation = investigationManager.closeInvestigation(
@@ -3111,7 +3111,7 @@ app.post('/api/investigation/:investigationId/close', ensureAuthenticated, requi
  * GET /api/investigation/statistics
  * Get investigation statistics
  */
-app.get('/api/investigation/statistics', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/investigation/statistics', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const stats = investigationManager.getStatistics();
     res.json(stats);
 });
@@ -3139,7 +3139,7 @@ app.post('/api/fraud/check', ensureAuthenticated, async (req, res) => {
  * GET /api/fraud/search
  * Search fraud database
  */
-app.get('/api/fraud/search', ensureAuthenticated, requireRole('Super Admin', 'Admin', 'super_admin', 'admin'), (req, res) => {
+app.get('/api/fraud/search', ensureAuthenticated, requireRole(ROLES.SUPER_ADMIN, ROLES.ADMIN), (req, res) => {
     const query = req.query.q || '';
     const results = investigationManager.searchFraudDatabase(query);
     res.json({ results });
