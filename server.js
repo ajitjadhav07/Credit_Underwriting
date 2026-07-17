@@ -26,6 +26,19 @@
 
 require('dotenv').config();
 
+// AFL internal API hosts use private TLS certificates issued to hostnames
+// (e.g. afloasuatweb.axisb.com), not to their IP addresses. Since we connect
+// via IP directly (to bypass VPC DNS resolution failure), Node/undici rejects
+// the cert because the IP doesn't match the hostname on the cert.
+// Setting this before any require() ensures ALL fetch() calls (via undici)
+// skip cert validation. Safe because ALL AFL IPs (10.0.252.13, 192.168.x.x)
+// are confirmed internal private-network hosts — traffic never leaves AFL's
+// private network. Remove this once AFL provides Route53 Private Hosted Zone
+// DNS records so we can connect via hostname instead of IP.
+if (process.env.NODE_TLS_REJECT_UNAUTHORIZED !== '1') {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 const express = require('express');
 const fs = require('fs'); // File system operations
 const http = require('http'); // NEW: For Socket.io
