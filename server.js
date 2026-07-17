@@ -3612,12 +3612,21 @@ app.get('/api/assessment/:id/export-docx', ensureAuthenticated, async (req, res)
     
     try {
         const docxGenerator = require('./lib/docx-generator');
-        const buffer = await docxGenerator.generateReport(assessment);
-        
+        // ?format=afl produces AFL's exact CAM template (Part A/B/Annexure II);
+        // default produces the full analytical assessment report.
+        const useAflFormat = (req.query.format || '').toLowerCase() === 'afl';
+        const buffer = useAflFormat
+            ? await docxGenerator.generateAflCamReport(assessment)
+            : await docxGenerator.generateReport(assessment);
+
+        const filename = useAflFormat
+            ? `${id}_CAM_AFL.docx`
+            : `${id}_Assessment_Report.docx`;
+
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        res.setHeader('Content-Disposition', `attachment; filename="${id}_Assessment_Report.docx"`);
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         res.send(buffer);
-        
+
     } catch (err) {
         console.error('DOCX generation error:', err);
         res.status(500).json({ error: 'Failed to generate DOCX: ' + err.message });
