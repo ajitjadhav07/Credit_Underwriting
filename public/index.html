@@ -6483,20 +6483,27 @@ function renderUploadModal(){
         {
             id: 'bank',
             name: 'Bank Statements (Last 12 Months)',
-            docs: [
-                {key:'bank_nov25',label:'Bank Statement Nov 2025'},
-                {key:'bank_oct25',label:'Bank Statement Oct 2025'},
-                {key:'bank_sep25',label:'Bank Statement Sep 2025'},
-                {key:'bank_aug25',label:'Bank Statement Aug 2025'},
-                {key:'bank_jul25',label:'Bank Statement Jul 2025'},
-                {key:'bank_jun25',label:'Bank Statement Jun 2025'},
-                {key:'bank_may25',label:'Bank Statement May 2025'},
-                {key:'bank_apr25',label:'Bank Statement Apr 2025'},
-                {key:'bank_mar25',label:'Bank Statement Mar 2025'},
-                {key:'bank_feb25',label:'Bank Statement Feb 2025'},
-                {key:'bank_jan25',label:'Bank Statement Jan 2025'},
-                {key:'bank_dec24',label:'Bank Statement Dec 2024'}
-            ]
+            docs: (function(){
+                // Generate the last 12 months dynamically from today's date so
+                // the list never goes stale. Previously these were hardcoded to
+                // Dec 2024 - Nov 2025, which meant 2026 statements had no matching
+                // option. Now it always shows the trailing 12 months.
+                var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var out = [];
+                var d = new Date();
+                for (var i = 0; i < 12; i++) {
+                    var m = d.getMonth();      // 0-11
+                    var y = d.getFullYear();
+                    var mon = months[m];
+                    var yy = String(y).slice(-2);
+                    out.push({
+                        key: 'bank_' + mon.toLowerCase() + yy,
+                        label: 'Bank Statement ' + mon + ' ' + y
+                    });
+                    d.setMonth(d.getMonth() - 1);  // step back one month
+                }
+                return out;
+            })()
         },
         {
             id: 'gst',
