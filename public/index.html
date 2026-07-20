@@ -6956,22 +6956,46 @@ var BULK_UPLOAD_SCHEMA = {
         {
             id: 'bank_statements',
             name: 'Bank Statements',
-            documents: [
-                {key: 'bank_statement_apr_2024', name: 'Bank Statement Apr 2024', required: false, patterns: ['bank_statement_apr_2024', 'bank_apr_2024', 'bs_apr_2024', 'bank_april_2024']},
-                {key: 'bank_statement_may_2024', name: 'Bank Statement May 2024', required: false, patterns: ['bank_statement_may_2024', 'bank_may_2024', 'bs_may_2024']},
-                {key: 'bank_statement_jun_2024', name: 'Bank Statement Jun 2024', required: false, patterns: ['bank_statement_jun_2024', 'bank_jun_2024', 'bs_jun_2024', 'bank_june_2024']},
-                {key: 'bank_statement_jul_2024', name: 'Bank Statement Jul 2024', required: false, patterns: ['bank_statement_jul_2024', 'bank_jul_2024', 'bs_jul_2024', 'bank_july_2024']},
-                {key: 'bank_statement_aug_2024', name: 'Bank Statement Aug 2024', required: false, patterns: ['bank_statement_aug_2024', 'bank_aug_2024', 'bs_aug_2024', 'bank_august_2024']},
-                {key: 'bank_statement_sep_2024', name: 'Bank Statement Sep 2024', required: false, patterns: ['bank_statement_sep_2024', 'bank_sep_2024', 'bs_sep_2024', 'bank_sept_2024']},
-                {key: 'bank_statement_oct_2024', name: 'Bank Statement Oct 2024', required: false, patterns: ['bank_statement_oct_2024', 'bank_oct_2024', 'bs_oct_2024']},
-                {key: 'bank_statement_nov_2024', name: 'Bank Statement Nov 2024', required: false, patterns: ['bank_statement_nov_2024', 'bank_nov_2024', 'bs_nov_2024']},
-                {key: 'bank_statement_dec_2024', name: 'Bank Statement Dec 2024', required: false, patterns: ['bank_statement_dec_2024', 'bank_dec_2024', 'bs_dec_2024']},
-                {key: 'bank_statement_jan_2025', name: 'Bank Statement Jan 2025', required: false, patterns: ['bank_statement_jan_2025', 'bank_jan_2025', 'bs_jan_2025']},
-                {key: 'bank_statement_feb_2025', name: 'Bank Statement Feb 2025', required: false, patterns: ['bank_statement_feb_2025', 'bank_feb_2025', 'bs_feb_2025']},
-                {key: 'bank_statement_mar_2025', name: 'Bank Statement Mar 2025', required: false, patterns: ['bank_statement_mar_2025', 'bank_mar_2025', 'bs_mar_2025']},
-                {key: 'sanction_letters', name: 'Sanction Letters', required: false, patterns: ['sanction_letters', 'loan_sanction', 'existing_loans']},
-                {key: 'noc_lenders', name: 'NOC from Lenders', required: false, patterns: ['noc_lenders', 'bank_noc', 'lender_noc']}
-            ]
+            documents: (function(){
+                // Generate last 24 months dynamically (24 to cover full FY + current year)
+                // Includes AFL filename pattern: 597109099_YYYY_M## (e.g. _2025_M06 = Jun 2025)
+                var months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+                var monthsFull = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                var docs = [];
+                var d = new Date();
+                for (var i = 0; i < 24; i++) {
+                    var m = d.getMonth();      // 0-11
+                    var y = d.getFullYear();
+                    var mon = months[m];
+                    var monFull = monthsFull[m];
+                    var yy = String(y).slice(-2);
+                    var mNum = String(m + 1).padStart(2, '0');  // 01-12
+                    var key = 'bank_statement_' + mon + '_' + y;
+                    docs.push({
+                        key: key,
+                        name: 'Bank Statement ' + mon.charAt(0).toUpperCase() + mon.slice(1) + ' ' + y,
+                        required: false,
+                        patterns: [
+                            // Standard patterns
+                            'bank_statement_' + mon + '_' + y,
+                            'bank_' + mon + '_' + y,
+                            'bs_' + mon + '_' + y,
+                            'bank_' + monFull.toLowerCase() + '_' + y,
+                            // AFL filename pattern: _YYYY_M## (e.g. 597109099_2025_M06)
+                            '_' + y + '_m' + mNum,
+                            y + '_m' + mNum,
+                            // Short year variants
+                            'bank_' + mon + yy,
+                            'bank_statement_' + mon + yy
+                        ]
+                    });
+                    d.setMonth(d.getMonth() - 1);
+                }
+                // Add sanction letters and NOC at the end
+                docs.push({key: 'sanction_letters', name: 'Sanction Letters', required: false, patterns: ['sanction_letters', 'loan_sanction', 'existing_loans']});
+                docs.push({key: 'noc_lenders', name: 'NOC from Lenders', required: false, patterns: ['noc_lenders', 'bank_noc', 'lender_noc']});
+                return docs;
+            })()
         },
         {
             id: 'odcc_statements',
