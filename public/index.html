@@ -10210,6 +10210,12 @@ function renderCamInputField(f){
     if(f.key === 'bt_emi_added'){
         var loans = getCamLiveLoans();
         if(loans.length > 0){
+            // Default to 0 so eligibility can be run immediately without
+            // selecting any loan. User can tick loan(s) afterward and
+            // re-run — the EMI total updates and recalculates from there.
+            if(state.camForm.bt_emi_added===undefined || state.camForm.bt_emi_added===''){
+                state.camForm.bt_emi_added = '0';
+            }
             var sel = state.camForm._btSelectedLoans || {};
             var selectedCount = loans.filter(function(l,i){ return sel[i]; }).length;
             var open = !!state.camForm._btDropdownOpen;
@@ -10230,7 +10236,7 @@ function renderCamInputField(f){
             return '<div>'+
                 '<label class="block text-xs font-medium text-gray-600 mb-1">'+escapeHtml(f.label)+'</label>'+
                 '<button type="button" onclick="toggleBtLoanDropdown()" class="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50">'+
-                    '<span>'+(selectedCount>0 ? (selectedCount+' loan'+(selectedCount===1?'':'s')+' selected — ₹'+(parseFloat(state.camForm.bt_emi_added)||0).toFixed(2)+' L total') : 'Select live loan(s) to mark as BT / Closure')+'</span>'+
+                    '<span>'+(selectedCount>0 ? (selectedCount+' loan'+(selectedCount===1?'':'s')+' selected — ₹'+(parseFloat(state.camForm.bt_emi_added)||0).toFixed(2)+' L total') : 'No loan selected — ₹0.00 L used (tick to mark BT / Closure)')+'</span>'+
                     '<span class="text-gray-400">'+(open?'▲':'▼')+'</span>'+
                 '</button>'+
                 (open ? '<div class="mt-1 border border-gray-200 rounded-lg max-h-56 overflow-y-auto bg-white shadow-sm">'+rows+'</div>' : '')+
