@@ -10149,12 +10149,97 @@ window.prefillCamDefaults=function(){
         }).catch(function(){});
 };
 
+// Collect live loans from any uploaded CIBIL reports (company + directors)
+// so the BT/Closure dropdown in the Banking Program can list them.
+function getCamLiveLoans(){
+    var cibil = (state.fullAssessment && state.fullAssessment.extracted_data && state.fullAssessment.extracted_data.cibil) || {};
+    var loans = [];
+    ['company','director'].forEach(function(who){
+        var rep = cibil[who];
+        if(rep && Array.isArray(rep.live_loans)){
+            rep.live_loans.forEach(function(l){
+                loans.push({
+                    source: who==='company' ? 'Company CIBIL' : 'Director CIBIL',
+                    lender: l.lender || 'Unknown Lender',
+                    facility_type: l.facility_type || '',
+                    sanctioned_amount: l.sanctioned_amount,
+                    current_outstanding: l.current_outstanding,
+                    // CIBIL reports show EMI/amounts in actual rupees, not lakhs —
+                    // convert to lakhs to match this form's unit.
+                    emi_lakhs: (l.emi_amount != null) ? (parseFloat(l.emi_amount)/100000) : null,
+                    account_status: l.account_status || ''
+                });
+            });
+        }
+    });
+    return loans;
+}
+
+function toggleBtLoanDropdown(){
+    state.camForm = state.camForm || {};
+    state.camForm._btDropdownOpen = !state.camForm._btDropdownOpen;
+    render();
+}
+window.toggleBtLoanDropdown = toggleBtLoanDropdown;
+
+function toggleBtLoan(idx){
+    state.camForm = state.camForm || {};
+    var sel = state.camForm._btSelectedLoans || {};
+    sel[idx] = !sel[idx];
+    state.camForm._btSelectedLoans = sel;
+
+    var loans = getCamLiveLoans();
+    var total = 0;
+    loans.forEach(function(l, i){
+        if(sel[i] && l.emi_lakhs != null) total += l.emi_lakhs;
+    });
+    state.camForm.bt_emi_added = total ? total.toFixed(2) : '';
+    render();
+}
+window.toggleBtLoan = toggleBtLoan;
+
 function renderCamInputField(f){
     state.camForm = state.camForm || {};
     var val = state.camForm[f.key];
     if(val===undefined && f.value!==undefined) val=f.value;
     if(val===undefined) val='';
     var hint = f.hint ? '<p class="text-xs text-gray-400 mt-1">'+escapeHtml(f.hint)+'</p>' : '';
+
+    // Special widget: BT/Closure loan selector, populated from uploaded CIBIL
+    // report(s). Falls back to a plain number input if no live loans found.
+    if(f.key === 'bt_emi_added'){
+        var loans = getCamLiveLoans();
+        if(loans.length > 0){
+            var sel = state.camForm._btSelectedLoans || {};
+            var selectedCount = loans.filter(function(l,i){ return sel[i]; }).length;
+            var open = !!state.camForm._btDropdownOpen;
+            var rows = loans.map(function(l, i){
+                var checked = sel[i] ? ' checked' : '';
+                var emiTxt = (l.emi_lakhs != null) ? ('₹'+l.emi_lakhs.toFixed(2)+' L/mo') : 'EMI N/A';
+                return '<label class="flex items-center justify-between gap-2 py-2 px-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0">'+
+                    '<span class="flex items-center gap-2 min-w-0">'+
+                        '<input type="checkbox" onclick="toggleBtLoan('+i+')"'+checked+' class="h-4 w-4 text-axis-primary rounded border-gray-300 flex-shrink-0"/>'+
+                        '<span class="text-sm text-gray-700 truncate"><span class="font-medium">'+escapeHtml(l.lender)+'</span>'+
+                        (l.facility_type ? ' — '+escapeHtml(l.facility_type) : '')+
+                        '<span class="text-xs text-gray-400 block">'+escapeHtml(l.source)+(l.account_status?' · '+escapeHtml(l.account_status):'')+'</span></span>'+
+                    '</span>'+
+                    '<span class="text-sm font-medium text-gray-900 flex-shrink-0">'+emiTxt+'</span>'+
+                '</label>';
+            }).join('');
+
+            return '<div>'+
+                '<label class="block text-xs font-medium text-gray-600 mb-1">'+escapeHtml(f.label)+'</label>'+
+                '<button type="button" onclick="toggleBtLoanDropdown()" class="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50">'+
+                    '<span>'+(selectedCount>0 ? (selectedCount+' loan'+(selectedCount===1?'':'s')+' selected — ₹'+(parseFloat(state.camForm.bt_emi_added)||0).toFixed(2)+' L total') : 'Select live loan(s) to mark as BT / Closure')+'</span>'+
+                    '<span class="text-gray-400">'+(open?'▲':'▼')+'</span>'+
+                '</button>'+
+                (open ? '<div class="mt-1 border border-gray-200 rounded-lg max-h-56 overflow-y-auto bg-white shadow-sm">'+rows+'</div>' : '')+
+                '<input type="hidden" data-cam-field="'+f.key+'" value="'+escapeHtml(String(state.camForm.bt_emi_added||''))+'"/>'+
+                '<p class="text-xs text-gray-400 mt-1">From uploaded CIBIL report — tick any loan(s) being taken over (BT) or closed; their EMI is summed here.</p>'+
+                '</div>';
+        }
+    }
+
     return '<div><label class="block text-xs font-medium text-gray-600 mb-1">'+escapeHtml(f.label)+'</label>'+
         '<input data-cam-field="'+f.key+'" type="'+(f.type||'text')+'"'+(f.step?' step="'+f.step+'"':'')+
         ' value="'+escapeHtml(String(val))+'" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-axis-primary focus:border-axis-primary"/>'+hint+'</div>';
