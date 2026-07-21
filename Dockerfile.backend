@@ -38,6 +38,7 @@ COPY config ./config
 COPY scripts ./scripts
 COPY public ./public
 COPY compliance ./compliance
+COPY templates ./templates
 COPY package.json ./
 
 RUN chown -R appuser:appuser /usr/src/app

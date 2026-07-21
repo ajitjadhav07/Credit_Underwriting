@@ -3612,12 +3612,19 @@ app.get('/api/assessment/:id/export-docx', ensureAuthenticated, async (req, res)
     
     try {
         const docxGenerator = require('./lib/docx-generator');
-        // ?format=afl produces AFL's exact CAM template (Part A/B/Annexure II);
+        // ?format=afl produces AFL's exact CAM template (Part A/B/C/Annexure II);
         // default produces the full analytical assessment report.
         const useAflFormat = (req.query.format || '').toLowerCase() === 'afl';
-        const buffer = useAflFormat
-            ? await docxGenerator.generateAflCamReport(assessment)
-            : await docxGenerator.generateReport(assessment);
+        let buffer;
+        if (useAflFormat) {
+            // Template-based generator fills the AFL master template (templates/
+            // cam-template.docx) preserving its exact format, header, footer,
+            // tables and spacing — only data values are substituted.
+            const aflCam = require('./lib/afl-cam-template');
+            buffer = await aflCam.generateAflCamReport(assessment);
+        } else {
+            buffer = await docxGenerator.generateReport(assessment);
+        }
 
         const filename = useAflFormat
             ? `${id}_CAM_AFL.docx`
