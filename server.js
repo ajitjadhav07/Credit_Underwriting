@@ -3744,7 +3744,7 @@ app.post('/api/assessment/create', ensureAuthenticated, ensureNotReadOnly, (req,
             return res.status(400).json({ error: 'Company name is required' });
         }
         
-        const assessmentId = `ACC-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
+        const assessmentId = `AFL-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
         
         const assessment = {
             assessment_id: assessmentId,
