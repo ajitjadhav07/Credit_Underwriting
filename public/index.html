@@ -6852,13 +6852,6 @@ window.fetchPennantDetails=async function(){
         return;
     }
 
-    // Guard: verify session is active before calling the protected endpoint
-    if(!state.user || !state.user.empId){
-        state.uploadData.pennantError = 'Session expired. Please refresh the page and log in again before fetching LAN details.';
-        render();
-        return;
-    }
-
     state.uploadData.loanAccountNumber = lan;
     state.uploadData.pennantLoading = true;
     state.uploadData.pennantError = null;
@@ -6871,8 +6864,16 @@ window.fetchPennantDetails=async function(){
             credentials: 'include',
             body: JSON.stringify({ finReference: lan, assessmentId: state.assessmentId || null })
         });
-        var data = await resp.json();
+        var data = await resp.json().catch(function(){ return {}; });
         var result = data.result || {};
+
+        if(resp.status === 401){
+            state.uploadData.pennantFetched = false;
+            state.uploadData.pennantError = 'Your session has expired. Please refresh the page and log in again.';
+            state.uploadData.pennantLoading = false;
+            render();
+            return;
+        }
 
         if(!resp.ok || !data.success || !result.success){
             state.uploadData.pennantFetched = false;
