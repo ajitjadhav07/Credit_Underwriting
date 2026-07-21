@@ -2253,11 +2253,12 @@ app.post('/api/assessment/:id/process-server', ensureAuthenticated, ensureNotRea
             companyName: assessment.company_name,
             loanAmount: assessment.loan_amount_lakhs,
             industryType: assessment.industry_type || null,
+            finReference: assessment.loan_account_number || null,  // LAN for Pennant call
+            pennantData: assessment.pennant_data || null,           // Pre-fetched Pennant data
             documents: docList,
-            userId: assessment.created_by || req.user.email,  // Preserve original creator, not who clicks Process
+            userId: assessment.created_by || req.user.email,
             created_by_name: assessment.created_by_name || req.user.displayName || req.user.name || req.user.email,
             priority: req.body.priority || 1,
-            // Legal masters for risk assessment
             legalRiskRules: legalRiskRules,
             stateLegalRules: stateLegalRules,
             propertyTypes: propertyTypes,
