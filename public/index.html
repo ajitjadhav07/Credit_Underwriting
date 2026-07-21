@@ -3804,28 +3804,24 @@ function renderActualProcessingTab(fa) {
     html += '<div class="text-xs text-green-600 font-mono">s3.amazonaws.com</div></div>';
     html += '<div class="text-right"><span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">✓ Complete</span></div></div>';
     
-    // Unavailable APIs
-    var unavailApis = [
-        {name: 'CIBIL Commercial Bureau', endpoint: 'api.cibil.com/v2/commercial'},
-        {name: 'GST Portal', endpoint: 'api.gst.gov.in/v1/returns'},
-        {name: 'MCA Company Search', endpoint: 'api.mca.gov.in/v1/company'},
-        {name: 'ITR Verification', endpoint: 'api.incometax.gov.in/v1/itr'},
-        {name: 'Bank Statement Parser', endpoint: 'perfios.com/v2/statements'},
-        {name: 'PAN Verification', endpoint: 'api.nsdl.co.in/pan/verify'}
+    // AFL Middleware APIs — integrated but dependent on network connectivity
+    var aflApis = [
+        {name: 'CIBIL Commercial Bureau', endpoint: 'aflmiddatapower.axisb.com:8441', status: 'middleware'},
+        {name: 'ITR Verification (Karza)', endpoint: 'afldatapoweruat.axisb.com:8441', status: 'middleware'},
+        {name: 'Novel Bank Statement Parser', endpoint: 'aflmiddatapower.axisb.com:8446', status: 'middleware'},
+        {name: 'GST Portal (Karza)', endpoint: 'afldatapoweruat.axisb.com:8441', status: 'middleware'},
+        {name: 'EPFO Verification', endpoint: 'afldatapoweruat.axisb.com:8441', status: 'middleware'},
+        {name: 'Pennant LOS', endpoint: 'afloasuatweb.axisb.com:8070', status: 'middleware'}
     ];
-    
-    unavailApis.forEach(function(api){
-        html += '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">';
-        html += '<div><div class="font-medium text-gray-500 text-sm">'+api.name+'</div>';
-        html += '<div class="text-xs text-gray-400 font-mono">'+api.endpoint+'</div></div>';
-        html += '<div class="text-right"><span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">⊘ Not Integrated</span></div></div>';
+
+    aflApis.forEach(function(api){
+        html += '<div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">';
+        html += '<div><div class="font-medium text-blue-700 text-sm">'+api.name+'</div>';
+        html += '<div class="text-xs text-blue-500 font-mono">'+api.endpoint+'</div></div>';
+        html += '<div class="text-right"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">⟳ Via AFL Middleware</span></div></div>';
     });
-    
+
     html += '</div>';
-    html += '<div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200 text-sm text-yellow-800">';
-    html += '<strong>Note:</strong> External APIs (CIBIL, GST, MCA, Bank Statements) are not integrated in this demo. ';
-    html += 'Credit scoring uses only financial statement data. In production, these integrations would provide additional data for comprehensive assessment.';
-    html += '</div></div></div>';
     
     html += '</div>';
     
