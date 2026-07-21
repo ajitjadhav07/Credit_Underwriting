@@ -128,7 +128,14 @@ const apiLimiter = rateLimit({
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
     skip: (req) => {
         // Skip rate limiting for health checks
-        return req.path === '/api/health' || req.path === '/health';
+        if (req.path === '/api/health' || req.path === '/health') return true;
+        // Skip for assessment progress polling — the frontend polls this
+        // every 3s during processing (which can run for several minutes
+        // with many documents/bank statements), so 100 req/15min is hit
+        // well before a long assessment finishes, causing 429s mid-run
+        // that break the UI polling loop.
+        if (/^\/api\/assessment\/[^/]+\/progress$/.test(req.path)) return true;
+        return false;
     }
 });
 
