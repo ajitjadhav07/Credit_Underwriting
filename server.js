@@ -127,14 +127,21 @@ const apiLimiter = rateLimit({
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
     skip: (req) => {
+        // NOTE: this limiter is mounted at app.use('/api/', apiLimiter), so
+        // Express strips the '/api' prefix from req.path here. A request to
+        // /api/assessment/X/progress arrives as req.path === '/assessment/X/progress'.
+        // Match on BOTH the stripped and full forms to be safe (originalUrl
+        // keeps the full path).
+        const p = req.path;
+        const full = req.originalUrl ? req.originalUrl.split('?')[0] : p;
         // Skip rate limiting for health checks
-        if (req.path === '/api/health' || req.path === '/health') return true;
+        if (p === '/health' || p === '/api/health' || full === '/api/health') return true;
         // Skip for assessment progress polling — the frontend polls this
-        // every 3s during processing (which can run for several minutes
-        // with many documents/bank statements), so 100 req/15min is hit
-        // well before a long assessment finishes, causing 429s mid-run
-        // that break the UI polling loop.
-        if (/^\/api\/assessment\/[^/]+\/progress$/.test(req.path)) return true;
+        // every 3s during processing (which can run for several minutes with
+        // many documents/bank statements), so 100 req/15min is hit well before
+        // a long assessment finishes, causing 429s mid-run that break the UI.
+        const progressRe = /\/assessment\/[^/]+\/progress$/;
+        if (progressRe.test(p) || progressRe.test(full)) return true;
         return false;
     }
 });

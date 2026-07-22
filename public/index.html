@@ -1145,6 +1145,12 @@ function startProgressPolling(assessmentId) {
     progressPollInterval = setInterval(async function() {
         try {
             var resp = await fetch('/api/assessment/' + assessmentId + '/progress');
+            // A transient 429 (rate limit) should NOT break the polling loop —
+            // just skip this tick and try again on the next interval.
+            if (resp.status === 429) {
+                console.log('📡 Progress poll rate-limited (429) — will retry next tick');
+                return;
+            }
             var data = await resp.json();
             
             console.log('📡 Poll result:', data.status, data);
