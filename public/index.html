@@ -6672,7 +6672,7 @@ function renderUploadModal(){
                 var hasFile = files[doc.key];
                 var dupOfKey = getDuplicateInfo(doc.key);
                 var isDuplicate = !!dupOfKey;
-                html += '<div class="file-input-wrapper '+(hasFile?'has-file':'')+' '+(isDuplicate?'is-duplicate':'')+'" style="padding:12px">';
+                html += '<div class="file-input-wrapper '+(hasFile?'has-file':'')+' '+(isDuplicate?'is-duplicate':'')+'" style="padding:12px;position:relative">';
                 html += '<input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(event,\''+doc.key+'\')">';
                 if(hasFile) {
                     if(isDuplicate) {
@@ -6683,6 +6683,8 @@ function renderUploadModal(){
                     } else {
                         html += '<div class="flex items-center justify-center text-green-600"><svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span class="text-xs truncate" style="max-width:100px">'+files[doc.key].name+'</span></div>';
                     }
+                    // Remove button — clear this slot so a different/correct file can be added
+                    html += '<button type="button" onclick="event.stopPropagation();removeSingleFile(\''+doc.key+'\')" class="absolute top-1 right-1 text-red-400 hover:text-red-600 text-xs font-bold z-10" title="Remove file" style="line-height:1">\u2715</button>';
                 } else {
                     html += '<div class="text-gray-400 text-center"><svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg><span class="text-xs">'+doc.label+'</span></div>';
                 }
@@ -7248,7 +7250,7 @@ function renderMappingResultsTable() {
         html += '<div class="mb-4">';
         html += '<h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>Matched Files (' + results.matched.length + ')</h4>';
         html += '<div class="border rounded-lg overflow-hidden"><table class="w-full text-sm">';
-        html += '<thead class="bg-gray-50"><tr><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">#</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Uploaded File</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Mapped To</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Internal Key</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Category</th></tr></thead>';
+        html += '<thead class="bg-gray-50"><tr><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">#</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Uploaded File</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Mapped To</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500">Change Category</th><th class="px-3 py-2 text-left text-xs font-medium text-gray-500"></th></tr></thead>';
         html += '<tbody class="divide-y divide-gray-200">';
         // Detect duplicates in matched files by file size + name pattern
         var bulkFingerprints = {};
@@ -7263,16 +7265,28 @@ function renderMappingResultsTable() {
         });
         var bulkDupCount = Object.keys(bulkDupMap).length;
         if (bulkDupCount > 0) {
-            html += '<tr><td colspan="5" class="px-3 py-2 bg-red-50 border-l-4 border-red-500"><div class="flex items-center"><svg class="w-4 h-4 text-red-600 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg><strong class="text-red-800 text-xs">⚠ '+bulkDupCount+' Duplicate File(s) Detected</strong> <span class="text-red-700 text-xs ml-2">Same file content uploaded for different year slots</span></div></td></tr>';
+            html += '<tr><td colspan="5" class="px-3 py-2 bg-red-50 border-l-4 border-red-500"><div class="flex items-center"><svg class="w-4 h-4 text-red-600 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg><strong class="text-red-800 text-xs">\u26a0 '+bulkDupCount+' Duplicate File(s) Detected</strong> <span class="text-red-700 text-xs ml-2">Same file content uploaded for different year slots</span></div></td></tr>';
         }
         results.matched.forEach(function(m, idx) {
             var isDup = bulkDupMap[idx] !== undefined;
             html += '<tr class="'+(isDup ? 'bg-red-50' : 'bg-green-50')+'">';
             html += '<td class="px-3 py-2 text-gray-500">' + (idx + 1) + '</td>';
-            html += '<td class="px-3 py-2 font-mono text-xs truncate '+(isDup ? 'text-red-700' : '')+'" style="max-width:200px" title="' + m.fileName + '">' + m.fileName + (isDup ? ' <span class="text-red-600 font-bold">⚠ DUPLICATE</span>' : '') + '</td>';
-            html += '<td class="px-3 py-2">' + m.documentName + '</td>';
-            html += '<td class="px-3 py-2 font-mono text-xs text-gray-600">' + m.documentKey + '</td>';
-            html += '<td class="px-3 py-2 text-xs text-gray-500">' + m.category + '</td>';
+            html += '<td class="px-3 py-2 font-mono text-xs truncate '+(isDup ? 'text-red-700' : '')+'" style="max-width:180px" title="' + m.fileName + '">' + m.fileName + (isDup ? ' <span class="text-red-600 font-bold">\u26a0</span>' : '') + '</td>';
+            html += '<td class="px-3 py-2 text-xs"><span class="font-medium">' + m.documentName + '</span><br><span class="text-gray-400">' + m.category + '</span></td>';
+            // Change Category dropdown — lets the user correct a wrong auto-match
+            html += '<td class="px-3 py-2">';
+            html += '<select onchange="reassignMatchedFile(' + idx + ', this.value)" class="w-full px-2 py-1 text-xs border border-gray-300 rounded">';
+            BULK_UPLOAD_SCHEMA.categories.forEach(function(cat) {
+                html += '<optgroup label="' + cat.name + '">';
+                cat.documents.forEach(function(doc) {
+                    var selected = m.documentKey === doc.key ? ' selected' : '';
+                    html += '<option value="' + doc.key + '"' + selected + '>' + doc.name + '</option>';
+                });
+                html += '</optgroup>';
+            });
+            html += '</select></td>';
+            // Remove button — moves the file back to unmatched for re-assignment
+            html += '<td class="px-3 py-2"><button onclick="removeMatchedFile(' + idx + ')" class="px-2 py-1 text-xs text-red-500 hover:text-red-700" title="Remove this file">\u2715 Remove</button></td>';
             html += '</tr>';
         });
         html += '</tbody></table></div></div>';
@@ -7396,6 +7410,47 @@ window.assignUnmatchedFile = function(idx, docKey) {
 window.skipUnmatchedFile = function(idx) {
     if (!state.bulkMappingResults || !state.bulkMappingResults.unmatched[idx]) return;
     state.bulkMappingResults.unmatched.splice(idx, 1);
+    state.bulkMappingResults.totalUnmatched = state.bulkMappingResults.unmatched.length;
+    renderUploadModal();
+};
+
+// Reassign a matched (auto-categorized) file to a different category —
+// fixes cases where auto-detection put a file in the wrong category.
+window.reassignMatchedFile = function(idx, newDocKey) {
+    if (!state.bulkMappingResults || !state.bulkMappingResults.matched[idx]) return;
+    if (!newDocKey) return;
+    var m = state.bulkMappingResults.matched[idx];
+    var docInfo = null;
+    BULK_UPLOAD_SCHEMA.categories.forEach(function(cat) {
+        cat.documents.forEach(function(doc) {
+            if (doc.key === newDocKey) {
+                docInfo = { key: doc.key, name: doc.name, category: cat.name, required: doc.required };
+            }
+        });
+    });
+    if (docInfo) {
+        m.documentKey  = docInfo.key;
+        m.documentName = docInfo.name;
+        m.category     = docInfo.category;
+        m.required     = docInfo.required;
+        m.manuallyAssigned = true;  // mark as user-corrected
+        renderUploadModal();
+    }
+};
+
+// Remove a matched file — moves it back to unmatched so the user can
+// re-assign the correct file/category (or skip it entirely).
+window.removeMatchedFile = function(idx) {
+    if (!state.bulkMappingResults || !state.bulkMappingResults.matched[idx]) return;
+    var m = state.bulkMappingResults.matched[idx];
+    // Push back to unmatched for manual re-assignment
+    state.bulkMappingResults.unmatched.push({
+        file: m.file,
+        fileName: m.fileName,
+        manualAssignment: null
+    });
+    state.bulkMappingResults.matched.splice(idx, 1);
+    state.bulkMappingResults.totalMatched = state.bulkMappingResults.matched.length;
     state.bulkMappingResults.totalUnmatched = state.bulkMappingResults.unmatched.length;
     renderUploadModal();
 };
@@ -7850,6 +7905,15 @@ window.handleFileSelect=function(event,key){
     if(file){
         state.uploadData.files[key]=file;
         // Run client-side duplicate detection
+        detectDuplicateFiles();
+        renderUploadModal();
+    }
+};
+
+// Remove a file from a single-upload slot so the correct one can be added
+window.removeSingleFile=function(key){
+    if(state.uploadData && state.uploadData.files){
+        delete state.uploadData.files[key];
         detectDuplicateFiles();
         renderUploadModal();
     }
