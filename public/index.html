@@ -3648,8 +3648,8 @@ function renderActualProcessingTab(fa) {
             cat: 'External API',
             status: 'unavailable',
             tasks: [
-                {text: 'CIBIL Commercial Report fetch', status: 'unavailable', note: 'API not integrated'},
-                {text: 'Director CIBIL scores fetch', status: 'unavailable', note: 'API not integrated'},
+                {text: 'CIBIL Commercial Report fetch', status: 'unavailable', note: 'Upload CIBIL report PDF — no API call needed'},
+                {text: 'Director CIBIL scores fetch', status: 'unavailable', note: 'Upload CIBIL report PDF — no API call needed'},
                 {text: 'Credit history analysis', status: 'unavailable', note: 'Data not available'}
             ]
         },
@@ -3668,7 +3668,7 @@ function renderActualProcessingTab(fa) {
             cat: 'External API',
             status: 'unavailable',
             tasks: [
-                {text: 'GST return fetch (24 months)', status: 'unavailable', note: 'API not integrated'},
+                {text: 'GST return fetch (24 months)', status: 'unavailable', note: 'Via AFL Middleware — requires Karza integration'},
                 {text: 'Turnover verification', status: 'unavailable', note: 'Data not available'},
                 {text: 'Compliance status check', status: 'unavailable', note: 'Data not available'}
             ]
@@ -7068,7 +7068,7 @@ var BULK_UPLOAD_SCHEMA = {
             name: 'Property Documents',
             documents: [
                 {key: 'property_title_deed', name: 'Property Title Deed', required: false, patterns: ['property_title_deed', 'title_deed', 'sale_deed', 'prop_title']},
-                {key: 'encumbrance_certificate', name: 'Encumbrance Certificate', required: false, patterns: ['encumbrance_certificate', 'ec', 'ec_certificate', 'prop_enc']},
+                {key: 'encumbrance_certificate', name: 'Encumbrance Certificate', required: false, patterns: ['encumbrance_certificate', 'encumbrance_cert', 'ec_certificate', 'prop_enc', 'encumbrance']},
                 {key: 'property_valuation', name: 'Property Valuation', required: false, patterns: ['property_valuation', 'valuation_report', 'prop_valuation']},
                 {key: 'property_tax_receipts', name: 'Property Tax Receipts', required: false, patterns: ['property_tax_receipts', 'property_tax', 'prop_tax']}
             ]
