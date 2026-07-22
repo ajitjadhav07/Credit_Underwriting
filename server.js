@@ -3646,11 +3646,11 @@ app.get('/api/assessment/:id/export-docx', ensureAuthenticated, async (req, res)
         const useAflFormat = (req.query.format || '').toLowerCase() === 'afl';
         let buffer;
         if (useAflFormat) {
-            // Ensure pennant_data is present. The main assessment record may
-            // not have it (e.g. older assessments, or if the job path didn't
-            // persist it), but Pennant's response is ALWAYS saved separately
-            // to assessments/<id>/api-responses/pennant.json. Load that as a
-            // fallback so the CAM report Part A/B populates regardless.
+            // Ensure pennant_data is present for CAM report Part A/B population.
+            // Three-layer fallback so old/reprocessed assessments still work:
+
+            // Layer 1: use what's already on the assessment object
+            // Layer 2: load the separately-saved pennant.json from S3
             if (!assessment.pennant_data) {
                 try {
                     const s3 = require('./lib/s3-client');
@@ -3658,14 +3658,36 @@ app.get('/api/assessment/:id/export-docx', ensureAuthenticated, async (req, res)
                     const raw = await s3.getFile(key);
                     if (raw) {
                         const pj = JSON.parse(raw.toString('utf-8'));
-                        // pennant.json is the normalized response object itself
                         if (pj && pj.success && (pj.customer || pj.loanDetail)) {
                             assessment.pennant_data = pj;
-                            console.log(`✅ CAM export: loaded pennant_data from S3 fallback for ${id}`);
+                            console.log(`✅ CAM export: loaded pennant_data from S3 pennant.json for ${id}`);
                         }
                     }
                 } catch (e) {
-                    console.log(`ℹ️ CAM export: no pennant.json fallback for ${id}: ${e.message}`);
+                    console.log(`ℹ️ CAM export: no pennant.json in S3 for ${id}: ${e.message}`);
+                }
+            }
+
+            // Layer 3: if still missing but we have a LAN, call Pennant live now.
+            // This handles reprocessed historical assessments where pennant.json
+            // was never saved (Pennant was skipped because finReference was lost
+            // after container restart). The LAN is on the assessment record.
+            if (!assessment.pennant_data) {
+                const lan = assessment.loan_account_number;
+                if (lan) {
+                    try {
+                        console.log(`🔄 CAM export: calling Pennant live for LAN ${lan} (assessment ${id})`);
+                        const pennantClient = require('./lib/pennant-client');
+                        const result = await pennantClient.getLoanDetails({ finReference: lan, assessmentId: id });
+                        if (result && result.success) {
+                            assessment.pennant_data = result;
+                            console.log(`✅ CAM export: live Pennant call succeeded for ${lan}`);
+                        } else {
+                            console.log(`⚠️ CAM export: live Pennant call failed for ${lan}: ${result?.error}`);
+                        }
+                    } catch (e) {
+                        console.log(`⚠️ CAM export: live Pennant error for ${lan}: ${e.message}`);
+                    }
                 }
             }
             // Template-based generator fills the AFL master template (templates/
