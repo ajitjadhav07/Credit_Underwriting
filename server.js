@@ -3632,6 +3632,28 @@ app.get('/api/assessment/:id/export-docx', ensureAuthenticated, async (req, res)
         const useAflFormat = (req.query.format || '').toLowerCase() === 'afl';
         let buffer;
         if (useAflFormat) {
+            // Ensure pennant_data is present. The main assessment record may
+            // not have it (e.g. older assessments, or if the job path didn't
+            // persist it), but Pennant's response is ALWAYS saved separately
+            // to assessments/<id>/api-responses/pennant.json. Load that as a
+            // fallback so the CAM report Part A/B populates regardless.
+            if (!assessment.pennant_data) {
+                try {
+                    const s3 = require('./lib/s3-client');
+                    const key = `assessments/${id}/api-responses/pennant.json`;
+                    const raw = await s3.getFile(key);
+                    if (raw) {
+                        const pj = JSON.parse(raw.toString('utf-8'));
+                        // pennant.json is the normalized response object itself
+                        if (pj && pj.success && (pj.customer || pj.loanDetail)) {
+                            assessment.pennant_data = pj;
+                            console.log(`✅ CAM export: loaded pennant_data from S3 fallback for ${id}`);
+                        }
+                    }
+                } catch (e) {
+                    console.log(`ℹ️ CAM export: no pennant.json fallback for ${id}: ${e.message}`);
+                }
+            }
             // Template-based generator fills the AFL master template (templates/
             // cam-template.docx) preserving its exact format, header, footer,
             // tables and spacing — only data values are substituted.
