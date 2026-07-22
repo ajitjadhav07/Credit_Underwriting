@@ -8232,7 +8232,9 @@ async function tryServerSideProcessing() {
             headers: {'Content-Type': 'application/json'},
             credentials: 'include',
             body: JSON.stringify({
-                priority: 1
+                priority: 1,
+                finReference: state.uploadData.loanAccountNumber || null,
+                pennantData: state.uploadData.pennantData || null
             })
         });
         
@@ -8437,12 +8439,18 @@ async function runActualDataProcessing(){
             console.log('Documents for server processing:', docList);
             addApiLog('info', 'Sending ' + docList.length + ' documents to server queue...');
             
-            // Trigger server-side processing
+            // Trigger server-side processing — include finReference and pennantData
+            // so the backend can patch them onto the assessment even if the
+            // in-memory record was wiped by a container restart.
             var serverResp = await fetch('/api/assessment/' + state.assessmentId + '/process-server', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 credentials: 'include',
-                body: JSON.stringify({ documents: docList })
+                body: JSON.stringify({
+                    documents: docList,
+                    finReference: state.uploadData.loanAccountNumber || null,
+                    pennantData: state.uploadData.pennantData || null
+                })
             });
             
             if (!serverResp.ok) {

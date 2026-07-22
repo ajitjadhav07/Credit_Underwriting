@@ -2194,7 +2194,10 @@ app.get('/api/processing/status', ensureAuthenticated, async (req, res) => {
  */
 app.post('/api/assessment/:id/process-server', ensureAuthenticated, ensureNotReadOnly, async (req, res) => {
     const assessmentId = req.params.id;
-    const { documents } = req.body; // Array of { id, name, type, s3Key }
+    // Accept finReference and pennantData from the request body so they're
+    // available even if the in-memory assessment record was wiped (e.g. after
+    // a container restart between create and process).
+    const { documents, finReference, pennantData } = req.body;
     
     // Check if server-side processing is available
     if (!bullQueue.isReady()) {
@@ -2218,6 +2221,17 @@ app.post('/api/assessment/:id/process-server', ensureAuthenticated, ensureNotRea
         let assessment = await getAssessmentById(assessmentId);
         if (!assessment) {
             return res.status(404).json({ error: 'Assessment not found' });
+        }
+
+        // Patch: if finReference / pennantData were passed in the request body
+        // (sent by the frontend from state.uploadData), use them to fill in
+        // what may be missing on the in-memory or S3 assessment record —
+        // especially after a container restart wiped in-memory state.
+        if (finReference && !assessment.loan_account_number) {
+            assessment.loan_account_number = finReference;
+        }
+        if (pennantData && !assessment.pennant_data) {
+            assessment.pennant_data = pennantData;
         }
         
         // GUARD: Don't allow re-processing if already completed
