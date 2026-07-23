@@ -7113,6 +7113,24 @@ var BULK_UPLOAD_SCHEMA = {
                 {key: 'oc_prop1', name: 'Occupancy Certificate - Property 1', required: false, patterns: ['oc_prop1', 'occupancy_prop1', 'completion_prop1']},
                 {key: 'society_noc_prop1', name: 'Society NOC - Property 1', required: false, patterns: ['society_noc_prop1', 'society_prop1', 'noc_prop1']}
             ]
+        },
+        {
+            id: 'api_responses',
+            name: 'API Response Files (Upload instead of live API call)',
+            documents: [
+                {key: 'pennant_response',      name: 'Pennant LOS Response',           required: false, patterns: ['pennant_response','los_response','loandetails','pennant_data','pennant']},
+                {key: 'mca_response',          name: 'MCA Details Response',           required: false, patterns: ['mca_response','mca_details','company_master','mca_data','mca']},
+                {key: 'gst_auth_response',     name: 'GST Authentication Response',    required: false, patterns: ['gst_auth','gstdetailed','gst_authentication','gst_auth_response']},
+                {key: 'gst_return_response',   name: 'GST Return Filing Response',     required: false, patterns: ['gst_return','gst_return_response','gst_filing','gstr_response']},
+                {key: 'itr_response',          name: 'ITR Verification Response',      required: false, patterns: ['itr_response','itr_v_response','karza_itr','itr_data']},
+                {key: 'epfo_response',         name: 'EPFO Response',                  required: false, patterns: ['epfo_response','epfo_data','uan_response','epf_response']},
+                {key: 'bgv_response',          name: 'Background Verification Response', required: false, patterns: ['bgv_response','background_verification','bgv_data','bgv']},
+                {key: 'litigation_response',   name: 'Litigation Response',            required: false, patterns: ['litigation_response','court_cases','litigation_data','litigation']},
+                {key: 'fir_response',          name: 'FIR Product Note Response',      required: false, patterns: ['fir_response','fir_data','fir_product','fir']},
+                {key: 'peer_comparison_response', name: 'Peer Comparison Response',   required: false, patterns: ['peer_comparison','peer_response','peer_details','peer_data']},
+                {key: 'trackwizz_response',    name: 'Trackwizz RBI Suite Response',   required: false, patterns: ['trackwizz_response','trackwizz','rbi_suite','screenzaa','as501']},
+                {key: 'novel_response',        name: 'Novel Bank Analysis Response',   required: false, patterns: ['novel_response','novel_analysis','bank_analysis','novel_data']}
+            ]
         }
     ]
 };
