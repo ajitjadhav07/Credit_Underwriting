@@ -7026,7 +7026,7 @@ var BULK_UPLOAD_SCHEMA = {
                         name: 'Bank Statement ' + mon.charAt(0).toUpperCase() + mon.slice(1) + ' ' + y,
                         required: false,
                         patterns: [
-                            // Standard patterns
+                            // Standard patterns (most specific first)
                             'bank_statement_' + mon + '_' + y,
                             'bank_' + mon + '_' + y,
                             'bs_' + mon + '_' + y,
@@ -7034,9 +7034,13 @@ var BULK_UPLOAD_SCHEMA = {
                             // AFL filename pattern: _YYYY_M## (e.g. 597109099_2025_M06)
                             '_' + y + '_m' + mNum,
                             y + '_m' + mNum,
-                            // Short year variants
-                            'bank_' + mon + yy,
-                            'bank_statement_' + mon + yy
+                            // Short year variants — month+YY e.g. "july_25", "jun_25"
+                            // These are more specific than month-only so listed first
+                            mon + '_' + yy,
+                            monFull.toLowerCase() + '_' + yy,
+                            // Full year with month: "july_2025"
+                            mon + '_' + y,
+                            monFull.toLowerCase() + '_' + y
                         ]
                     });
                     d.setMonth(d.getMonth() - 1);
@@ -7198,7 +7202,8 @@ function mapFilesToDocuments(files) {
         // Find best match
         for (var i = 0; i < allDocs.length; i++) {
             var doc = allDocs[i];
-            if (usedKeys.has(doc.key)) continue; // Already used
+            var isBankType = doc.key && (doc.key.startsWith('bank_statement_') || doc.key.startsWith('odcc_'));
+            if (!isBankType && usedKeys.has(doc.key)) continue; // Allow multiple bank statements per month
             
             for (var j = 0; j < doc.patterns.length; j++) {
                 if (normalizedName.includes(doc.patterns[j]) || doc.patterns[j].includes(normalizedName)) {
