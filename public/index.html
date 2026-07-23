@@ -7026,21 +7026,28 @@ var BULK_UPLOAD_SCHEMA = {
                         name: 'Bank Statement ' + mon.charAt(0).toUpperCase() + mon.slice(1) + ' ' + y,
                         required: false,
                         patterns: [
-                            // Standard patterns (most specific first)
-                            'bank_statement_' + mon + '_' + y,
-                            'bank_' + mon + '_' + y,
-                            'bs_' + mon + '_' + y,
-                            'bank_' + monFull.toLowerCase() + '_' + y,
                             // AFL filename pattern: _YYYY_M## (e.g. 597109099_2025_M06)
                             '_' + y + '_m' + mNum,
                             y + '_m' + mNum,
-                            // Short year variants — month+YY e.g. "july_25", "jun_25"
-                            // These are more specific than month-only so listed first
-                            mon + '_' + yy,
-                            monFull.toLowerCase() + '_' + yy,
-                            // Full year with month: "july_2025"
+                            // YYYY_MM format (e.g. 2025_07)
+                            y + '_' + mNum,
+                            // Standard named patterns with full year
                             mon + '_' + y,
-                            monFull.toLowerCase() + '_' + y
+                            monFull.toLowerCase() + '_' + y,
+                            'bank_statement_' + mon + '_' + y,
+                            'bank_' + mon + '_' + y,
+                            'bs_' + mon + '_' + y
+                        ],
+                        // Regex patterns match month+year in any format regardless
+                        // of the customer name prefix — e.g. "HDFC jul25", "SBI_july_2025",
+                        // "axis-jun-26", "ICICI JUN26" all match correctly.
+                        // Two regex: full year (jul2025, jul_2025) and short year (jul25, jul_25)
+                        regexPatterns: [
+                            new RegExp('(?:^|[^a-z])' + mon + '[_\\-]?' + y + '(?:[^0-9]|$)', 'i'),
+                            new RegExp('(?:^|[^a-z])' + monFull.toLowerCase() + '[_\\-]?' + y + '(?:[^0-9]|$)', 'i'),
+                            new RegExp('(?:^|[^a-z])' + mon + '[_\\-]?' + yy + '(?:[^0-9]|$)', 'i'),
+                            new RegExp('(?:^|[^a-z])' + monFull.toLowerCase() + '[_\\-]?' + yy + '(?:[^0-9]|$)', 'i'),
+                            new RegExp(y + '[_\\-]' + mNum + '(?:[^0-9]|$)')
                         ]
                     });
                     d.setMonth(d.getMonth() - 1);
@@ -7205,10 +7212,22 @@ function mapFilesToDocuments(files) {
             var isBankType = doc.key && (doc.key.startsWith('bank_statement_') || doc.key.startsWith('odcc_'));
             if (!isBankType && usedKeys.has(doc.key)) continue; // Allow multiple bank statements per month
             
+            // Try string patterns first (fast)
             for (var j = 0; j < doc.patterns.length; j++) {
-                if (normalizedName.includes(doc.patterns[j]) || doc.patterns[j].includes(normalizedName)) {
+                if (normalizedName.includes(doc.patterns[j])) {
                     matchedDoc = doc;
                     break;
+                }
+            }
+            // Try regex patterns if present — these match month+year in any
+            // format regardless of the customer/bank name prefix in the filename
+            if (!matchedDoc && doc.regexPatterns) {
+                var originalName = file.name.toLowerCase();
+                for (var k = 0; k < doc.regexPatterns.length; k++) {
+                    if (doc.regexPatterns[k].test(originalName) || doc.regexPatterns[k].test(normalizedName)) {
+                        matchedDoc = doc;
+                        break;
+                    }
                 }
             }
             if (matchedDoc) break;
