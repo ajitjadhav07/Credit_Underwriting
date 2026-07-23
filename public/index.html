@@ -2815,6 +2815,32 @@ function renderDecisionTab(r){
     // === HEADER SECTION ===
     html += '<div class="bg-gradient-to-r '+headerBg+' rounded-xl p-6 mb-8"><div class="flex items-center justify-between text-white"><div class="flex items-center space-x-5"><div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><div><div class="text-sm text-pink-200">CREDIT DECISION</div><div class="text-3xl font-bold">'+decision+'</div><div class="text-pink-200 mt-1">'+authority+'</div></div></div><div class="text-right"><div class="text-6xl font-bold">'+grade+'</div><div class="text-pink-200">Credit Grade</div></div></div></div>';
     
+    // === TRACKWIZZ AML/RBI SCREENING RESULT ===
+    var tw = (fa && fa.trackwizz_screening) ? fa.trackwizz_screening : null;
+    if (tw) {
+        var twAdverse = tw.isAdverse;
+        var twBg = twAdverse ? 'bg-red-50 border-red-400' : 'bg-green-50 border-green-400';
+        var twTitleColor = twAdverse ? 'text-red-800' : 'text-green-800';
+        var twBodyColor  = twAdverse ? 'text-red-700'  : 'text-green-700';
+        var twTitle = twAdverse ? 'ADVERSE HIT DETECTED' : 'CLEAR — No Adverse Hits';
+        var twMsg = twAdverse
+            ? 'Loan application <strong>REJECTED</strong> due to adverse hit in Trackwizz RBI/AML screening. '
+              + 'Hit Count: <strong>' + tw.hitsCount + '</strong> | '
+              + 'Confirmed Hits: <strong>' + tw.confirmedHits + '</strong> | '
+              + 'Suggested Action: <strong>' + tw.suggestedAction + '</strong>. '
+              + 'Reason: <strong>Defaulter / Adverse profile match</strong>.'
+            : 'No adverse hits detected. Hit Count: ' + tw.hitsCount
+              + ' | Confirmed Hits: ' + tw.confirmedHits
+              + ' | Suggested Action: ' + tw.suggestedAction + '. Customer profile is clean.';
+        html += '<div class="border-l-4 rounded-lg p-4 mb-6 ' + twBg + '">'
+            + '<p class="font-semibold text-sm mb-1 ' + twTitleColor + '">'
+            + (twAdverse ? '⚠️' : '✅')
+            + ' Trackwizz RBI/AML Screening — ' + twTitle + '</p>'
+            + '<p class="text-sm ' + twBodyColor + '">' + twMsg + '</p>'
+            + (twAdverse ? '<p class="text-xs text-red-600 mt-2 font-medium">This screening result has overridden the credit score decision. Application cannot proceed further.</p>' : '')
+            + '</div>';
+    }
+
     // === SCORE, LIMITS, SECURITY - 3 COLUMN GRID ===
     html += '<div class="grid grid-cols-3 gap-6 mb-8">';
     
