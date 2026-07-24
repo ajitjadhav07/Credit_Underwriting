@@ -3567,6 +3567,15 @@ app.get('/api/assessment/:id/cam/defaults', ensureAuthenticated, async (req, res
         if (loan.tenureMonths != null) {
             defaults.tenure_months = defaults.tenure_months || loan.tenureMonths;
         }
+        // Rate of interest from LOS — Pennant may give it as a percentage
+        // (e.g. 10.5) or decimal (0.105). Normalize to decimal for the engine.
+        if (loan.interestRate != null) {
+            let r = parseFloat(loan.interestRate);
+            if (!isNaN(r)) {
+                if (r > 1) r = r / 100;   // 10.5 → 0.105
+                defaults.rate = defaults.rate || r;
+            }
+        }
         if (cust.name) defaults.borrower_name = cust.name;
         if (loan.ucic) defaults.ucic = loan.ucic;
 

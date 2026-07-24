@@ -10579,6 +10579,12 @@ function renderCamTab(){
         var stored = state.fullAssessment && state.fullAssessment.cam_eligibility;
         if(stored) state.camResult=stored;
     }
+    // Auto-prefill once from LOS (rate, proposed loan) + Novel (ADB) when the
+    // tab first opens, so the user sees populated fields without clicking.
+    if(!state._camAutoPrefilled && camAssessmentId()){
+        state._camAutoPrefilled = true;
+        prefillCamDefaults();
+    }
     var program=state.camProgram;
     var def=CAM_FIELD_MAP[program];
 
