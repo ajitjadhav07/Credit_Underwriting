@@ -10299,27 +10299,55 @@ window.prefillCamDefaults=function(){
 // Collect live loans from any uploaded CIBIL reports (company + directors)
 // so the BT/Closure dropdown in the Banking Program can list them.
 function getCamLiveLoans(){
-    var cibil = (state.fullAssessment && state.fullAssessment.extracted_data && state.fullAssessment.extracted_data.cibil) || {};
+    var ed = (state.fullAssessment && state.fullAssessment.extracted_data) || {};
+    var cibil = ed.cibil || {};
+    // Also read the upload-path CIBIL (external_verification.cibil_commercial)
+    var cibilCommercial = (ed.external_verification && ed.external_verification.cibil_commercial) || null;
     var loans = [];
+    function pushLoan(l, who){
+        loans.push({
+            source: who,
+            lender: l.lender || 'Unknown Lender',
+            facility_type: l.facility_type || '',
+            sanctioned_amount: l.sanctioned_amount,
+            current_outstanding: l.current_outstanding,
+            // CIBIL reports show EMI in actual rupees — convert to lakhs
+            emi_lakhs: (l.emi_amount != null) ? (parseFloat(l.emi_amount)/100000) : null,
+            account_status: l.account_status || '',
+            opened_date: l.opened_date || null
+        });
+    }
     ['company','director'].forEach(function(who){
         var rep = cibil[who];
         if(rep && Array.isArray(rep.live_loans)){
-            rep.live_loans.forEach(function(l){
-                loans.push({
-                    source: who==='company' ? 'Company CIBIL' : 'Director CIBIL',
-                    lender: l.lender || 'Unknown Lender',
-                    facility_type: l.facility_type || '',
-                    sanctioned_amount: l.sanctioned_amount,
-                    current_outstanding: l.current_outstanding,
-                    // CIBIL reports show EMI/amounts in actual rupees, not lakhs —
-                    // convert to lakhs to match this form's unit.
-                    emi_lakhs: (l.emi_amount != null) ? (parseFloat(l.emi_amount)/100000) : null,
-                    account_status: l.account_status || ''
-                });
-            });
+            rep.live_loans.forEach(function(l){ pushLoan(l, who==='company'?'Company CIBIL':'Director CIBIL'); });
         }
     });
+    if(cibilCommercial && Array.isArray(cibilCommercial.live_loans)){
+        cibilCommercial.live_loans.forEach(function(l){ pushLoan(l, 'CIBIL Report'); });
+    }
     return loans;
+}
+
+// Active loans only — candidates for Balance Transfer / takeover (EMI Added)
+function getActiveLoans(){
+    return getCamLiveLoans().filter(function(l){
+        return !l.account_status || /active/i.test(l.account_status);
+    });
+}
+
+// Loans serviced in the last 12 months (for the "Less: EMI last 12m" deduction).
+// Includes active loans and loans closed within the last 12 months.
+function getLast12mLoans(){
+    var now = new Date();
+    var cutoff = new Date(now.getFullYear()-1, now.getMonth(), now.getDate());
+    return getCamLiveLoans().filter(function(l){
+        if(l.emi_lakhs == null) return false;
+        if(!l.account_status || /active/i.test(l.account_status)) return true;
+        // Closed loans: include if opened within last 12m (best-effort)
+        if(l.opened_date){ var d = new Date(l.opened_date); if(!isNaN(d) && d >= cutoff) return true; }
+        return false;
+    });
 }
 
 function toggleBtLoanDropdown(){
@@ -10334,16 +10362,70 @@ function toggleBtLoan(idx){
     var sel = state.camForm._btSelectedLoans || {};
     sel[idx] = !sel[idx];
     state.camForm._btSelectedLoans = sel;
-
-    var loans = getCamLiveLoans();
+    var loans = getActiveLoans();
     var total = 0;
-    loans.forEach(function(l, i){
-        if(sel[i] && l.emi_lakhs != null) total += l.emi_lakhs;
-    });
+    loans.forEach(function(l, i){ if(sel[i] && l.emi_lakhs != null) total += l.emi_lakhs; });
     state.camForm.bt_emi_added = total ? total.toFixed(2) : '';
     render();
 }
 window.toggleBtLoan = toggleBtLoan;
+
+function toggleEmi12Dropdown(){
+    state.camForm = state.camForm || {};
+    state.camForm._emi12DropdownOpen = !state.camForm._emi12DropdownOpen;
+    render();
+}
+window.toggleEmi12Dropdown = toggleEmi12Dropdown;
+
+function toggleEmi12Loan(idx){
+    state.camForm = state.camForm || {};
+    var sel = state.camForm._emi12SelectedLoans || {};
+    sel[idx] = !sel[idx];
+    state.camForm._emi12SelectedLoans = sel;
+    var loans = getLast12mLoans();
+    var total = 0;
+    loans.forEach(function(l, i){ if(sel[i] && l.emi_lakhs != null) total += l.emi_lakhs; });
+    state.camForm.emi_last_12_months = total ? total.toFixed(2) : '';
+    render();
+}
+window.toggleEmi12Loan = toggleEmi12Loan;
+
+// Shared renderer for a CIBIL-loan multi-select dropdown
+function renderLoanSelector(opts){
+    var loans = opts.loans, fieldKey = opts.fieldKey, label = opts.label;
+    var selKey = opts.selKey, openKey = opts.openKey;
+    var onToggle = opts.onToggleFn, onOpen = opts.onOpenFn, hintText = opts.hint;
+    if(state.camForm[fieldKey]===undefined || state.camForm[fieldKey]===''){
+        state.camForm[fieldKey] = '0';
+    }
+    var sel = state.camForm[selKey] || {};
+    var selectedCount = loans.filter(function(l,i){ return sel[i]; }).length;
+    var open = !!state.camForm[openKey];
+    var rows = loans.map(function(l, i){
+        var checked = sel[i] ? ' checked' : '';
+        var emiTxt = (l.emi_lakhs != null) ? ('₹'+l.emi_lakhs.toFixed(2)+' L/mo') : 'EMI N/A';
+        return '<label class="flex items-center justify-between gap-2 py-2 px-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0">'+
+            '<span class="flex items-center gap-2 min-w-0">'+
+                '<input type="checkbox" onclick="'+onToggle+'('+i+')"'+checked+' class="h-4 w-4 text-axis-primary rounded border-gray-300 flex-shrink-0"/>'+
+                '<span class="text-sm text-gray-700 truncate"><span class="font-medium">'+escapeHtml(l.lender)+'</span>'+
+                (l.facility_type ? ' — '+escapeHtml(l.facility_type) : '')+
+                '<span class="text-xs text-gray-400 block">'+escapeHtml(l.source)+(l.account_status?' · '+escapeHtml(l.account_status):'')+'</span></span>'+
+            '</span>'+
+            '<span class="text-sm font-medium text-gray-900 flex-shrink-0">'+emiTxt+'</span>'+
+        '</label>';
+    }).join('');
+    var totalVal = (parseFloat(state.camForm[fieldKey])||0).toFixed(2);
+    return '<div>'+
+        '<label class="block text-xs font-medium text-gray-600 mb-1">'+escapeHtml(label)+'</label>'+
+        '<button type="button" onclick="'+onOpen+'()" class="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50">'+
+            '<span>'+(selectedCount>0 ? (selectedCount+' loan'+(selectedCount===1?'':'s')+' selected — ₹'+totalVal+' L total') : 'No loan selected — ₹0.00 L')+'</span>'+
+            '<span class="text-gray-400">'+(open?'▲':'▼')+'</span>'+
+        '</button>'+
+        (open ? (loans.length ? '<div class="mt-1 border border-gray-200 rounded-lg max-h-56 overflow-y-auto bg-white shadow-sm">'+rows+'</div>' : '<div class="mt-1 p-3 text-xs text-gray-400 border border-gray-200 rounded-lg">No matching loans in the CIBIL report.</div>') : '')+
+        '<input type="hidden" data-cam-field="'+fieldKey+'" value="'+escapeHtml(String(state.camForm[fieldKey]||''))+'"/>'+
+        '<p class="text-xs text-gray-400 mt-1">'+escapeHtml(hintText)+'</p>'+
+        '</div>';
+}
 
 function renderCamInputField(f){
     state.camForm = state.camForm || {};
@@ -10352,44 +10434,29 @@ function renderCamInputField(f){
     if(val===undefined) val='';
     var hint = f.hint ? '<p class="text-xs text-gray-400 mt-1">'+escapeHtml(f.hint)+'</p>' : '';
 
-    // Special widget: BT/Closure loan selector, populated from uploaded CIBIL
-    // report(s). Falls back to a plain number input if no live loans found.
+    // EMI Added (BT / takeover) — dropdown of ACTIVE loans from CIBIL
     if(f.key === 'bt_emi_added'){
-        var loans = getCamLiveLoans();
-        if(loans.length > 0){
-            // Default to 0 so eligibility can be run immediately without
-            // selecting any loan. User can tick loan(s) afterward and
-            // re-run — the EMI total updates and recalculates from there.
-            if(state.camForm.bt_emi_added===undefined || state.camForm.bt_emi_added===''){
-                state.camForm.bt_emi_added = '0';
-            }
-            var sel = state.camForm._btSelectedLoans || {};
-            var selectedCount = loans.filter(function(l,i){ return sel[i]; }).length;
-            var open = !!state.camForm._btDropdownOpen;
-            var rows = loans.map(function(l, i){
-                var checked = sel[i] ? ' checked' : '';
-                var emiTxt = (l.emi_lakhs != null) ? ('₹'+l.emi_lakhs.toFixed(2)+' L/mo') : 'EMI N/A';
-                return '<label class="flex items-center justify-between gap-2 py-2 px-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0">'+
-                    '<span class="flex items-center gap-2 min-w-0">'+
-                        '<input type="checkbox" onclick="toggleBtLoan('+i+')"'+checked+' class="h-4 w-4 text-axis-primary rounded border-gray-300 flex-shrink-0"/>'+
-                        '<span class="text-sm text-gray-700 truncate"><span class="font-medium">'+escapeHtml(l.lender)+'</span>'+
-                        (l.facility_type ? ' — '+escapeHtml(l.facility_type) : '')+
-                        '<span class="text-xs text-gray-400 block">'+escapeHtml(l.source)+(l.account_status?' · '+escapeHtml(l.account_status):'')+'</span></span>'+
-                    '</span>'+
-                    '<span class="text-sm font-medium text-gray-900 flex-shrink-0">'+emiTxt+'</span>'+
-                '</label>';
-            }).join('');
+        var activeLoans = getActiveLoans();
+        if(activeLoans.length > 0){
+            return renderLoanSelector({
+                loans: activeLoans, fieldKey: 'bt_emi_added', label: f.label,
+                selKey: '_btSelectedLoans', openKey: '_btDropdownOpen',
+                onToggleFn: 'toggleBtLoan', onOpenFn: 'toggleBtLoanDropdown',
+                hint: 'From uploaded CIBIL report — tick active loan(s) being taken over (BT) or closed; their EMI is summed here.'
+            });
+        }
+    }
 
-            return '<div>'+
-                '<label class="block text-xs font-medium text-gray-600 mb-1">'+escapeHtml(f.label)+'</label>'+
-                '<button type="button" onclick="toggleBtLoanDropdown()" class="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50">'+
-                    '<span>'+(selectedCount>0 ? (selectedCount+' loan'+(selectedCount===1?'':'s')+' selected — ₹'+(parseFloat(state.camForm.bt_emi_added)||0).toFixed(2)+' L total') : 'No loan selected — ₹0.00 L used (tick to mark BT / Closure)')+'</span>'+
-                    '<span class="text-gray-400">'+(open?'▲':'▼')+'</span>'+
-                '</button>'+
-                (open ? '<div class="mt-1 border border-gray-200 rounded-lg max-h-56 overflow-y-auto bg-white shadow-sm">'+rows+'</div>' : '')+
-                '<input type="hidden" data-cam-field="'+f.key+'" value="'+escapeHtml(String(state.camForm.bt_emi_added||''))+'"/>'+
-                '<p class="text-xs text-gray-400 mt-1">From uploaded CIBIL report — tick any loan(s) being taken over (BT) or closed; their EMI is summed here.</p>'+
-                '</div>';
+    // Less: EMI of loans in last 12 months — dropdown of loans serviced in last 12m
+    if(f.key === 'emi_last_12_months'){
+        var last12 = getLast12mLoans();
+        if(last12.length > 0){
+            return renderLoanSelector({
+                loans: last12, fieldKey: 'emi_last_12_months', label: f.label,
+                selKey: '_emi12SelectedLoans', openKey: '_emi12DropdownOpen',
+                onToggleFn: 'toggleEmi12Loan', onOpenFn: 'toggleEmi12Dropdown',
+                hint: 'From uploaded CIBIL report — tick loan(s) whose EMI was serviced from the considered account(s) in the last 12 months; summed and deducted from ADB.'
+            });
         }
     }
 
