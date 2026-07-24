@@ -3554,6 +3554,22 @@ app.get('/api/assessment/:id/cam/defaults', ensureAuthenticated, async (req, res
         if (!assessment) return res.status(404).json({ success: false, error: 'Assessment not found' });
         const ed = assessment.all_extracted_data || assessment.extracted_data || {};
         const defaults = calculationEngine.deriveCamDefaults(ed);
+
+        // Overlay LOS/Pennant-sourced values so the CAM form prefills the
+        // proposed loan amount and borrower details from the LOS fetch.
+        const pen = assessment.pennant_data || {};
+        const loan = pen.loanDetail || {};
+        const cust = pen.customer || {};
+        if (loan.financeAmount != null) {
+            // Pennant finamount is in rupees → convert to lakhs for the CAM form
+            defaults.proposed_loan = defaults.proposed_loan || (parseFloat(loan.financeAmount) / 100000);
+        }
+        if (loan.tenureMonths != null) {
+            defaults.tenure_months = defaults.tenure_months || loan.tenureMonths;
+        }
+        if (cust.name) defaults.borrower_name = cust.name;
+        if (loan.ucic) defaults.ucic = loan.ucic;
+
         res.json({ success: true, defaults });
     } catch (err) {
         console.error('[CAM] defaults error:', err.message);
